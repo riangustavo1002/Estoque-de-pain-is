@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relatório de Estoque Agrupado — Painéis</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
   --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430;
@@ -19,32 +20,83 @@ body { font-family: var(--font-mono); background: var(--bg); color: var(--text);
 .header h1 { font-family: var(--font-head); font-size: 26px; font-weight: 800; }
 .header h1 span { color: var(--accent); }
 
-.filters { display: flex; gap: 10px; margin-bottom: 20px; }
+.filters { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
 select { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: var(--font-mono); outline: none; cursor: pointer; }
 
+/* ESTILOS DE CARTÕES E GRÁFICOS (Adicionado) */
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; border-left: 3px solid transparent; }
 .card-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
 .card-value { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+.card.c-pcp { border-left-color: var(--teal); } .card.c-pcp .card-value { color: var(--teal); }
+.card.c-comp { border-left-color: var(--warn); } .card.c-comp .card-value { color: var(--warn); }
+.card.c-falta { border-left-color: var(--danger); } .card.c-falta .card-value { color: var(--danger); }
 
+.charts-section { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 24px; }
+.chart-box { background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
+.chart-header { font-family: var(--font-head); font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
+.chart-container { height: 260px; position: relative; }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 18px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; font-weight: 600; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ESTILOS DA TABELA */
 .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-th { padding: 12px; text-align: left; background: var(--surface2); color: var(--muted); font-size: 10px; text-transform: uppercase; white-space: nowrap; }
-td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+th { padding: 12px; text-align: left; background: var(--surface2); color: var(--muted); font-size: 10px; text-transform: uppercase; white-space: nowrap; border-bottom: 1px solid var(--border2); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border2); }
 tr:hover { background: rgba(255,255,255,0.02); }
 
-.badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; }
+.badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; white-space: nowrap; }
 .b-excess { background: rgba(79,195,161,0.15); color: var(--teal); }
 .b-lack { background: rgba(240,100,100,0.15); color: var(--danger); }
-.b-neutral { background: rgba(122,132,148,0.15); color: var(--muted); }
+.b-normal { background: rgba(255,255,255,0.03); color: var(--muted); }
+
+/* SKUs/Referências */
+.sku { background: var(--surface2); padding: 2px 5px; font-size: 10px; border-radius: 3px; margin: 1px; display: inline-block; color: var(--muted); border: 1px solid rgba(255,255,255,0.05); }
+
+/* ESTILOS DA ABA SUBSTITUIÇÃO (Adicionado) */
+.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+.cross-head { padding: 12px 18px; background: var(--surface2); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.cross-medida { font-family: var(--font-head); font-weight: 800; color: var(--accent); font-size: 15px; }
+.cross-body { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.ce { border: 1px solid var(--border2); padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.1); }
+.ce.excess { border-color: rgba(79,195,161,0.3); background: rgba(79,195,161,0.03); }
+.ce.lack { border-color: rgba(240,100,100,0.3); background: rgba(240,100,100,0.03); }
+.ce-title { font-weight: 700; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; display: flex; justify-content: space-between; }
+.item-row { font-size: 11px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.tip { color: var(--muted); font-size: 10px; margin-top: 5px; font-style: italic; }
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <div class="header">
-    <h1>Estoque <span>Agrupado</span></h1>
-    <p style="color: var(--muted)">Totalização por Grupo Mestre e Medida</p>
+    <h1>Estoque <span>Painéis</span></h1>
+    <p id="last-update" style="color: var(--muted)">Análise Geral</p>
+  </div>
+
+  <div class="cards">
+    <div class="card c-pcp"><div class="card-label">Total Estoque PCP</div><div class="card-value" id="c-tot-pcp">0</div></div>
+    <div class="card c-comp"><div class="card-label">Total Est. Compras</div><div class="card-value" id="c-tot-comp">0</div></div>
+    <div class="card c-falta"><div class="card-label">Grupos em Falta</div><div class="card-value" id="c-tot-falta">0</div></div>
+    <div class="card"><div class="card-label">Espécies Distintas</div><div class="card-value" id="c-tot-esp">0</div></div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-box">
+      <div class="chart-header">Estoque Total vs PCP vs Compras por Espécie</div>
+      <div class="chart-container"><canvas id="ch-geral"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-header">Status dos Grupos</div>
+      <div class="chart-container"><canvas id="ch-status"></canvas></div>
+    </div>
   </div>
 
   <div class="filters">
@@ -52,45 +104,46 @@ tr:hover { background: rgba(255,255,255,0.02); }
     <select id="f-medida" onchange="applyFilters()"><option value="">Todas as Medidas</option></select>
   </div>
 
-  <div class="cards">
-    <div class="card"><div class="card-label">Estoque Total</div><div class="card-value" id="c-total">0</div></div>
-    <div class="card"><div class="card-label">Falta M0 (Atual)</div><div class="card-value" id="c-falta-m0" style="color:var(--danger)">0</div></div>
-    <div class="card"><div class="card-label">Falta M1 (Planejada)</div><div class="card-value" id="c-falta-m1" style="color:var(--warn)">0</div></div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('tabela', this)">Tabela de Dados</div>
+    <div class="tab" onclick="switchTab('cross', this)">Substituição por Medida</div>
   </div>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Espécie</th>
-          <th>Grupo Mestre</th>
-          <th>Medida</th>
-          <th>Status</th>
-          <th>Est. Compras</th>
-          <th>Est. PCP</th>
-          <th style="color: var(--teal)">Est. Total</th>
-          <th style="background: rgba(240,100,100,0.05)">Falta M0</th>
-          <th style="background: rgba(240,160,96,0.05)">Falta M1</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+  <div id="tab-tabela" class="section active">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Espécie</th><th>Grupo Mestre</th><th>Padrão</th><th>Medida</th>
+            <th>Status</th><th>Est. PCP</th><th>Est. Compras</th><th>Falta Atual</th><th>SKUs</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-cross" class="section">
+    <div id="cross-grid"></div>
   </div>
 </div>
 
 <script>
-// Mapeamento das colunas do seu CSV
+// Mapeamento das colunas baseado no seu CSV
 const COL = {
   ESPECIE: 0,
-  GRUPO_MESTRE: 2, // Coluna C
-  EST_COMPRAS: 8,  // Coluna I
-  EST_PCP: 9,      // Coluna J
-  FALTA_M0: 10,    // Coluna K
-  FALTA_M1: 11,    // Coluna L
-  MEDIDA: 16       // Coluna Q
+  GRUPO_ORIG: 1,
+  GRUPO_MESTRE: 2,
+  PADRAO: 3,
+  STATUS: 7,
+  EST_COMPRAS: 8,
+  EST_PCP: 9,
+  FALTA_ATUAL: 10,
+  REF_IND: 14, // Referências para SKUs
+  MEDIDA: 16
 };
 
-// Cole seu CSV aqui entre as crases
+// --- DADOS DO SEU CSV - COLE AQUI ---
 const DADOS_CSV = `Espécie,Grupo Original (I),Grupo Mestre,Padrão (A),Compr (D),Larg (F),Esp (G),Status (AH),Estoque Compras (J),Estoque PCP (M),Falta Atual (AK),Falta Seg (AL),Total Atual (AM),Total Seg (AN),Referencias Individuais,Referencias agrupado,Medida Mestre
 Maçaranduba,01P,01P,438000,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
 Maçaranduba,01P,01P,232011,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
@@ -550,110 +603,242 @@ Tauari,70P-1,70P,381206,"264,3",125,59,#ERROR!,,"2.054,00",0,0,0,0,,10539384,540
 Tauari,CP587,CP587,381437,159,"114,5","59,4",#ERROR!,,"2.206,00",0,0,0,0,,,159 x 114.5 x 59.4
 Tauari,PBAH,PBAH,381269,410,410,18,#ERROR!,,"7.142,00",0,0,"30,26",0,14204400,14204400,410 x 410 x 18
 Tauari,PTAU,PTAU,381174,290,205,17,#ERROR!,,"4.875,00",0,0,0,0,"10239684,1",10239684,290 x 205 x 17`;
+// Cole seu CSV completo entre as crases acima.
 
-function parseNum(v) {
-  if (!v || v === "" || v === "-" || v === "0") return 0;
-  v = v.replace(/"/g, '').replace(/\./g, '').replace(',', '.');
-  return parseFloat(v) || 0;
+let allData = [];
+let groupedByMestre = [];
+let ch_geral = null, ch_status = null;
+
+// Função auxiliar para converter os números do CSV (ex: "1.070,10" -> 1070.10)
+function parseCSVNumber(val) {
+  if (!val || val === "" || val === "-") return 0;
+  let clean = val.replace(/"/g, '').replace(/\./g, '').replace(',', '.');
+  return parseFloat(clean) || 0;
 }
-
-function fmt(n) {
-  return n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-}
-
-let rows = [];
 
 function init() {
-  const lines = DADOS_CSV.split('\n').slice(1);
-  rows = lines.filter(l => l.trim() !== '').map(l => l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
-
-  // Preencher filtros
-  const especies = [...new Set(rows.map(r => r[COL.ESPECIE]))].sort();
-  const medidas = [...new Set(rows.map(r => r[COL.MEDIDA]))].sort();
+  const lines = DADOS_CSV.trim().split('\n');
   
-  especies.forEach(e => document.getElementById('f-especie').innerHTML += `<option value="${e}">${e}</option>`);
-  medidas.forEach(m => document.getElementById('f-medida').innerHTML += `<option value="${m}">${m}</option>`);
+  // Limpa e mapeia os dados, pulando o cabeçalho
+  allData = lines.slice(1).map(line => {
+    // Regex para lidar com vírgulas dentro de aspas
+    return line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g, '').trim());
+  }).filter(row => row.length > 5);
 
+  // LOGICA DE AGRUPAMENTO (Por Especie + Grupo Mestre + Medida)
+  const map = new Map();
+  
+  allData.forEach(row => {
+    const key = `${row[COL.ESPECIE]}|${row[COL.GRUPO_MESTRE]}|${row[COL.MEDIDA]}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        especie: row[COL.ESPECIE],
+        grupo: row[COL.GRUPO_MESTRE],
+        medida: row[COL.MEDIDA],
+        padrao: row[COL.PADRAO], // Pega o primeiro padrão como referência
+        statuses: new Set(),
+        estComp: 0,
+        estPCP: 0,
+        falta: 0,
+        refs: new Set()
+      });
+    }
+    const g = map.get(key);
+    g.estComp += parseCSVNumber(row[COL.EST_COMPRAS]);
+    g.estPCP += parseCSVNumber(row[COL.EST_PCP]);
+    g.falta += parseCSVNumber(row[COL.FALTA_ATUAL]);
+    if(row[COL.STATUS] && row[COL.STATUS] !== '-') g.statuses.add(row[COL.STATUS]);
+    if(row[COL.REF_IND]) row[COL.REF_IND].split(';').forEach(r => if(r) g.refs.add(r));
+  });
+
+  groupedByMestre = Array.from(map.values()).map(g => {
+    g.statusFinal = Array.from(g.statuses).join(' / ') || '-';
+    g.isLack = g.statusFinal.includes('Falta');
+    g.isExcess = g.statusFinal.includes('Excesso');
+    return g;
+  });
+
+  fillFilters();
   applyFilters();
+}
+
+function fillFilters() {
+  const especies = [...new Set(groupedByMestre.map(g => g.especie))].sort();
+  const medidas = [...new Set(groupedByMestre.map(g => g.medida))].sort();
+  
+  const selE = document.getElementById('f-especie');
+  especies.forEach(e => selE.innerHTML += `<option value="${e}">${e}</option>`);
+  
+  const selM = document.getElementById('f-medida');
+  medidas.forEach(m => selM.innerHTML += `<option value="${m}">${m}</option>`);
 }
 
 function applyFilters() {
   const fEsp = document.getElementById('f-especie').value;
   const fMed = document.getElementById('f-medida').value;
-
-  const filtered = rows.filter(r => 
-    (fEsp === "" || r[COL.ESPECIE] === fEsp) && 
-    (fMed === "" || r[COL.MEDIDA] === fMed)
-  );
-
-  // LOGICA DE AGRUPAMENTO
-  const agrupado = {};
-
-  filtered.forEach(r => {
-    // Chave única: Espécie + Grupo Mestre + Medida
-    const chave = `${r[COL.ESPECIE]}|${r[COL.GRUPO_MESTRE]}|${r[COL.MEDIDA]}`;
-
-    if (!agrupado[chave]) {
-      agrupado[chave] = {
-        especie: r[COL.ESPECIE],
-        grupo: r[COL.GRUPO_MESTRE],
-        medida: r[COL.MEDIDA],
-        estCompras: 0,
-        estPCP: 0,
-        faltaM0: 0,
-        faltaM1: 0
-      };
-    }
-
-    agrupado[chave].estCompras += parseNum(r[COL.EST_COMPRAS]);
-    agrupado[chave].estPCP += parseNum(r[COL.EST_PCP]);
-    agrupado[chave].faltaM0 += parseNum(r[COL.FALTA_M0]);
-    agrupado[chave].faltaM1 += parseNum(r[COL.FALTA_M1]);
+  
+  const filtered = groupedByMestre.filter(g => {
+    return (!fEsp || g.especie === fEsp) && (!fMed || g.medida === fMed);
   });
 
-  render(Object.values(agrupado));
+  renderTableAndStats(filtered);
+  renderCharts(filtered);
+  renderSubstitution(filtered);
 }
 
-function render(data) {
+function renderTableAndStats(data) {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
   
-  let totalEst = 0, totalM0 = 0, totalM1 = 0;
+  let totComp = 0, totPCP = 0, totLack = 0;
+  
+  data.forEach(g => {
+    totComp += g.estComp;
+    totPCP += g.estPCP;
+    if(g.isLack) totLack++;
 
-  data.forEach(item => {
-    const estTotal = item.estCompras + item.estPCP;
-    totalEst += estTotal;
-    totalM0 += item.faltaM0;
-    totalM1 += item.faltaM1;
-
-    // Lógica simples de Status para o Grupo
-    let statusClass = 'b-neutral', statusText = 'Normal';
-    if (item.faltaM0 > 0) { statusClass = 'b-lack'; statusText = 'Falta M0'; }
-    else if (item.faltaM1 > 0) { statusClass = 'b-lack'; statusText = 'Falta M1'; }
-    else if (estTotal > 500) { statusClass = 'b-excess'; statusText = 'Excesso'; }
+    const badgeClass = g.isLack ? 'b-lack' : (g.isExcess ? 'b-excess' : 'b-normal');
+    
+    // Formata SKUs
+    const skuHtml = Array.from(g.refs).slice(0, 5).map(r => `<span class="sku">${r}</span>`).join('');
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${item.especie}</td>
-      <td style="font-weight:700">${item.grupo}</td>
-      <td>${item.medida}</td>
-      <td><span class="badge ${statusClass}">${statusText}</span></td>
-      <td>${fmt(item.estCompras)}</td>
-      <td>${fmt(item.estPCP)}</td>
-      <td style="font-weight:bold; color:var(--teal)">${fmt(estTotal)}</td>
-      <td style="color:var(--danger)">${fmt(item.faltaM0)}</td>
-      <td style="color:var(--warn)">${fmt(item.faltaM1)}</td>
+      <td>${g.especie}</td>
+      <td style="font-weight:700">${g.grupo}</td>
+      <td>${g.padrao}</td>
+      <td style="color:var(--accent)">${g.medida}</td>
+      <td><span class="badge ${badgeClass}">${g.statusFinal}</span></td>
+      <td>${g.estPCP.toLocaleString()}</td>
+      <td>${g.estComp.toLocaleString()}</td>
+      <td style="color:var(--danger)">${g.falta.toLocaleString()}</td>
+      <td><div style="max-width:200px">${skuHtml}${g.refs.size > 5 ? '...' : ''}</div></td>
     `;
     tbody.appendChild(tr);
   });
+  
+  // Atualiza cartões
+  document.getElementById('c-tot-pcp').textContent = totPCP.toLocaleString();
+  document.getElementById('c-tot-comp').textContent = totComp.toLocaleString();
+  document.getElementById('c-tot-falta').textContent = totLack;
+  document.getElementById('c-tot-esp').textContent = new Set(data.map(g => g.especie)).size;
+}
 
-  document.getElementById('c-total').innerText = fmt(totalEst);
-  document.getElementById('c-falta-m0').innerText = fmt(totalM0);
-  document.getElementById('c-falta-m1').innerText = fmt(totalM1);
+function renderCharts(data) {
+  const mono = "'DM Mono', monospace";
+  const gray = "#7a8494";
+
+  // Agrupa por espécie para o gráfico geral
+  const byEsp = {};
+  data.forEach(g => {
+    if(!byEsp[g.especie]) byEsp[g.especie] = { pcp: 0, comp: 0, faltaGroups: 0, excessGroups: 0, totalGroups: 0 };
+    byEsp[g.especie].pcp += g.estPCP;
+    byEsp[g.especie].comp += g.estComp;
+    byEsp[g.especie].totalGroups++;
+    if(g.isLack) byEsp[g.especie].faltaGroups++;
+    if(g.isExcess) byEsp[g.especie].excessGroups++;
+  });
+  const especies = Object.keys(byEsp).sort();
+
+  // Gráfico Geral
+  if(ch_geral) ch_geral.destroy();
+  ch_geral = new Chart(document.getElementById('ch-geral').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: especies,
+      datasets: [
+        { label: 'Estoque PCP', data: especies.map(e => byEsp[e].pcp), backgroundColor: 'rgba(79, 195, 161, 0.7)' },
+        { label: 'Est. Compras', data: especies.map(e => byEsp[e].comp), backgroundColor: 'rgba(232, 197, 71, 0.5)' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: gray, font: { family: mono } } } },
+      scales: {
+        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: gray, font: { family: mono } } },
+        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: gray, font: { family: mono } } }
+      }
+    }
+  });
+
+  // Gráfico Status
+  if(ch_status) ch_status.destroy();
+  ch_status = new Chart(document.getElementById('ch-status').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Com Falta', 'Com Excesso', 'Normal'],
+      datasets: [{
+        data: [totFalta = data.filter(g=>g.isLack).length, totEx = data.filter(g=>g.isExcess).length, data.length - totFalta - totEx],
+        backgroundColor: ['rgba(240, 100, 100, 0.7)', 'rgba(79, 195, 161, 0.7)', 'rgba(255,255,255,0.05)']
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: gray, font: { family: mono }, boxWidth: 10 } } }
+    }
+  });
+}
+
+function renderSubstitution(data) {
+  const grid = document.getElementById('cross-grid');
+  grid.innerHTML = '';
+  
+  // Agrupa por medida
+  const porMedida = {};
+  data.forEach(g => {
+    if(!porMedida[g.medida]) porMedida[g.medida] = [];
+    porMedida[g.medida].push(g);
+  });
+
+  // Filtra medidas que têm Excesso E Falta
+  const medidasComOportunidade = Object.keys(porMedida).sort().filter(m => {
+    const rows = porMedida[m];
+    return rows.some(r => r.isExcess) && rows.some(r => r.isLack);
+  });
+
+  if(medidasComOportunidade.length === 0) {
+    grid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted)">🔍 Nenhuma oportunidade de substituição direta encontrada nos filtros atuais.<br><small>Procure por medidas com excessos e faltas simultâneos.</small></div>';
+    return;
+  }
+
+  medidasComOportunidade.forEach(med => {
+    const rows = porMedida[med];
+    const excessos = rows.filter(r => r.isExcess);
+    const faltas = rows.filter(r => r.isLack);
+
+    const div = document.createElement('div');
+    div.className = 'cross-card';
+    div.innerHTML = `
+      <div class="cross-head">
+        <span class="cross-medida">${med}</span>
+        <div style="display:flex; gap:5px">
+          <span class="badge b-excess">${excessos.length} Excessos</span>
+          <span class="badge b-lack">${faltas.length} Faltas</span>
+        </div>
+      </div>
+      <div class="cross-body">
+        <div class="ce excess">
+          <div class="ce-title">Disponível (Pode Ofertar)</div>
+          ${excessos.map(e => `<div class="item-row"><b>${e.especie} · ${e.grupo}</b><br>Qtd: ${e.estPCP.toLocaleString()} <span class="tip">(Substituto Potencial)</span></div>`).join('')}
+        </div>
+        <div class="ce lack">
+          <div class="ce-title">Necessário (Cobrar/Trocar)</div>
+          ${faltas.map(f => `<div class="item-row"><b>${f.especie} · ${f.grupo}</b><br>Falta: <span style="color:var(--danger)">${f.falta.toLocaleString()}</span> <span class="tip">(Demanda em Aberto)</span></div>`).join('')}
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
 }
 
 window.onload = init;
 </script>
-
 </body>
 </html>
