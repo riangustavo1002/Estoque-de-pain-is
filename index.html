@@ -166,7 +166,7 @@ tbody tr:last-child td { border-bottom: none; }
 /* BADGES */
 .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
 .b-excess  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.25); }
-.b-lack    { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
+.b-lack     { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
 .b-lack1   { background: var(--warn-dim);   color: var(--warn);   border: 1px solid rgba(240,160,96,0.25); }
 .b-neutral { background: rgba(122,132,148,0.1); color: var(--muted); border: 1px solid var(--border2); }
 .b-multi   { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(232,197,71,0.25); }
@@ -188,7 +188,7 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 10px 12px;
 }
 .ce.excess  { border-color: rgba(79,195,161,0.35);  background: rgba(79,195,161,0.04); }
-.ce.lack    { border-color: rgba(240,100,100,0.35); background: rgba(240,100,100,0.04); }
+.ce.lack     { border-color: rgba(240,100,100,0.35); background: rgba(240,100,100,0.04); }
 .ce-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
 .ce-row { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--muted); }
 .ce-row span:last-child { color: var(--text); font-weight: 500; }
@@ -338,6 +338,7 @@ function setStatus(msg,cls='') {
   el.textContent=msg; el.className=cls;
 }
 
+// FUNÇÃO CARREGAR CORRIGIDA COM PROXY PARA EVITAR ERRO DE FETCH
 async function loadSheet() {
   const url=document.getElementById('sheet-url').value.trim();
   const id=extractId(url);
@@ -347,9 +348,11 @@ async function loadSheet() {
   document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="loading"><div class="spinner"></div>Buscando dados...</div></td></tr>';
   
   try {
+    // Usando proxy do allorigins para evitar o erro de CORS em outros PCs
     const proxy = "https://api.allorigins.win/raw?url=";
-    const targetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
-    const res = await fetch(`${proxy}${encodeURIComponent(targetUrl)}`);
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+    
+    const res = await fetch(proxy + encodeURIComponent(sheetUrl));
     
     if(!res.ok) throw new Error('HTTP '+res.status);
     const text = await res.text();
@@ -525,7 +528,7 @@ function badge(st) {
   if(st.includes(' / ')) return `<span class="badge b-multi">${st}</span>`;
   if(st.includes('Excesso'))   return `<span class="badge b-excess">${st}</span>`;
   if(st.includes('Falta Mês1'))return `<span class="badge b-lack1">${st}</span>`;
-  if(st.includes('Falta'))     return `<span class="badge b-lack">${st}</span>`;
+  if(st.includes('Falta'))      return `<span class="badge b-lack">${st}</span>`;
   return `<span class="badge b-neutral">${st}</span>`;
 }
 
