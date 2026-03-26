@@ -60,7 +60,7 @@
 
 <div class="header">
     <h1>Estoque <span>Agrupado</span></h1>
-    <div style="color: var(--muted)">Resumo por Grupo Mestre</div>
+    <div style="color: var(--muted)">Análise de Demanda Atual vs Futura</div>
 </div>
 
 <div class="cards">
@@ -91,12 +91,12 @@
                     <th>Espécie</th>
                     <th>Grupo Mestre</th>
                     <th>Padrões</th>
-                    <th>Medida</th>
+                    <th>Medida Mestre</th>
                     <th>Status</th>
                     <th>Est. Físico</th>
-                    <th style="color: var(--danger)">Falta Atual</th>
-                    <th style="color: var(--warn)">Falta Seg</th>
-                    <th>Ref. Agrupada</th>
+                    <th style="color: var(--danger)">Falta Atual (M0)</th>
+                    <th style="color: var(--warn)">Falta Seg (M1)</th>
+                    <th>Referências Agrupado</th>
                 </tr>
             </thead>
             <tbody id="tbody"></tbody>
@@ -568,32 +568,35 @@ Tauari,70P,70P,381204,540,135,64,#ERROR!,,,0,0,0,0,"10539384,11",10539384,540 x 
 Tauari,70P-1,70P,381206,"264,3",125,59,#ERROR!,,"2.054,00",0,0,0,0,,10539384,540 x 135 x 64
 Tauari,CP587,CP587,381437,159,"114,5","59,4",#ERROR!,,"2.206,00",0,0,0,0,,,159 x 114.5 x 59.4
 Tauari,PBAH,PBAH,381269,410,410,18,#ERROR!,,"7.142,00",0,0,"30,26",0,14204400,14204400,410 x 410 x 18
-Tauari,PTAU,PTAU,381174,290,205,17,#ERROR!,,"4.875,00",0,0,0,0,"10239684,1",10239684,290 x 205 x 17`;
+Tauari,PTAU,PTAU,381174,290,205,17,#ERROR!,,"4.875,00",0,0,0,0,"10239684,1",10239684,290 x 205 x 17`; // Cole seu CSV aqui
 
 let groupedData = [];
 let chart1 = null, chart2 = null;
 
 function parseNum(v) {
-    if(!v) return 0;
+    if(!v || v === "-") return 0;
     let n = v.toString().replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
     return parseFloat(n) || 0;
 }
 
 function init() {
     const lines = DADOS_CSV.trim().split('\n');
+    if (lines.length < 1) return;
+
     const sep = lines[0].includes(';') ? ';' : ',';
     const headers = lines[0].split(sep).map(h => h.trim().toLowerCase());
 
+    // Mapeamento exato baseado na sua necessidade
     const idx = {
-        esp: headers.findIndex(h => h.includes('esp')),
-        grp: headers.findIndex(h => h.includes('mestre')),
-        pad: headers.findIndex(h => h.includes('padr')),
-        med: headers.findIndex(h => h.includes('medida')),
-        sts: headers.findIndex(h => h.includes('status')),
+        esp: headers.findIndex(h => h === 'espécie' || h.includes('especie')),
+        grp: headers.findIndex(h => h === 'grupo mestre' || h.includes('mestre')),
+        pad: headers.findIndex(h => h === 'padrão' || h.includes('padrao')),
+        med: headers.findIndex(h => h.includes('medida mestre') || h === 'medida'),
+        sts: headers.findIndex(h => h === 'status'),
         pcp: headers.findIndex(h => h.includes('pcp')),
-        com: headers.findIndex(h => h.includes('comp')),
-        flt0: headers.findIndex(h => h.includes('falta atual') || h.includes('falta atual')),
-        flt1: headers.findIndex(h => h.includes('falta seg') || h.includes('falta seg')),
+        com: headers.findIndex(h => h.includes('compras')),
+        flt0: headers.findIndex(h => h.includes('falta atual') || h.includes('m0')),
+        flt1: headers.findIndex(h => h.includes('falta seg') || h.includes('m1')),
         refAg: headers.findIndex(h => h.includes('referencias agrupado'))
     };
 
@@ -601,22 +604,31 @@ function init() {
 
     lines.slice(1).forEach(line => {
         const cols = line.split(sep).map(c => c.replace(/^"|"$/g, '').trim());
-        if(!cols[idx.esp]) return;
+        if(!cols[idx.esp] || !cols[idx.grp]) return;
 
-        const key = `${cols[idx.esp]}|${cols[idx.grp]}|${cols[idx.med]}`;
+        // Chave de agrupamento: Espécie + Grupo
+        const key = `${cols[idx.esp].toUpperCase()}|${cols[idx.grp].toUpperCase()}`;
 
         if(!map.has(key)) {
             map.set(key, {
-                especie: cols[idx.esp], grupo: cols[idx.grp], medida: cols[idx.med],
-                padroes: new Set(), statuses: new Set(), refs: new Set(),
+                especie: cols[idx.esp], 
+                grupo: cols[idx.grp], 
+                medida: cols[idx.med] || "-", // Captura a medida mestre
+                padroes: new Set(), 
+                statuses: new Set(), 
+                refs: new Set(),
                 pcp: 0, compras: 0, falta0: 0, falta1: 0
             });
         }
 
         const g = map.get(key);
-        g.padroes.add(cols[idx.pad]);
-        if(cols[idx.sts] && cols[idx.sts] !== '-') g.statuses.add(cols[idx.sts]);
+        if(cols[idx.pad]) g.padroes.add(cols[idx.pad]);
+        if(cols[idx.sts] && cols[idx.sts] !== '-' && cols[idx.sts] !== "") g.statuses.add(cols[idx.sts]);
         if(cols[idx.refAg]) g.refs.add(cols[idx.refAg]);
+        
+        // Se a medida do grupo original estiver vazia no objeto mas houver no CSV, preenche
+        if((g.medida === "-" || g.medida === "") && cols[idx.med]) g.medida = cols[idx.med];
+
         g.pcp += parseNum(cols[idx.pcp]);
         g.compras += parseNum(cols[idx.com]);
         g.falta0 += parseNum(cols[idx.flt0]);
@@ -626,6 +638,7 @@ function init() {
     groupedData = Array.from(map.values());
 
     const s = document.getElementById('sel-esp');
+    s.innerHTML = '<option value="">Todas as Espécies</option>';
     [...new Set(groupedData.map(d => d.especie))].sort().forEach(e => {
         s.innerHTML += `<option value="${e}">${e}</option>`;
     });
@@ -646,9 +659,9 @@ function process() {
 function renderTable(data) {
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = data.map(d => {
-        const statusText = Array.from(d.statuses).join(' / ') || 'Normal';
-        const isL = d.falta0 > 0 || d.falta1 > 0 || statusText.includes('Falta');
-        const isE = statusText.includes('Excesso');
+        const statusText = Array.from(d.statuses).join(' / ') || '-';
+        const isL = d.falta0 > 0 || d.falta1 > 0 || statusText.toLowerCase().includes('falta');
+        const isE = statusText.toLowerCase().includes('excesso');
         
         return `<tr>
             <td>${d.especie}</td>
@@ -657,8 +670,8 @@ function renderTable(data) {
             <td style="color:var(--accent)">${d.medida}</td>
             <td><span class="badge ${isL?'b-lack':(isE?'b-excess':'')}">${statusText}</span></td>
             <td><b>${(d.pcp + d.compras).toLocaleString('pt-BR')}</b></td>
-            <td style="color:var(--danger)">${d.falta0.toLocaleString('pt-BR')}</td>
-            <td style="color:var(--warn)">${d.falta1.toLocaleString('pt-BR')}</td>
+            <td style="color:var(--danger); font-weight:bold">${d.falta0 > 0 ? d.falta0.toLocaleString('pt-BR') : '-'}</td>
+            <td style="color:var(--warn)">${d.falta1 > 0 ? d.falta1.toLocaleString('pt-BR') : '-'}</td>
             <td style="font-size:9px; color:var(--muted)">${Array.from(d.refs).join(', ')}</td>
         </tr>`;
     }).join('');
@@ -681,25 +694,30 @@ function renderCharts(data) {
     if(chart1) chart1.destroy();
     chart1 = new Chart(ctx1, {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Estoque por Espécie', data: pcpData, backgroundColor: '#4fc3a1' }] },
-        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1e2430' } } } }
+        data: { labels, datasets: [{ label: 'Estoque PCP', data: pcpData, backgroundColor: '#4fc3a1' }] },
+        options: { 
+            maintainAspectRatio: false, 
+            plugins: { legend: { display: false } }, 
+            scales: { y: { ticks: { color: '#7a8494' }, grid: { color: '#1e2430' } }, x: { ticks: { color: '#7a8494' } } } 
+        }
     });
 
     if(chart2) chart2.destroy();
     chart2 = new Chart(ctx2, {
         type: 'doughnut',
         data: { 
-            labels: ['Em Falta', 'Com Excesso', 'Normal'],
+            labels: ['Em Falta', 'Excesso', 'Normal'],
             datasets: [{ 
                 data: [
                     data.filter(d => d.falta0 > 0 || d.falta1 > 0).length,
-                    data.filter(d => Array.from(d.statuses).some(s => s.includes('Excesso'))).length,
-                    data.filter(d => d.falta0 === 0 && d.falta1 === 0 && !Array.from(d.statuses).some(s => s.includes('Excesso'))).length
+                    data.filter(d => Array.from(d.statuses).some(s => s.toLowerCase().includes('excesso'))).length,
+                    data.filter(d => d.falta0 === 0 && d.falta1 === 0 && !Array.from(d.statuses).some(s => s.toLowerCase().includes('excesso'))).length
                 ],
-                backgroundColor: ['#f06464', '#4fc3a1', '#1e2430'] 
+                backgroundColor: ['#f06464', '#4fc3a1', '#1e2430'],
+                borderWidth: 0
             }] 
         },
-        options: { maintainAspectRatio: false }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#7a8494', font: { size: 10 } } } } }
     });
 }
 
@@ -713,20 +731,20 @@ function renderSub(data) {
 
     grid.innerHTML = Object.keys(porMedida).map(m => {
         const items = porMedida[m];
-        const exs = items.filter(i => Array.from(i.statuses).some(s => s.includes('Excesso')));
-        const lks = items.filter(i => i.falta0 > 0 || i.falta1 > 0 || Array.from(i.statuses).some(s => s.includes('Falta')));
+        const exs = items.filter(i => Array.from(i.statuses).some(s => s.toLowerCase().includes('excesso')));
+        const lks = items.filter(i => i.falta0 > 0 || i.falta1 > 0 || Array.from(i.statuses).some(s => s.toLowerCase().includes('falta')));
         
-        if(exs.length && lks.length) {
+        if(exs.length && lks.length && m !== "-") {
             return `<div class="cross-card">
-                <div class="cross-header"><span>MEDIDA: ${m}</span> <span>Oportunidade</span></div>
+                <div class="cross-header"><span>MEDIDA: ${m}</span> <span>OPORTUNIDADE DE TROCA</span></div>
                 <div class="cross-body">
                     <div class="cross-col ex">
-                        <p style="color:var(--teal); margin-bottom:10px"><b>OFERTAR (DISPONÍVEL)</b></p>
-                        ${exs.map(e => `<div style="margin-bottom:8px">${e.especie} - ${e.grupo}<br><small>Físico: ${e.pcp + e.compras}</small></div>`).join('')}
+                        <p style="color:var(--teal); margin-bottom:10px"><b>DISPONÍVEL (EXCESSO)</b></p>
+                        ${exs.map(e => `<div style="margin-bottom:8px">${e.especie} - ${e.grupo}<br><small>Físico: ${(e.pcp + e.compras).toLocaleString('pt-BR')}</small></div>`).join('')}
                     </div>
                     <div class="cross-col lk">
-                        <p style="color:var(--danger); margin-bottom:10px"><b>COBRAR (FALTA)</b></p>
-                        ${lks.map(l => `<div style="margin-bottom:8px">${l.especie} - ${l.grupo}<br><small>Falta M0: ${l.falta0} | M1: ${l.falta1}</small></div>`).join('')}
+                        <p style="color:var(--danger); margin-bottom:10px"><b>NECESSÁRIO (FALTA)</b></p>
+                        ${lks.map(l => `<div style="margin-bottom:8px">${l.especie} - ${l.grupo}<br><small>Falta M0: ${l.falta0.toLocaleString('pt-BR')}</small></div>`).join('')}
                     </div>
                 </div>
             </div>`;
