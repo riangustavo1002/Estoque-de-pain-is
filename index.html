@@ -586,7 +586,6 @@ function init() {
     const sep = lines[0].includes(';') ? ';' : ',';
     const headers = lines[0].split(sep).map(h => h.trim().toLowerCase());
 
-    // Mapeamento exato baseado na sua necessidade
     const idx = {
         esp: headers.findIndex(h => h === 'espécie' || h.includes('especie')),
         grp: headers.findIndex(h => h === 'grupo mestre' || h.includes('mestre')),
@@ -606,14 +605,13 @@ function init() {
         const cols = line.split(sep).map(c => c.replace(/^"|"$/g, '').trim());
         if(!cols[idx.esp] || !cols[idx.grp]) return;
 
-        // Chave de agrupamento: Espécie + Grupo
-        const key = `${cols[idx.esp].toUpperCase()}|${cols[idx.grp].toUpperCase()}`;
+        const key = `${cols[idx.esp].toUpperCase().trim()}|${cols[idx.grp].toUpperCase().trim()}`;
 
         if(!map.has(key)) {
             map.set(key, {
                 especie: cols[idx.esp], 
                 grupo: cols[idx.grp], 
-                medida: cols[idx.med] || "-", // Captura a medida mestre
+                medida: "-", // Inicializa vazio para pegar a primeira válida
                 padroes: new Set(), 
                 statuses: new Set(), 
                 refs: new Set(),
@@ -622,13 +620,16 @@ function init() {
         }
 
         const g = map.get(key);
+        
+        // REGRA SOLICITADA: Se a medida do grupo ainda for "-" e encontrarmos uma medida na linha, ela vira a medida oficial
+        if((g.medida === "-" || g.medida === "") && cols[idx.med] && cols[idx.med] !== "-") {
+            g.medida = cols[idx.med];
+        }
+
         if(cols[idx.pad]) g.padroes.add(cols[idx.pad]);
         if(cols[idx.sts] && cols[idx.sts] !== '-' && cols[idx.sts] !== "") g.statuses.add(cols[idx.sts]);
         if(cols[idx.refAg]) g.refs.add(cols[idx.refAg]);
         
-        // Se a medida do grupo original estiver vazia no objeto mas houver no CSV, preenche
-        if((g.medida === "-" || g.medida === "") && cols[idx.med]) g.medida = cols[idx.med];
-
         g.pcp += parseNum(cols[idx.pcp]);
         g.compras += parseNum(cols[idx.com]);
         g.falta0 += parseNum(cols[idx.flt0]);
