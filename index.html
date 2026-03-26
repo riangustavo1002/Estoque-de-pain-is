@@ -298,33 +298,24 @@ tbody tr:last-child td { border-bottom: none; }
 
 </div>
 <script>
+// MAPEAMENTO CORRIGIDO PARA A PLANILHA 10OnOUkR3pla...
 const C = {
-  const C = {
-  especie: 0,      // Coluna A
-  grupoOrig: 1,    // Coluna B
-  grupoMestre: 2,  // Coluna C
-  padrao: 3,       // Coluna D
-  compr: 4,        // Coluna E
-  larg: 5,         // Coluna F
-  esp: 6,          // Coluna G
-  status: 7,       // Coluna H (Status)
-  estComp: 8,      // Coluna I (Estoque Compras)
-  estPCP: 9,       // Coluna J (Estoque PCP)
-  faltaAtual: 10,  // Coluna K (Falta Atual)
-  faltaSeg: 11,    // Coluna L (Falta Seg)
-  totalAtual: 12,  // Coluna M (Total Atual)
-  totalSeg: 13,    // Coluna N (Total Seg)
-  refInd: 14,      // Coluna O (Ref Individual)
-  refAgrup: 15,    // Coluna P (Ref Agrupada)
-  medida: 16       // Coluna Q (Medida Mestre)
+  especie:0, grupoOrig:1, grupoMestre:2, padrao:3,
+  compr:4, larg:5, esp:6, status:7,
+  estComp:8, estPCP:9, faltaAtual:10, faltaSeg:11,
+  totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16
 };
 
 let allRows=[], grouped=[], filtered=[];
 let ch1=null, ch2=null;
 
 const cl = v => (v||'').replace(/^"|"$/g,'').trim();
-const num = v => { const n=parseFloat(cl(v).replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
-const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '—';
+const num = v => { 
+  const val = cl(v).replace(/\./g,'').replace(',','.');
+  const n = parseFloat(val);
+  return isNaN(n) ? 0 : n; 
+};
+const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '0';
 const hasDigit = g => /\d/.test(g||'');
 
 function splitLine(line) {
@@ -352,28 +343,40 @@ function setStatus(msg,cls='') {
   el.textContent=msg; el.className=cls;
 }
 
-// FUNÇÃO CARREGAR CORRIGIDA COM PROXY PARA EVITAR ERRO DE FETCH
 async function loadSheet() {
   const url=document.getElementById('sheet-url').value.trim();
   const id=extractId(url);
   if(!id){setStatus('Link inválido','err');return;}
   const gid=extractGid(url);
-  setStatus('Carregando...','');
-  document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="loading"><div class="spinner"></div>Buscando dados...</div></td></tr>';
+  
+  setStatus('Conectando...','');
+  document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="loading"><div class="spinner"></div>Buscando dados no Google...</div></td></tr>';
   
   try {
-    // Usando proxy do allorigins para evitar o erro de CORS em outros PCs
-    const proxy = "https://api.allorigins.win/raw?url=";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+    // TENTATIVA 1: Busca Direta (Mais rápido)
+    const directUrl = `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
+    const res = await fetch(directUrl);
     
-    const res = await fetch(proxy + encodeURIComponent(sheetUrl));
+    if(!res.ok) throw new Error('CORS_OR_PRIVATE');
     
-    if(!res.ok) throw new Error('HTTP '+res.status);
     const text = await res.text();
+    if(text.startsWith('<!DOCTYPE')) throw new Error('PRIVATE_SHEET');
+    
     parseData(text);
   } catch(e) {
-    setStatus('Erro: '+e.message,'err');
-    document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar. Verifique o link ou tente novamente.</p></div></td></tr>';
+    // TENTATIVA 2: Proxy (Se a primeira falhar por bloqueio do navegador)
+    console.warn("Tentativa direta falhou, tentando via Proxy...");
+    try {
+      const proxy = "https://api.allorigins.win/raw?url=";
+      const sheetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+      const resProxy = await fetch(proxy + encodeURIComponent(sheetUrl));
+      if(!resProxy.ok) throw new Error('FALHA_TOTAL');
+      const textProxy = await resProxy.text();
+      parseData(textProxy);
+    } catch(err) {
+      setStatus('Erro: Verifique se a planilha está pública','err');
+      document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar. Certifique-se que a planilha está em "Qualquer pessoa com o link".</p></div></td></tr>';
+    }
   }
 }
 
@@ -382,10 +385,14 @@ function parseData(text) {
   allRows=[];
   for(let i=1;i<lines.length;i++){
     const cols=splitLine(lines[i]);
-    if(cols.length<3) continue;
+    if(cols.length < 10) continue;
     const esp=cl(cols[C.especie]);
-    if(!esp) continue;
+    if(!esp || esp.toLowerCase() === 'espécie') continue;
     allRows.push(cols);
+  }
+  if(allRows.length === 0) {
+    setStatus('Planilha vazia ou colunas erradas','err');
+    return;
   }
   setStatus(`${allRows.length} linhas carregadas ✓`,'ok');
   document.getElementById('last-update').textContent='Atualizado: '+new Date().toLocaleString('pt-BR');
@@ -400,8 +407,9 @@ function buildGrouped() {
     const esp=cl(row[C.especie]);
     const go=cl(row[C.grupoOrig]);
     const gm=cl(row[C.grupoMestre]);
-    const med=cl(row[C.medida]);
+    const med=cl(row[C.medida]) || "Sem Medida";
     if(!esp||!gm) continue;
+    
     const key=`${esp}||${gm}||${med}`;
     if(!map.has(key)){
       map.set(key,{
@@ -414,24 +422,21 @@ function buildGrouped() {
       });
     }
     const g=map.get(key);
-    g.estPCP    +=num(row[C.estPCP]);
-    g.estComp   +=num(row[C.estComp]);
-    g.faltaAtual+=num(row[C.faltaAtual]);
-    g.faltaSeg  +=num(row[C.faltaSeg]);
-    g.totalAtual+=num(row[C.totalAtual]);
-    if(hasDigit(go)&&cl(row[C.status])) g.statuses.push(cl(row[C.status]));
-    if(hasDigit(go)){
-      if(cl(row[C.padrao])) g.padrao=cl(row[C.padrao]);
-      if(cl(row[C.compr]))  g.compr =cl(row[C.compr]);
-      if(cl(row[C.larg]))   g.larg  =cl(row[C.larg]);
-      if(cl(row[C.esp]))    g.esp   =cl(row[C.esp]);
-    }
+    g.estPCP    += num(row[C.estPCP]);
+    g.estComp   += num(row[C.estComp]);
+    g.faltaAtual+= num(row[C.faltaAtual]);
+    g.faltaSeg  += num(row[C.faltaSeg]);
+    g.totalAtual+= num(row[C.totalAtual]);
+    
+    const st = cl(row[C.status]);
+    if(st && st !== '-' && st !== '—') g.statuses.push(st);
+
     cl(row[C.refInd]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refs.add(r));
     cl(row[C.refAgrup]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refsAgrup.add(r));
   }
 
   grouped=Array.from(map.values()).map(g=>{
-    const uniq=[...new Set(g.statuses.map(s=>s.trim()))];
+    const uniq=[...new Set(g.statuses)];
     g.statusFinal = uniq.length===0 ? '—' : uniq.join(' / ');
     g.refs=[...g.refs];
     g.refsAgrup=[...g.refsAgrup];
@@ -441,7 +446,7 @@ function buildGrouped() {
 
 function fillFilters() {
   const especies=[...new Set(grouped.map(g=>g.especie))].sort();
-  const medidas=[...new Set(grouped.map(g=>g.medida).filter(Boolean))].sort();
+  const medidas=[...new Set(grouped.map(g=>g.medida))].sort();
   const se=document.getElementById('f-especie');
   const sm=document.getElementById('f-medida');
   se.innerHTML='<option value="">Todas as espécies</option>';
@@ -538,9 +543,9 @@ function renderCharts() {
 }
 
 function badge(st) {
-  if(!st||st==='—') return '<span class="badge b-neutral">—</span>';
+  if(!st||st==='—' || st === '-') return '<span class="badge b-neutral">—</span>';
   if(st.includes(' / ')) return `<span class="badge b-multi">${st}</span>`;
-  if(st.includes('Excesso'))   return `<span class="badge b-excess">${st}</span>`;
+  if(st.includes('Excesso'))    return `<span class="badge b-excess">${st}</span>`;
   if(st.includes('Falta Mês1'))return `<span class="badge b-lack1">${st}</span>`;
   if(st.includes('Falta'))      return `<span class="badge b-lack">${st}</span>`;
   return `<span class="badge b-neutral">${st}</span>`;
@@ -588,7 +593,7 @@ function renderTable() {
 function renderCross() {
   const byMed={};
   for(const g of filtered){
-    if(!g.medida) continue;
+    if(!g.medida || g.medida === "Sem Medida") continue;
     if(!byMed[g.medida]) byMed[g.medida]=[];
     byMed[g.medida].push(g);
   }
