@@ -39,7 +39,7 @@
         .section { display: none; }
         .section.active { display: block; }
         .table-wrap { background: var(--surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 900px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1000px; }
         th { background: var(--surface2); padding: 10px; color: var(--muted); font-size: 9px; text-transform: uppercase; }
         td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
         
@@ -66,7 +66,7 @@
 <div class="cards">
     <div class="card c-pcp"><div class="card-label">Estoque PCP</div><div class="card-value" id="stat-pcp">0</div></div>
     <div class="card c-comp"><div class="card-label">Estoque Compras</div><div class="card-value" id="stat-comp">0</div></div>
-    <div class="card c-falta"><div class="card-label">Faltas (M0)</div><div class="card-value" id="stat-falta">0</div></div>
+    <div class="card c-falta"><div class="card-label">Faltas M0</div><div class="card-value" id="stat-falta">0</div></div>
     <div class="card"><div class="card-label">Grupos Mestre</div><div class="card-value" id="stat-esp">0</div></div>
 </div>
 
@@ -88,7 +88,15 @@
         <table>
             <thead>
                 <tr>
-                    <th>Espécie</th><th>Grupo Mestre</th><th>Padrões</th><th>Medida</th><th>Status</th><th>Est. Total (Físico)</th><th>Falta Total</th><th>Refs/SKUs</th>
+                    <th>Espécie</th>
+                    <th>Grupo Mestre</th>
+                    <th>Padrões</th>
+                    <th>Medida</th>
+                    <th>Status</th>
+                    <th>Est. Físico</th>
+                    <th style="color: var(--danger)">Falta Atual</th>
+                    <th style="color: var(--warn)">Falta Seg</th>
+                    <th>Ref. Agrupada</th>
                 </tr>
             </thead>
             <tbody id="tbody"></tbody>
@@ -584,8 +592,9 @@ function init() {
         sts: headers.findIndex(h => h.includes('status')),
         pcp: headers.findIndex(h => h.includes('pcp')),
         com: headers.findIndex(h => h.includes('comp')),
-        flt: headers.findIndex(h => h.includes('falta')),
-        ref: headers.findIndex(h => h.includes('ref'))
+        flt0: headers.findIndex(h => h.includes('falta atual') || h.includes('falta atual')),
+        flt1: headers.findIndex(h => h.includes('falta seg') || h.includes('falta seg')),
+        refAg: headers.findIndex(h => h.includes('referencias agrupado'))
     };
 
     const map = new Map();
@@ -594,24 +603,24 @@ function init() {
         const cols = line.split(sep).map(c => c.replace(/^"|"$/g, '').trim());
         if(!cols[idx.esp]) return;
 
-        // CHAVE DE AGRUPAMENTO: Espécie + Grupo Mestre + Medida
         const key = `${cols[idx.esp]}|${cols[idx.grp]}|${cols[idx.med]}`;
 
         if(!map.has(key)) {
             map.set(key, {
                 especie: cols[idx.esp], grupo: cols[idx.grp], medida: cols[idx.med],
                 padroes: new Set(), statuses: new Set(), refs: new Set(),
-                pcp: 0, compras: 0, falta: 0
+                pcp: 0, compras: 0, falta0: 0, falta1: 0
             });
         }
 
         const g = map.get(key);
         g.padroes.add(cols[idx.pad]);
         if(cols[idx.sts] && cols[idx.sts] !== '-') g.statuses.add(cols[idx.sts]);
-        if(cols[idx.ref]) g.refs.add(cols[idx.ref]);
+        if(cols[idx.refAg]) g.refs.add(cols[idx.refAg]);
         g.pcp += parseNum(cols[idx.pcp]);
         g.compras += parseNum(cols[idx.com]);
-        g.falta += parseNum(cols[idx.flt]);
+        g.falta0 += parseNum(cols[idx.flt0]);
+        g.falta1 += parseNum(cols[idx.flt1]);
     });
 
     groupedData = Array.from(map.values());
@@ -638,7 +647,7 @@ function renderTable(data) {
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = data.map(d => {
         const statusText = Array.from(d.statuses).join(' / ') || 'Normal';
-        const isL = d.falta > 0 || statusText.includes('Falta');
+        const isL = d.falta0 > 0 || d.falta1 > 0 || statusText.includes('Falta');
         const isE = statusText.includes('Excesso');
         
         return `<tr>
@@ -648,7 +657,8 @@ function renderTable(data) {
             <td style="color:var(--accent)">${d.medida}</td>
             <td><span class="badge ${isL?'b-lack':(isE?'b-excess':'')}">${statusText}</span></td>
             <td><b>${(d.pcp + d.compras).toLocaleString('pt-BR')}</b></td>
-            <td style="color:var(--danger)">${d.falta.toLocaleString('pt-BR')}</td>
+            <td style="color:var(--danger)">${d.falta0.toLocaleString('pt-BR')}</td>
+            <td style="color:var(--warn)">${d.falta1.toLocaleString('pt-BR')}</td>
             <td style="font-size:9px; color:var(--muted)">${Array.from(d.refs).join(', ')}</td>
         </tr>`;
     }).join('');
@@ -657,7 +667,7 @@ function renderTable(data) {
 function renderStats(data) {
     document.getElementById('stat-pcp').innerText = data.reduce((a,b) => a+b.pcp, 0).toLocaleString('pt-BR');
     document.getElementById('stat-comp').innerText = data.reduce((a,b) => a+b.compras, 0).toLocaleString('pt-BR');
-    document.getElementById('stat-falta').innerText = data.reduce((a,b) => a+b.falta, 0).toLocaleString('pt-BR');
+    document.getElementById('stat-falta').innerText = data.reduce((a,b) => a+b.falta0, 0).toLocaleString('pt-BR');
     document.getElementById('stat-esp').innerText = data.length;
 }
 
@@ -682,9 +692,9 @@ function renderCharts(data) {
             labels: ['Em Falta', 'Com Excesso', 'Normal'],
             datasets: [{ 
                 data: [
-                    data.filter(d => d.falta > 0).length,
+                    data.filter(d => d.falta0 > 0 || d.falta1 > 0).length,
                     data.filter(d => Array.from(d.statuses).some(s => s.includes('Excesso'))).length,
-                    data.filter(d => d.falta === 0 && !Array.from(d.statuses).some(s => s.includes('Excesso'))).length
+                    data.filter(d => d.falta0 === 0 && d.falta1 === 0 && !Array.from(d.statuses).some(s => s.includes('Excesso'))).length
                 ],
                 backgroundColor: ['#f06464', '#4fc3a1', '#1e2430'] 
             }] 
@@ -704,7 +714,7 @@ function renderSub(data) {
     grid.innerHTML = Object.keys(porMedida).map(m => {
         const items = porMedida[m];
         const exs = items.filter(i => Array.from(i.statuses).some(s => s.includes('Excesso')));
-        const lks = items.filter(i => i.falta > 0 || Array.from(i.statuses).some(s => s.includes('Falta')));
+        const lks = items.filter(i => i.falta0 > 0 || i.falta1 > 0 || Array.from(i.statuses).some(s => s.includes('Falta')));
         
         if(exs.length && lks.length) {
             return `<div class="cross-card">
@@ -716,7 +726,7 @@ function renderSub(data) {
                     </div>
                     <div class="cross-col lk">
                         <p style="color:var(--danger); margin-bottom:10px"><b>COBRAR (FALTA)</b></p>
-                        ${lks.map(l => `<div style="margin-bottom:8px">${l.especie} - ${l.grupo}<br><small>Falta: ${l.falta}</small></div>`).join('')}
+                        ${lks.map(l => `<div style="margin-bottom:8px">${l.especie} - ${l.grupo}<br><small>Falta M0: ${l.falta0} | M1: ${l.falta1}</small></div>`).join('')}
                     </div>
                 </div>
             </div>`;
