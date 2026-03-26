@@ -1,149 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Estoque Agrupado — Painéis</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-:root {
-  --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430;
-  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
-  --accent: #e8c547; --teal: #4fc3a1; --danger: #f06464; --warn: #f0a060;
-  --text: #e2e4ec; --muted: #7a8494; --font-head: 'Syne', sans-serif; --font-mono: 'DM Mono', monospace;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-mono); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 12px; }
-.wrap { max-width: 1450px; margin: 0 auto; padding: 24px; }
-.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
-.header h1 { font-family: var(--font-head); font-size: 26px; font-weight: 800; }
-.header h1 span { color: var(--accent); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Estoque — Painéis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430;
+            --border: rgba(255,255,255,0.07); --accent: #e8c547;
+            --teal: #4fc3a1; --danger: #f06464; --warn: #f0a060;
+            --text: #e2e4ec; --muted: #7a8494;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); font-size: 12px; padding: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        h1 { font-family: 'Syne', sans-serif; font-size: 28px; }
+        h1 span { color: var(--accent); }
+        
+        /* Cartões */
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border); border-left: 4px solid var(--muted); }
+        .card.c-pcp { border-left-color: var(--teal); }
+        .card.c-comp { border-left-color: var(--warn); }
+        .card.c-falta { border-left-color: var(--danger); }
+        .card-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+        .card-value { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
 
-.filters { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
-select { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: var(--font-mono); outline: none; cursor: pointer; }
+        /* Gráficos */
+        .charts { display: grid; grid-template-columns: 2fr 1.2fr; gap: 20px; margin-bottom: 30px; }
+        .chart-container { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border); height: 320px; }
+        
+        /* Tabs e Filtros */
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .tabs { display: flex; gap: 20px; }
+        .tab { cursor: pointer; color: var(--muted); padding-bottom: 8px; font-weight: 600; transition: 0.3s; }
+        .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        select { background: var(--surface2); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; outline: none; }
 
-/* ESTILOS DE CARTÕES E GRÁFICOS (Adicionado) */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; border-left: 3px solid transparent; }
-.card-label { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-.card-value { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
-.card.c-pcp { border-left-color: var(--teal); } .card.c-pcp .card-value { color: var(--teal); }
-.card.c-comp { border-left-color: var(--warn); } .card.c-comp .card-value { color: var(--warn); }
-.card.c-falta { border-left-color: var(--danger); } .card.c-falta .card-value { color: var(--danger); }
+        /* Tabela */
+        .section { display: none; }
+        .section.active { display: block; }
+        .table-wrap { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: var(--surface2); padding: 12px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        .badge { padding: 3px 7px; border-radius: 4px; font-weight: 700; font-size: 10px; }
+        .b-lack { background: rgba(240,100,100,0.15); color: var(--danger); }
+        .b-excess { background: rgba(79,195,161,0.15); color: var(--teal); }
 
-.charts-section { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 24px; }
-.chart-box { background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
-.chart-header { font-family: var(--font-head); font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; }
-.chart-container { height: 260px; position: relative; }
-
-/* TABS */
-.tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.tab { padding: 10px 18px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; font-weight: 600; }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-.section { display: none; }
-.section.active { display: block; }
-
-/* ESTILOS DA TABELA */
-.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-th { padding: 12px; text-align: left; background: var(--surface2); color: var(--muted); font-size: 10px; text-transform: uppercase; white-space: nowrap; border-bottom: 1px solid var(--border2); }
-td { padding: 9px 12px; border-bottom: 1px solid var(--border2); }
-tr:hover { background: rgba(255,255,255,0.02); }
-
-.badge { padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; white-space: nowrap; }
-.b-excess { background: rgba(79,195,161,0.15); color: var(--teal); }
-.b-lack { background: rgba(240,100,100,0.15); color: var(--danger); }
-.b-normal { background: rgba(255,255,255,0.03); color: var(--muted); }
-
-/* SKUs/Referências */
-.sku { background: var(--surface2); padding: 2px 5px; font-size: 10px; border-radius: 3px; margin: 1px; display: inline-block; color: var(--muted); border: 1px solid rgba(255,255,255,0.05); }
-
-/* ESTILOS DA ABA SUBSTITUIÇÃO (Adicionado) */
-.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
-.cross-head { padding: 12px 18px; background: var(--surface2); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-.cross-medida { font-family: var(--font-head); font-weight: 800; color: var(--accent); font-size: 15px; }
-.cross-body { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.ce { border: 1px solid var(--border2); padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.1); }
-.ce.excess { border-color: rgba(79,195,161,0.3); background: rgba(79,195,161,0.03); }
-.ce.lack { border-color: rgba(240,100,100,0.3); background: rgba(240,100,100,0.03); }
-.ce-title { font-weight: 700; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; display: flex; justify-content: space-between; }
-.item-row { font-size: 11px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.tip { color: var(--muted); font-size: 10px; margin-top: 5px; font-style: italic; }
-</style>
+        /* Substituição */
+        .cross-card { background: var(--surface); border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); overflow: hidden; }
+        .cross-header { padding: 15px; background: var(--surface2); font-family: 'Syne', sans-serif; color: var(--accent); display: flex; justify-content: space-between; }
+        .cross-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+        .cross-col { padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03); }
+        .cross-col.ex { background: rgba(79,195,161,0.03); border-color: rgba(79,195,161,0.1); }
+        .cross-col.lk { background: rgba(240,100,100,0.03); border-color: rgba(240,100,100,0.1); }
+        .item-row { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="header">
+<div class="header">
     <h1>Estoque <span>Painéis</span></h1>
-    <p id="last-update" style="color: var(--muted)">Análise Geral</p>
-  </div>
+    <div style="color: var(--muted)" id="date-now">Análise de Dados</div>
+</div>
 
-  <div class="cards">
-    <div class="card c-pcp"><div class="card-label">Total Estoque PCP</div><div class="card-value" id="c-tot-pcp">0</div></div>
-    <div class="card c-comp"><div class="card-label">Total Est. Compras</div><div class="card-value" id="c-tot-comp">0</div></div>
-    <div class="card c-falta"><div class="card-label">Grupos em Falta</div><div class="card-value" id="c-tot-falta">0</div></div>
-    <div class="card"><div class="card-label">Espécies Distintas</div><div class="card-value" id="c-tot-esp">0</div></div>
-  </div>
+<div class="cards">
+    <div class="card c-pcp"><div class="card-label">Estoque PCP Total</div><div class="card-value" id="stat-pcp">0</div></div>
+    <div class="card c-comp"><div class="card-label">Estoque Compras</div><div class="card-value" id="stat-comp">0</div></div>
+    <div class="card c-falta"><div class="card-label">Grupos em Falta</div><div class="card-value" id="stat-falta">0</div></div>
+    <div class="card"><div class="card-label">Espécies</div><div class="card-value" id="stat-esp">0</div></div>
+</div>
 
-  <div class="charts-section">
-    <div class="chart-box">
-      <div class="chart-header">Estoque Total vs PCP vs Compras por Espécie</div>
-      <div class="chart-container"><canvas id="ch-geral"></canvas></div>
+<div class="charts">
+    <div class="chart-container"><canvas id="chart-main"></canvas></div>
+    <div class="chart-container"><canvas id="chart-pie"></canvas></div>
+</div>
+
+<div class="controls">
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('tab-data', this)">Relatório Detalhado</div>
+        <div class="tab" onclick="showTab('tab-sub', this)">Plano de Substituição</div>
     </div>
-    <div class="chart-box">
-      <div class="chart-header">Status dos Grupos</div>
-      <div class="chart-container"><canvas id="ch-status"></canvas></div>
+    <div class="filters">
+        <select id="sel-esp" onchange="process()"><option value="">Todas as Espécies</option></select>
     </div>
-  </div>
+</div>
 
-  <div class="filters">
-    <select id="f-especie" onchange="applyFilters()"><option value="">Todas as Espécies</option></select>
-    <select id="f-medida" onchange="applyFilters()"><option value="">Todas as Medidas</option></select>
-  </div>
-
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('tabela', this)">Tabela de Dados</div>
-    <div class="tab" onclick="switchTab('cross', this)">Substituição por Medida</div>
-  </div>
-
-  <div id="tab-tabela" class="section active">
+<div id="tab-data" class="section active">
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Espécie</th><th>Grupo Mestre</th><th>Padrão</th><th>Medida</th>
-            <th>Status</th><th>Est. PCP</th><th>Est. Compras</th><th>Falta Atual</th><th>SKUs</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Espécie</th><th>Grupo</th><th>Padrão</th><th>Medida</th><th>Status</th><th>Est. PCP</th><th>Falta</th><th>Referências</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
     </div>
-  </div>
+</div>
 
-  <div id="tab-cross" class="section">
-    <div id="cross-grid"></div>
-  </div>
+<div id="tab-sub" class="section">
+    <div id="sub-grid"></div>
 </div>
 
 <script>
-// Mapeamento das colunas baseado no seu CSV
-const COL = {
-  ESPECIE: 0,
-  GRUPO_ORIG: 1,
-  GRUPO_MESTRE: 2,
-  PADRAO: 3,
-  STATUS: 7,
-  EST_COMPRAS: 8,
-  EST_PCP: 9,
-  FALTA_ATUAL: 10,
-  REF_IND: 14, // Referências para SKUs
-  MEDIDA: 16
-};
-
-// --- DADOS DO SEU CSV - COLE AQUI ---
+// --- CONFIGURAÇÃO E DADOS ---
 const DADOS_CSV = `Espécie,Grupo Original (I),Grupo Mestre,Padrão (A),Compr (D),Larg (F),Esp (G),Status (AH),Estoque Compras (J),Estoque PCP (M),Falta Atual (AK),Falta Seg (AL),Total Atual (AM),Total Seg (AN),Referencias Individuais,Referencias agrupado,Medida Mestre
 Maçaranduba,01P,01P,438000,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
 Maçaranduba,01P,01P,232011,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
@@ -605,237 +569,154 @@ Tauari,PBAH,PBAH,381269,410,410,18,#ERROR!,,"7.142,00",0,0,"30,26",0,14204400,14
 Tauari,PTAU,PTAU,381174,290,205,17,#ERROR!,,"4.875,00",0,0,0,0,"10239684,1",10239684,290 x 205 x 17`;
 // Cole seu CSV completo entre as crases acima.
 
-let allData = [];
-let groupedByMestre = [];
-let ch_geral = null, ch_status = null;
+let parsedData = [];
+let chart1 = null, chart2 = null;
 
-// Função auxiliar para converter os números do CSV (ex: "1.070,10" -> 1070.10)
-function parseCSVNumber(val) {
-  if (!val || val === "" || val === "-") return 0;
-  let clean = val.replace(/"/g, '').replace(/\./g, '').replace(',', '.');
-  return parseFloat(clean) || 0;
+function parseNum(v) {
+    if(!v) return 0;
+    let n = v.toString().replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+    return parseFloat(n) || 0;
 }
 
 function init() {
-  const lines = DADOS_CSV.trim().split('\n');
-  
-  // Limpa e mapeia os dados, pulando o cabeçalho
-  allData = lines.slice(1).map(line => {
-    // Regex para lidar com vírgulas dentro de aspas
-    return line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g, '').trim());
-  }).filter(row => row.length > 5);
+    const lines = DADOS_CSV.trim().split('\n');
+    const sep = lines[0].includes(';') ? ';' : ',';
+    const headers = lines[0].split(sep).map(h => h.trim().toLowerCase());
 
-  // LOGICA DE AGRUPAMENTO (Por Especie + Grupo Mestre + Medida)
-  const map = new Map();
-  
-  allData.forEach(row => {
-    const key = `${row[COL.ESPECIE]}|${row[COL.GRUPO_MESTRE]}|${row[COL.MEDIDA]}`;
-    if (!map.has(key)) {
-      map.set(key, {
-        especie: row[COL.ESPECIE],
-        grupo: row[COL.GRUPO_MESTRE],
-        medida: row[COL.MEDIDA],
-        padrao: row[COL.PADRAO], // Pega o primeiro padrão como referência
-        statuses: new Set(),
-        estComp: 0,
-        estPCP: 0,
-        falta: 0,
-        refs: new Set()
-      });
-    }
-    const g = map.get(key);
-    g.estComp += parseCSVNumber(row[COL.EST_COMPRAS]);
-    g.estPCP += parseCSVNumber(row[COL.EST_PCP]);
-    g.falta += parseCSVNumber(row[COL.FALTA_ATUAL]);
-    if(row[COL.STATUS] && row[COL.STATUS] !== '-') g.statuses.add(row[COL.STATUS]);
-    if(row[COL.REF_IND]) row[COL.REF_IND].split(';').forEach(r => if(r) g.refs.add(r));
-  });
+    // Mapeia colunas dinamicamente
+    const idx = {
+        esp: headers.findIndex(h => h.includes('esp')),
+        grp: headers.findIndex(h => h.includes('mestre')),
+        pad: headers.findIndex(h => h.includes('padr')),
+        med: headers.findIndex(h => h.includes('medida')),
+        sts: headers.findIndex(h => h.includes('status')),
+        pcp: headers.findIndex(h => h.includes('pcp')),
+        com: headers.findIndex(h => h.includes('comp')),
+        flt: headers.findIndex(h => h.includes('falta')),
+        ref: headers.findIndex(h => h.includes('ref'))
+    };
 
-  groupedByMestre = Array.from(map.values()).map(g => {
-    g.statusFinal = Array.from(g.statuses).join(' / ') || '-';
-    g.isLack = g.statusFinal.includes('Falta');
-    g.isExcess = g.statusFinal.includes('Excesso');
-    return g;
-  });
+    parsedData = lines.slice(1).map(line => {
+        const cols = line.split(sep).map(c => c.replace(/^"|"$/g, '').trim());
+        return {
+            especie: cols[idx.esp], grupo: cols[idx.grp], padrao: cols[idx.pad],
+            medida: cols[idx.med], status: cols[idx.sts],
+            pcp: parseNum(cols[idx.pcp]), compras: parseNum(cols[idx.com]),
+            falta: parseNum(cols[idx.flt]), ref: cols[idx.ref]
+        };
+    }).filter(d => d.especie);
 
-  fillFilters();
-  applyFilters();
+    // Popular filtro
+    const s = document.getElementById('sel-esp');
+    [...new Set(parsedData.map(d => d.especie))].sort().forEach(e => {
+        s.innerHTML += `<option value="${e}">${e}</option>`;
+    });
+
+    process();
 }
 
-function fillFilters() {
-  const especies = [...new Set(groupedByMestre.map(g => g.especie))].sort();
-  const medidas = [...new Set(groupedByMestre.map(g => g.medida))].sort();
-  
-  const selE = document.getElementById('f-especie');
-  especies.forEach(e => selE.innerHTML += `<option value="${e}">${e}</option>`);
-  
-  const selM = document.getElementById('f-medida');
-  medidas.forEach(m => selM.innerHTML += `<option value="${m}">${m}</option>`);
+function process() {
+    const filter = document.getElementById('sel-esp').value;
+    const data = filter ? parsedData.filter(d => d.especie === filter) : parsedData;
+
+    renderTable(data);
+    renderStats(data);
+    renderCharts(data);
+    renderSub(data);
 }
 
-function applyFilters() {
-  const fEsp = document.getElementById('f-especie').value;
-  const fMed = document.getElementById('f-medida').value;
-  
-  const filtered = groupedByMestre.filter(g => {
-    return (!fEsp || g.especie === fEsp) && (!fMed || g.medida === fMed);
-  });
-
-  renderTableAndStats(filtered);
-  renderCharts(filtered);
-  renderSubstitution(filtered);
+function renderTable(data) {
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = data.map(d => {
+        const isL = d.status.toLowerCase().includes('falta') || d.falta > 0;
+        const isE = d.status.toLowerCase().includes('excesso');
+        return `<tr>
+            <td>${d.especie}</td><td><b>${d.grupo}</b></td><td>${d.padrao}</td>
+            <td style="color:var(--accent)">${d.medida}</td>
+            <td><span class="badge ${isL?'b-lack':(isE?'b-excess':'')}">${d.status}</span></td>
+            <td>${d.pcp.toLocaleString('pt-BR')}</td>
+            <td style="color:var(--danger)">${d.falta.toLocaleString('pt-BR')}</td>
+            <td style="font-size:9px; color:var(--muted)">${d.ref}</td>
+        </tr>`;
+    }).join('');
 }
 
-function renderTableAndStats(data) {
-  const tbody = document.getElementById('tbody');
-  tbody.innerHTML = '';
-  
-  let totComp = 0, totPCP = 0, totLack = 0;
-  
-  data.forEach(g => {
-    totComp += g.estComp;
-    totPCP += g.estPCP;
-    if(g.isLack) totLack++;
-
-    const badgeClass = g.isLack ? 'b-lack' : (g.isExcess ? 'b-excess' : 'b-normal');
-    
-    // Formata SKUs
-    const skuHtml = Array.from(g.refs).slice(0, 5).map(r => `<span class="sku">${r}</span>`).join('');
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${g.especie}</td>
-      <td style="font-weight:700">${g.grupo}</td>
-      <td>${g.padrao}</td>
-      <td style="color:var(--accent)">${g.medida}</td>
-      <td><span class="badge ${badgeClass}">${g.statusFinal}</span></td>
-      <td>${g.estPCP.toLocaleString()}</td>
-      <td>${g.estComp.toLocaleString()}</td>
-      <td style="color:var(--danger)">${g.falta.toLocaleString()}</td>
-      <td><div style="max-width:200px">${skuHtml}${g.refs.size > 5 ? '...' : ''}</div></td>
-    `;
-    tbody.appendChild(tr);
-  });
-  
-  // Atualiza cartões
-  document.getElementById('c-tot-pcp').textContent = totPCP.toLocaleString();
-  document.getElementById('c-tot-comp').textContent = totComp.toLocaleString();
-  document.getElementById('c-tot-falta').textContent = totLack;
-  document.getElementById('c-tot-esp').textContent = new Set(data.map(g => g.especie)).size;
+function renderStats(data) {
+    document.getElementById('stat-pcp').innerText = data.reduce((a,b) => a+b.pcp, 0).toLocaleString('pt-BR');
+    document.getElementById('stat-comp').innerText = data.reduce((a,b) => a+b.compras, 0).toLocaleString('pt-BR');
+    document.getElementById('stat-falta').innerText = data.filter(d => d.falta > 0 || d.status.includes('Falta')).length;
+    document.getElementById('stat-esp').innerText = new Set(data.map(d => d.especie)).size;
 }
 
 function renderCharts(data) {
-  const mono = "'DM Mono', monospace";
-  const gray = "#7a8494";
+    const ctx1 = document.getElementById('chart-main').getContext('2d');
+    const ctx2 = document.getElementById('chart-pie').getContext('2d');
+    
+    const labels = [...new Set(data.map(d => d.especie))];
+    const pcpData = labels.map(l => data.filter(d => d.especie === l).reduce((a,b) => a+b.pcp, 0));
 
-  // Agrupa por espécie para o gráfico geral
-  const byEsp = {};
-  data.forEach(g => {
-    if(!byEsp[g.especie]) byEsp[g.especie] = { pcp: 0, comp: 0, faltaGroups: 0, excessGroups: 0, totalGroups: 0 };
-    byEsp[g.especie].pcp += g.estPCP;
-    byEsp[g.especie].comp += g.estComp;
-    byEsp[g.especie].totalGroups++;
-    if(g.isLack) byEsp[g.especie].faltaGroups++;
-    if(g.isExcess) byEsp[g.especie].excessGroups++;
-  });
-  const especies = Object.keys(byEsp).sort();
+    if(chart1) chart1.destroy();
+    chart1 = new Chart(ctx1, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Estoque PCP por Espécie', data: pcpData, backgroundColor: '#4fc3a1' }] },
+        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1e2430' } } } }
+    });
 
-  // Gráfico Geral
-  if(ch_geral) ch_geral.destroy();
-  ch_geral = new Chart(document.getElementById('ch-geral').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: especies,
-      datasets: [
-        { label: 'Estoque PCP', data: especies.map(e => byEsp[e].pcp), backgroundColor: 'rgba(79, 195, 161, 0.7)' },
-        { label: 'Est. Compras', data: especies.map(e => byEsp[e].comp), backgroundColor: 'rgba(232, 197, 71, 0.5)' }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: gray, font: { family: mono } } } },
-      scales: {
-        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: gray, font: { family: mono } } },
-        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: gray, font: { family: mono } } }
-      }
-    }
-  });
-
-  // Gráfico Status
-  if(ch_status) ch_status.destroy();
-  ch_status = new Chart(document.getElementById('ch-status').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Com Falta', 'Com Excesso', 'Normal'],
-      datasets: [{
-        data: [totFalta = data.filter(g=>g.isLack).length, totEx = data.filter(g=>g.isExcess).length, data.length - totFalta - totEx],
-        backgroundColor: ['rgba(240, 100, 100, 0.7)', 'rgba(79, 195, 161, 0.7)', 'rgba(255,255,255,0.05)']
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { color: gray, font: { family: mono }, boxWidth: 10 } } }
-    }
-  });
+    if(chart2) chart2.destroy();
+    chart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: { 
+            labels: ['Em Falta', 'Excesso', 'Normal'],
+            datasets: [{ 
+                data: [
+                    data.filter(d => d.falta > 0).length,
+                    data.filter(d => d.status.includes('Excesso')).length,
+                    data.filter(d => !d.status.includes('Excesso') && d.falta === 0).length
+                ],
+                backgroundColor: ['#f06464', '#4fc3a1', '#1e2430'] 
+            }] 
+        },
+        options: { maintainAspectRatio: false }
+    });
 }
 
-function renderSubstitution(data) {
-  const grid = document.getElementById('cross-grid');
-  grid.innerHTML = '';
-  
-  // Agrupa por medida
-  const porMedida = {};
-  data.forEach(g => {
-    if(!porMedida[g.medida]) porMedida[g.medida] = [];
-    porMedida[g.medida].push(g);
-  });
+function renderSub(data) {
+    const grid = document.getElementById('sub-grid');
+    const porMedida = {};
+    data.forEach(d => {
+        if(!porMedida[d.medida]) porMedida[d.medida] = [];
+        porMedida[d.medida].push(d);
+    });
 
-  // Filtra medidas que têm Excesso E Falta
-  const medidasComOportunidade = Object.keys(porMedida).sort().filter(m => {
-    const rows = porMedida[m];
-    return rows.some(r => r.isExcess) && rows.some(r => r.isLack);
-  });
-
-  if(medidasComOportunidade.length === 0) {
-    grid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted)">🔍 Nenhuma oportunidade de substituição direta encontrada nos filtros atuais.<br><small>Procure por medidas com excessos e faltas simultâneos.</small></div>';
-    return;
-  }
-
-  medidasComOportunidade.forEach(med => {
-    const rows = porMedida[med];
-    const excessos = rows.filter(r => r.isExcess);
-    const faltas = rows.filter(r => r.isLack);
-
-    const div = document.createElement('div');
-    div.className = 'cross-card';
-    div.innerHTML = `
-      <div class="cross-head">
-        <span class="cross-medida">${med}</span>
-        <div style="display:flex; gap:5px">
-          <span class="badge b-excess">${excessos.length} Excessos</span>
-          <span class="badge b-lack">${faltas.length} Faltas</span>
-        </div>
-      </div>
-      <div class="cross-body">
-        <div class="ce excess">
-          <div class="ce-title">Disponível (Pode Ofertar)</div>
-          ${excessos.map(e => `<div class="item-row"><b>${e.especie} · ${e.grupo}</b><br>Qtd: ${e.estPCP.toLocaleString()} <span class="tip">(Substituto Potencial)</span></div>`).join('')}
-        </div>
-        <div class="ce lack">
-          <div class="ce-title">Necessário (Cobrar/Trocar)</div>
-          ${faltas.map(f => `<div class="item-row"><b>${f.especie} · ${f.grupo}</b><br>Falta: <span style="color:var(--danger)">${f.falta.toLocaleString()}</span> <span class="tip">(Demanda em Aberto)</span></div>`).join('')}
-        </div>
-      </div>
-    `;
-    grid.appendChild(div);
-  });
+    grid.innerHTML = Object.keys(porMedida).map(m => {
+        const items = porMedida[m];
+        const exs = items.filter(i => i.status.includes('Excesso'));
+        const lks = items.filter(i => i.falta > 0 || i.status.includes('Falta'));
+        
+        if(exs.length && lks.length) {
+            return `<div class="cross-card">
+                <div class="cross-header"><span>MEDIDA: ${m}</span> <span>Oportunidade de Troca</span></div>
+                <div class="cross-body">
+                    <div class="cross-col ex">
+                        <p style="color:var(--teal); margin-bottom:10px"><b>OFERTAR (EXCESSO)</b></p>
+                        ${exs.map(e => `<div class="item-row">${e.especie} - ${e.grupo}<br><small>Disp: ${e.pcp}</small></div>`).join('')}
+                    </div>
+                    <div class="cross-col lk">
+                        <p style="color:var(--danger); margin-bottom:10px"><b>COBRAR (FALTA)</b></p>
+                        ${lks.map(l => `<div class="item-row">${l.especie} - ${l.grupo}<br><small>Falta: ${l.falta}</small></div>`).join('')}
+                    </div>
+                </div>
+            </div>`;
+        }
+        return '';
+    }).join('');
 }
 
-function switchTab(id, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('tab-'+id).classList.add('active');
+function showTab(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
 }
 
 window.onload = init;
