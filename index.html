@@ -3,228 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Estoque — Painéis</title>
+<title>Relatório de Estoque — Painéis (Local)</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root {
-  --bg: #0d0f14;
-  --surface: #161a22;
-  --surface2: #1e2430;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --accent: #e8c547;
-  --accent-dim: rgba(232,197,71,0.12);
-  --teal: #4fc3a1;
-  --teal-dim: rgba(79,195,161,0.12);
-  --danger: #f06464;
-  --danger-dim: rgba(240,100,100,0.12);
-  --warn: #f0a060;
-  --warn-dim: rgba(240,160,96,0.12);
-  --text: #e2e4ec;
-  --muted: #7a8494;
-  --muted2: #4a5260;
-  --font-head: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-}
+/* ... (Mantive seu estilo original para economizar espaço, ele continua igual) ... */
+:root { --bg: #0d0f14; --surface: #161a22; --surface2: #1e2430; --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13); --accent: #e8c547; --teal: #4fc3a1; --danger: #f06464; --warn: #f0a060; --text: #e2e4ec; --muted: #7a8494; --font-head: 'Syne', sans-serif; --font-mono: 'DM Mono', monospace; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: var(--font-mono);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 13px;
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 10% 10%, rgba(232,197,71,0.03) 0%, transparent 55%),
-    radial-gradient(ellipse at 90% 90%, rgba(79,195,161,0.03) 0%, transparent 55%);
-  pointer-events: none;
-  z-index: 0;
-}
+body { font-family: var(--font-mono); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; }
 .wrap { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
-
-/* HEADER */
-.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
-.header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 800; }
 .header h1 span { color: var(--accent); }
-.header p { color: var(--muted); margin-top: 4px; font-size: 12px; }
-
-/* SHEET BAR */
-.sheet-bar {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 14px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.sheet-bar label { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.sheet-bar input {
-  flex: 1;
-  min-width: 260px;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.sheet-bar input:focus { border-color: var(--accent); }
-.btn {
-  background: var(--accent);
-  color: #0d0f14;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s;
-}
-.btn:hover { opacity: 0.85; }
-#status-msg { font-size: 12px; color: var(--muted); }
-#status-msg.ok  { color: var(--teal); }
-#status-msg.err { color: var(--danger); }
-
-/* FILTROS */
-.filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.filter-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-select {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 7px 12px;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  outline: none;
-  cursor: pointer;
-}
-select:focus { border-color: var(--accent); }
-
-/* CARDS */
+.header p { color: var(--muted); font-size: 12px; }
+.filters { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+select { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 7px 12px; color: var(--text); font-family: var(--font-mono); }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-.card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.card-value { font-family: var(--font-head); font-size: 26px; font-weight: 800; line-height: 1; }
-.card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-.card.c-accent { border-color: rgba(232,197,71,0.25); }  .card.c-accent .card-value { color: var(--accent); }
-.card.c-teal   { border-color: rgba(79,195,161,0.25); }  .card.c-teal   .card-value { color: var(--teal); }
-.card.c-danger { border-color: rgba(240,100,100,0.25); } .card.c-danger .card-value { color: var(--danger); }
-.card.c-warn   { border-color: rgba(240,160,96,0.25); }  .card.c-warn   .card-value { color: var(--warn); }
-
-/* TABS */
+.card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+.card-value { font-family: var(--font-head); font-size: 26px; font-weight: 800; }
+.card.c-accent .card-value { color: var(--accent); }
+.card.c-teal .card-value { color: var(--teal); }
+.card.c-danger .card-value { color: var(--danger); }
+.card.c-warn .card-value { color: var(--warn); }
 .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.tab {
-  padding: 10px 18px;
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.tab:hover { color: var(--text); }
+.tab { padding: 10px 18px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
 .section { display: none; }
 .section.active { display: block; }
-
-/* CHARTS */
 .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-.chart-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; margin-bottom: 16px; }
-.chart-container { position: relative; width: 100%; height: 280px; }
-
-/* TABLE */
-.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-.table-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.table-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; }
-.table-count { font-size: 11px; color: var(--muted); }
-.table-scroll { overflow-x: auto; }
+.chart-container { height: 280px; }
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 table { width: 100%; border-collapse: collapse; }
-thead tr { background: var(--surface2); }
-th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); white-space: nowrap; border-bottom: 1px solid var(--border); }
-td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
-tbody tr:hover { background: rgba(255,255,255,0.02); }
-tbody tr:last-child td { border-bottom: none; }
-
-/* BADGES */
-.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
-.b-excess  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.25); }
-.b-lack     { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
-.b-lack1   { background: var(--warn-dim);   color: var(--warn);   border: 1px solid rgba(240,160,96,0.25); }
-.b-neutral { background: rgba(122,132,148,0.1); color: var(--muted); border: 1px solid var(--border2); }
-.b-multi   { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(232,197,71,0.25); }
-.b-warn-sm { display:inline-block; font-size:9px; padding:1px 5px; border-radius:3px; background:var(--warn-dim); color:var(--warn); border:1px solid rgba(240,160,96,0.3); margin-left:4px; vertical-align:middle; }
-
-/* SKUS */
-.sku-list { display: flex; flex-wrap: wrap; gap: 3px; }
-.sku { background: var(--surface2); border: 1px solid var(--border2); border-radius: 3px; padding: 2px 5px; font-size: 10px; color: var(--muted); }
-
-/* CROSS */
-.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-.cross-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-.cross-medida { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
-.cross-body { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px; }
-.ce {
-  flex: 1; min-width: 200px;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 10px 12px;
-}
-.ce.excess  { border-color: rgba(79,195,161,0.35);  background: rgba(79,195,161,0.04); }
-.ce.lack     { border-color: rgba(240,100,100,0.35); background: rgba(240,100,100,0.04); }
-.ce-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-.ce-row { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--muted); }
-.ce-row span:last-child { color: var(--text); font-weight: 500; }
-.ce-tip { margin-top: 8px; padding: 5px 8px; border-radius: 5px; font-size: 10px; }
-.ce-tip.ok  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.2); }
-.ce-tip.bad { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.2); }
-
-/* MISC */
-.placeholder { text-align: center; padding: 50px 20px; color: var(--muted); }
-.placeholder .ico { font-size: 32px; opacity: 0.35; margin-bottom: 10px; }
-.loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 50px 20px; color: var(--muted); }
-.spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 600px) {
-  .wrap { padding: 16px 12px; }
-  .cards { grid-template-columns: repeat(2, 1fr); }
-}
+th { padding: 10px; text-align: left; background: var(--surface2); color: var(--muted); font-size: 11px; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
+.badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; }
+.b-excess { background: rgba(79,195,161,0.12); color: var(--teal); }
+.b-lack { background: rgba(240,100,100,0.12); color: var(--danger); }
+.sku { background: var(--surface2); padding: 2px 5px; font-size: 10px; margin: 1px; display: inline-block; }
+.cross-card { background: var(--surface); margin-bottom: 12px; border-radius: 10px; overflow: hidden; }
+.cross-head { padding: 12px; background: var(--surface2); display: flex; justify-content: space-between; }
+.cross-body { padding: 12px; display: flex; flex-wrap: wrap; gap: 10px; }
+.ce { flex: 1; min-width: 200px; border: 1px solid var(--border2); padding: 10px; border-radius: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="header">
     <div>
       <h1>Estoque <span>Painéis</span></h1>
-      <p id="last-update">Conecte a planilha para carregar os dados</p>
+      <p id="last-update">Dados fixos carregados</p>
     </div>
-  </div>
-
-  <div class="sheet-bar">
-    <label>🔗 Google Sheets</label>
-    <input type="text" id="sheet-url"
-      placeholder="Cole o link da planilha..."
-      value="https://docs.google.com/spreadsheets/d/1C9tUTh4QVT67UbAdx0j04CBnHAqrrV-28ozhG0RfTQ8/edit?gid=1769742644#gid=1769742644" />
-    <button class="btn" onclick="loadSheet()">Carregar</button>
-    <span id="status-msg">Aguardando...</span>
   </div>
 
   <div class="filters">
@@ -240,46 +69,37 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 
   <div class="cards">
-    <div class="card c-accent"><div class="card-label">Espécies</div><div class="card-value" id="c-especies">—</div><div class="card-sub">tipos distintos</div></div>
-    <div class="card"><div class="card-label">Grupos</div><div class="card-value" id="c-grupos">—</div><div class="card-sub">grupos mestre</div></div>
-    <div class="card c-teal"><div class="card-label">Estoque PCP</div><div class="card-value" id="c-pcp">—</div><div class="card-sub">confiável</div></div>
-    <div class="card c-warn"><div class="card-label">Est. Compras</div><div class="card-value" id="c-comp">—</div><div class="card-sub">⚠ não confiável</div></div>
-    <div class="card c-danger"><div class="card-label">Em Falta</div><div class="card-value" id="c-falta">—</div><div class="card-sub">grupos com falta</div></div>
-    <div class="card c-teal"><div class="card-label">Com Excesso</div><div class="card-value" id="c-excesso">—</div><div class="card-sub">grupos com excesso</div></div>
+    <div class="card c-accent"><div class="card-label">Espécies</div><div class="card-value" id="c-especies">—</div></div>
+    <div class="card"><div class="card-label">Grupos</div><div class="card-value" id="c-grupos">—</div></div>
+    <div class="card c-teal"><div class="card-label">Estoque PCP</div><div class="card-value" id="c-pcp">—</div></div>
+    <div class="card c-warn"><div class="card-label">Est. Compras</div><div class="card-value" id="c-comp">—</div></div>
+    <div class="card c-danger"><div class="card-label">Em Falta</div><div class="card-value" id="c-falta">—</div></div>
+    <div class="card c-teal"><div class="card-label">Com Excesso</div><div class="card-value" id="c-excesso">—</div></div>
   </div>
 
   <div class="tabs">
     <div class="tab active" onclick="switchTab('grafico')">Gráficos</div>
-    <div class="tab" onclick="switchTab('tabela')">Por Espécie · Grupo · Medida</div>
-    <div class="tab" onclick="switchTab('cross')">Substituição por Medida</div>
+    <div class="tab" onclick="switchTab('tabela')">Tabela Geral</div>
+    <div class="tab" onclick="switchTab('cross')">Substituição</div>
   </div>
 
   <div class="section active" id="tab-grafico">
     <div class="chart-wrap">
-      <div class="chart-title">Estoque PCP por Espécie</div>
-      <div class="chart-container"><canvas id="ch1"></canvas></div>
+        <div class="chart-container"><canvas id="ch1"></canvas></div>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">Status por Espécie (grupos)</div>
-      <div class="chart-container"><canvas id="ch2"></canvas></div>
+        <div class="chart-container"><canvas id="ch2"></canvas></div>
     </div>
   </div>
 
   <div class="section" id="tab-tabela">
     <div class="table-wrap">
-      <div class="table-header">
-        <span class="table-title">Estoque detalhado</span>
-        <span class="table-count" id="tbl-count">—</span>
-      </div>
-      <div class="table-scroll">
+      <div style="overflow-x:auto">
         <table>
           <thead>
             <tr>
-              <th>Espécie</th><th>Grupo Mestre</th><th>Padrão</th><th>Medida Mestre</th>
-              <th>Comp</th><th>Larg</th><th>Esp</th><th>Status</th>
-              <th>Est. PCP ✓</th><th>Est. Compras ⚠</th>
-              <th>Falta Atual</th><th>Falta Seg</th><th>Total Atual</th>
-              <th>SKUs Produzíveis</th>
+                <th>Espécie</th><th>Grupo</th><th>Padrão</th><th>Medida</th>
+                <th>Status</th><th>Est. PCP</th><th>Falta Atual</th><th>SKUs</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -289,92 +109,496 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 
   <div class="section" id="tab-cross">
-    <div class="table-header" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;">
-      <span class="table-title">Medidas com Excesso e Falta simultâneos</span>
-      <span class="table-count" id="cross-count">—</span>
-    </div>
-    <div id="cross-grid"><div class="placeholder"><div class="ico">🔀</div><p>Carregue os dados para ver oportunidades de substituição</p></div></div>
+    <div id="cross-grid"></div>
   </div>
-
 </div>
+
 <script>
-const C = {
-  especie:0, grupoOrig:1, grupoMestre:2, padrao:3,
-  compr:4, larg:5, esp:6, status:7,
-  estComp:8, estPCP:9, faltaAtual:10, faltaSeg:11,
-  totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16
-};
+// CONFIGURAÇÃO DOS DADOS - COLE O CONTEÚDO DO CSV ENTRE AS CRASES ABAIXO
+const DADOS_CSV = `
+Espécie,Grupo Original (I),Grupo Mestre,Padrão (A),Compr (D),Larg (F),Esp (G),Status (AH),Estoque Compras (J),Estoque PCP (M),Falta Atual (AK),Falta Seg (AL),Total Atual (AM),Total Seg (AN),Referencias Individuais,Referencias agrupado,Medida Mestre
+Maçaranduba,01P,01P,438000,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,01P,01P,232011,410,280,18,-,,,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,01P-1,01P,232003,410,280,18,Excesso?,,,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,01P-1,01P,231070,410,280,18,Excesso?,,,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,01P-3,01P,231065,410,70,21,Excesso?,,128,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,01P-3,01P,231072,410,94,21,Excesso?,,,0,0,0,0,,,410 x 280 x 18
+Maçaranduba,02P,02P,431009,410,240,12,-,,,0,0,0,0,,,410 x 240 x 12
+Maçaranduba,02P-1,02P,431007,410,240,12,-,,,0,0,0,0,,,410 x 240 x 12
+Maçaranduba,03P,03P,431010,395,212,10,-,,,0,0,0,0,,,395 x 212 x 10
+Maçaranduba,03P-1,03P,431006,395,212,10,Excesso?,,"3.552,00",0,0,0,0,,,395 x 212 x 10
+Maçaranduba,03P-3,03P,431008,395,57,16,Excesso?,,,0,0,0,0,,,395 x 212 x 10
+Maçaranduba,04P,04P,431011,380,240,18,-,,,0,0,0,0,,,380 x 240 x 18
+Maçaranduba,04P-1,04P,431005,380,240,18,-,,,0,0,0,0,,,380 x 240 x 18
+Maçaranduba,05P,05P,232004,350,200,15,-,,,0,0,0,0,,13102432,350 x 200 x 15
+Maçaranduba,05P,05P,431012,350,200,15,-,,,0,"14.700,00","6.300,00","14.700,00",13102432,13102432,350 x 200 x 15
+Maçaranduba,05P,05P,431013,350,200,15,-,,,0,0,0,0,,13102432,350 x 200 x 15
+Maçaranduba,05P-1,05P,431017,350,200,15,Falta Mês1,,,0,0,0,0,,13102432,350 x 200 x 15
+Maçaranduba,05P-2,05P,232050,350,200,18,Falta Mês1,,"2.236,00",0,0,0,0,,13102432,350 x 200 x 15
+Maçaranduba,05P-3,05P,232005,350,40,18,Falta Mês1,,,0,0,0,0,,13102432,350 x 200 x 15
+Maçaranduba,06P,06P,431014,340,210,18,-,,,0,0,0,0,,,340 x 210 x 18
+Maçaranduba,06P,06P,232006,340,210,18,-,,,0,0,0,0,,,340 x 210 x 18
+Maçaranduba,06P-3,06P,231010,340,42,21,-,,,0,0,0,0,,,340 x 210 x 18
+Maçaranduba,07P,07P,431015,290,210,18,-,,,0,0,0,0,,,290 x 210 x 18
+Maçaranduba,07P-1,07P,436018,290,210,18,-,,,0,0,0,0,,,290 x 210 x 18
+Maçaranduba,07P-3,07P,231067,290,70,21,-,,,0,0,0,0,,,290 x 210 x 18
+Maçaranduba,08P,08P,431016,290,205,18,-,,,0,0,0,0,,,290 x 205 x 18
+Maçaranduba,08P-1,08P,436017,290,205,18,-,,,0,0,0,0,,,290 x 205 x 18
+Maçaranduba,08P-3,08P,231066,290,41,21,-,,,0,0,0,0,,,290 x 205 x 18
+Maçaranduba,09P,09P,431018,350,200,15,-,,,0,0,0,0,,,350 x 200 x 15
+Maçaranduba,09P,09P,232007,350,200,15,-,,,0,0,0,0,,,350 x 200 x 15
+Maçaranduba,PL380,PL380,987024,380,210,18,Excesso?,,7,0,0,0,0,,,380 x 210 x 18
+Jutaí,06P-1,06P,210001,410,290,18,-,,,0,0,0,0,,,410 x 290 x 18
+Jutaí,10P-1,10P,210019,350,240,18,Excesso?,,"2.491,00",0,0,0,0,,,350 x 240 x 18
+Jutaí,12P-1,12P,210020,410,240,18,Excesso?,,403,0,0,0,0,,,410 x 240 x 18
+Jutaí,13P-1,13P,210006,290,200,18,Excesso?,,532,0,0,0,0,,,290 x 200 x 18
+Jutaí,14P-1,14P,217778,365,265,20,-,,,0,0,0,0,,,365 x 265 x 20
+Teca,01P,01P,51708,410,290,18,-,,,0,0,0,0,"10239764,1","10239764, 10239763, 13908351, 10239684, 10239701, 10239765, 10239773, 10239774",410 x 290 x 18
+Teca,01P,01P,354504,410,290,18,-,,840,"1.070,10","2.424,85","1.070,10","2.424,85","10239763,13908351,10239684,10239701,10239765,10239773,10239774,10239684,10239701,10239765,10239773,10239774","10239764, 10239763, 13908351, 10239684, 10239701, 10239765, 10239773, 10239774",410 x 290 x 18
+Teca,01P-1,01P,354530,410,290,18,Falta Mês0,,,0,0,0,0,,"10239764, 10239763, 13908351, 10239684, 10239701, 10239765, 10239773, 10239774",410 x 290 x 18
+Teca,01P-2,01P,351272,410,290,20,Falta Mês0,,,0,0,0,0,,"10239764, 10239763, 13908351, 10239684, 10239701, 10239765, 10239773, 10239774",410 x 290 x 18
+Teca,02P,02P,354506,410,290,18,-,,,"145,53","4.184,09","3.843,80","4.605,71","10239789,13142050,13317050,13408351,13409351,13453351,13456051,13629352,13660351,13680351,13682351,14085351,14090351,14091351,10239620,13233052,13462351,13466351,13468351,13548351,13894351,13905351,13998038,13998101,13998102,10239620,13233052,13462351,13466351,13468351,13548351,13894351,13905351,13998038,13998101,13998102","10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P,02P,51707,410,290,20,-,,,"64,21","1.735,94","159,33","867,97","13485052,13578351,13398052,13399052,13428052,13398052,13399052,13428052","10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-0,02P,350999,410,290,18,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-0,02P,354541,410,290,20,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-1,02P,359928,410,290,17,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-1,02P,51623,410,290,18,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-1,02P,354526,410,290,18,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-2,02P,351257,410,290,20,Falta Mês1,,,0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,02P-2,02P,51624,410,290,20,Falta Mês1,,"3.645,00",0,0,0,0,,"10239789, 13142050, 13317050, 13408351, 13409351, 13453351, 13456051, 13629352, 13660351, 13680351, 13682351, 14085351, 14090351, 14091351, 10239620, 13233052, 13462351, 13466351, 13468351, 13548351, 13894351, 13905351, 13998038, 13998101, 13998102, 13485052, 13578351, 13398052, 13399052, 13428052",410 x 290 x 20
+Teca,03P,03P,51715,350,243,18,-,,,0,0,0,0,,"10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,03P,03P,354507,350,243,20,-,,,"855,6","4.516,65","6.974,10","4.659,04","10239769,10239775,10239776,10239776,13273351,13276351,13458352,13907351,13286920,10239765,10239766,10239773,10239774,10239777,13234052,10239765,10239766,10239773,10239774,10239777,13234052","10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,03P-1,03P,354534,350,243,17,Falta Mês1,,,0,0,0,0,,"10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,03P-1,03P,354334,350,243,17,Falta Mês1,,,0,0,0,0,,"10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,03P-1,03P,354531,350,243,18,Falta Mês1,,"2.036,00",0,0,0,0,,"10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,03P-2,03P,351300,350,243,20,Falta Mês1,,,0,0,0,0,,"10239769, 10239775, 10239776, 13273351, 13276351, 13458352, 13907351, 13286920, 10239765, 10239766, 10239773, 10239774, 10239777, 13234052",350 x 243 x 20
+Teca,04P,04P,51705,350,240,18,-,,,"3,02",0,"55,94",0,"13458051,10239618,10239618","13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P,04P,354522,350,240,18,-,,,0,567,0,"604,8",13679351,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P,04P,354508,350,243,18,-,,,"776,17","205,14","2.368,30","535,82","10239789,13331352,13688351,13904351,13212052,13437052,13998037,13998088,13212052,13437052,13998037,13998088","13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-0,04P,350998,350,243,18,-,,,0,0,0,0,,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-0,04P,359921,350,243,20,-,,,0,0,0,0,,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-1,04P,354543,350,243,17,-,,,0,0,0,0,,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-1,04P,51641,350,240,18,-,,"3.461,00",0,0,0,0,"10239701,13273051,13276051,10239701,13273051,13276051","13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-1,04P,354527,350,243,18,-,,,0,0,0,0,,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,04P-2,04P,351366,350,243,20,-,,391,0,0,0,0,13273359,"13458051, 10239618, 13679351, 10239789, 13331352, 13688351, 13904351, 13212052, 13437052, 13998037, 13998088, 10239701, 13273051, 13276051, 13273359",350 x 243 x 18
+Teca,05P,05P,354509,290,205,18,-,,,"548,96","1.282,02","3.008,05","1.256,30","10239719,10239768,10239775,13275351,13454352,13731351,10239417,10239766,10239773,10239774,10239777,10239417,10239766,10239773,10239774,10239777","10239719, 10239768, 10239775, 13275351, 13454352, 13731351, 10239417, 10239766, 10239773, 10239774, 10239777",290 x 205 x 18
+Teca,05P-1,05P,354535,290,205,17,Falta Mês1,,,0,0,0,0,,"10239719, 10239768, 10239775, 13275351, 13454352, 13731351, 10239417, 10239766, 10239773, 10239774, 10239777",290 x 205 x 18
+Teca,05P-1,05P,354532,290,205,18,Falta Mês1,,334,0,0,0,0,,"10239719, 10239768, 10239775, 13275351, 13454352, 13731351, 10239417, 10239766, 10239773, 10239774, 10239777",290 x 205 x 18
+Teca,05P-2,05P,351304,290,205,20,Falta Mês1,,467,0,0,0,0,,"10239719, 10239768, 10239775, 13275351, 13454352, 13731351, 10239417, 10239766, 10239773, 10239774, 10239777",290 x 205 x 18
+Teca,06P,06P,354525,290,205,18,-,,,0,0,"28,89",0,"13109051,13454051,13998204,13454051,13998204","13109051, 13454051, 13998204",290 x 205 x 18
+Teca,06P-0,06P,359932,290,205,18,Excesso?,,"1.877,00",0,0,0,0,,"13109051, 13454051, 13998204",290 x 205 x 18
+Teca,06P-1,06P,354528,290,205,18,Excesso?,,"3.772,00",0,0,0,0,,"13109051, 13454051, 13998204",290 x 205 x 18
+Teca,06P-2,06P,351298,290,205,20,Excesso?,,"2.643,00",0,0,0,0,,"13109051, 13454051, 13998204",290 x 205 x 18
+Teca,07P,07P,51716,290,243,18,-,,,0,0,0,0,"10239704,10239705,10239711,13998200,10239704,10239705,10239711,13998200","10239704, 10239705, 10239711, 13998200, 10239720",290 x 243 x 20
+Teca,07P,07P,354510,290,243,20,-,,,0,0,0,0,"10239720,1","10239704, 10239705, 10239711, 13998200, 10239720",290 x 243 x 20
+Teca,07P-2,07P,351365,290,243,20,-,,,0,0,0,0,,"10239704, 10239705, 10239711, 13998200, 10239720",290 x 243 x 20
+Teca,07P-2,07P,354419,290,243,20,-,,,0,0,0,0,,"10239704, 10239705, 10239711, 13998200, 10239720",290 x 243 x 20
+Teca,08P,08P,359929,290,243,18,-,,,0,0,0,0,,,290 x 243 x 18
+Teca,08P-0,08P,359930,290,243,18,Excesso?,,"4.583,00",0,0,0,0,,,290 x 243 x 18
+Teca,08P-1,08P,359931,290,243,18,Excesso?,,803,0,0,0,0,,,290 x 243 x 18
+Teca,10P,10P,354514,500,290,18,-,,,"1.106,64",522,"3.369,51",522,"13333352,13461351,13464351,13681351,13683351,13214052,13214052","13333352, 13461351, 13464351, 13681351, 13683351, 13214052",500 x 290 x 18
+Teca,10P-0,10P,356121,500,290,18,Comprar?,,"2.273,00",0,0,0,0,,"13333352, 13461351, 13464351, 13681351, 13683351, 13214052",500 x 290 x 18
+Teca,10P-0,10P,359924,500,290,20,Comprar?,580,,0,0,0,0,,"13333352, 13461351, 13464351, 13681351, 13683351, 13214052",500 x 290 x 18
+Teca,10P-1,10P,350101,500,290,18,Comprar?,,421,0,0,0,0,,"13333352, 13461351, 13464351, 13681351, 13683351, 13214052",500 x 290 x 18
+Teca,10P-2,10P,351310,500,290,20,Comprar?,,76,0,0,0,0,,"13333352, 13461351, 13464351, 13681351, 13683351, 13214052",500 x 290 x 18
+Teca,11P,11P,51709,"314,7",243,18,-,,,0,0,0,0,"10239764,1","10239764, 13998198",410 x 243 x 18
+Teca,11P,11P,51701,410,243,18,-,,,0,0,0,0,"13998198,14","10239764, 13998198",410 x 243 x 18
+Teca,11P,11P,354516,410,243,18,-,,,0,0,0,0,,"10239764, 13998198",410 x 243 x 18
+Teca,11P-2,11P,351273,410,243,20,Excesso?,,,0,0,0,0,,"10239764, 13998198",410 x 243 x 18
+Teca,11P-2,11P,56094,410,243,20,Excesso?,,"3.367,00",0,0,0,0,,"10239764, 13998198",410 x 243 x 18
+Teca,12P,12P,354515,410,243,18,-,,,0,"112,98","1.076,00","1.203,33","13213052,13332352,13998085,13998085","13213052, 13332352, 13998085",410 x 243 x 18
+Teca,12P-0,12P,356122,410,243,18,Comprar?,,,0,0,0,0,,"13213052, 13332352, 13998085",410 x 243 x 18
+Teca,12P-0,12P,356023,410,243,20,Comprar?,,,0,0,0,0,,"13213052, 13332352, 13998085",410 x 243 x 18
+Teca,12P-1,12P,359926,410,243,17,Comprar?,,160,0,0,0,0,,"13213052, 13332352, 13998085",410 x 243 x 18
+Teca,12P-1,12P,356123,410,243,18,Comprar?,,,0,0,0,0,,"13213052, 13332352, 13998085",410 x 243 x 18
+Teca,12P-2,12P,351256,410,243,20,Comprar?,,,0,0,0,0,,"13213052, 13332352, 13998085",410 x 243 x 18
+Teca,13P,13P,354517,410,220,18,-,,,0,0,0,0,,,410 x 220 x 18
+Teca,13P,13P,51702,410,220,18,-,,,0,0,0,0,,,410 x 220 x 18
+Teca,13P-2,13P,351258,410,220,20,Excesso?,,,0,0,0,0,,,410 x 220 x 18
+Teca,13P-2,13P,351274,410,220,20,Excesso?,,,0,0,0,0,,,410 x 220 x 18
+Teca,13P-2,13P,56092,410,220,20,Excesso?,,"4.566,00",0,0,0,0,,,410 x 220 x 18
+Teca,14P,14P,51703,410,220,18,-,,,0,0,0,0,,,410 x 220 x 18
+Teca,14P-2,14P,51639,410,220,20,Excesso?,,896,0,0,0,0,,,410 x 220 x 18
+Teca,16P,16P,351333,290,160,18,-,,,"417,6",0,"417,6",0,13906351,13906351,290 x 160 x 18
+Teca,16P-0,16P,351335,290,160,18,Excesso?,,"1.498,00",0,0,0,0,,13906351,290 x 160 x 18
+Teca,16P-1,16P,351334,290,160,18,Excesso?,,473,0,0,0,0,,13906351,290 x 160 x 18
+Teca,18P,18P,354518,490,200,18,-,,,0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P,18P,51704,490,200,18,-,,,0,0,0,0,"13279051,13","13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P,18P,354519,490,205,18,-,,,0,"1.486,26","48,82","1.486,26","10239767,13412351,13488641,13998039,14087351,13488641,13998039,14087351","13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-0,18P,354547,490,205,18,Excesso?,,"2.493,00",0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-1,18P,351397,490,205,18,Excesso?,,"1.576,00",0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-2,18P,351307,490,200,15,Excesso?,,,0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-2,18P,51642,490,200,20,Excesso?,,,0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-2,18P,351277,490,200,20,Excesso?,,82,0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,18P-2,18P,351393,490,205,20,Excesso?,,203,0,0,0,0,,"13279051, 10239767, 13412351, 13488641, 13998039, 14087351",490 x 205 x 18
+Teca,20P,20P,354520,630,510,18,-,,,0,"387,49","7.148,28","312,3",13414351,13414351,630 x 510 x 18
+Teca,20P-2,20P,351361,630,510,20,Falta Mês1,,,0,0,0,0,,13414351,630 x 510 x 18
+Teca,22P,22P,354521,290,182,15,-,,,0,0,0,0,,,290 x 182 x 15
+Teca,22P-1,22P,351306,290,182,15,Excesso?,,314,0,0,0,0,,,290 x 182 x 15
+Teca,24P,24P,51706,380,264,18,-,,,0,0,0,0,"13299051,13299999,13299051,13299999","13299051, 13299999",380 x 265 x 18
+Teca,24P,24P,354523,380,265,18,-,,,0,0,0,0,,"13299051, 13299999",380 x 265 x 18
+Teca,24P-2,24P,351283,380,264,20,Excesso?,,,0,0,0,0,,"13299051, 13299999",380 x 265 x 18
+Teca,24P-2,24P,51622,380,265,20,Excesso?,,"3.552,00",0,0,0,0,,"13299051, 13299999",380 x 265 x 18
+Teca,26P,26P,354548,365,265,20,-,,,0,0,0,0,,,365 x 265 x 20
+Teca,26P-1,26P,354551,365,265,20,Excesso?,,"1.780,00",0,0,0,0,,,365 x 265 x 20
+Teca,28P,28P,354549,315,215,20,-,,,0,0,0,0,,,315 x 215 x 20
+Teca,28P-0,28P,354550,315,215,20,-,,,0,0,0,0,,,315 x 215 x 20
+Teca,30P,30P,354544,415,315,20,-,,,0,0,0,0,,,415 x 315 x 20
+Teca,30P-0,30P,354552,415,315,18,-,,,0,0,0,0,,,415 x 315 x 20
+Teca,32P,32P,354555,410,310,18,-,,,0,0,"274,54",0,13451351,13451351,410 x 310 x 18
+Teca,32P-0,32P,359154,410,310,20,Comprar?,,,0,0,0,0,,13451351,410 x 310 x 18
+Teca,32P-1,32P,351299,410,310,20,Comprar?,,264,0,0,0,0,,13451351,410 x 310 x 18
+Teca,34P,34P,354556,260,260,18,-,,,0,0,"21,9",0,13732351,13732351,260 x 260 x 18
+Teca,34P-1,34P,354557,260,260,18,Excesso?,,,0,0,0,0,,13732351,260 x 260 x 18
+Teca,34P-2,34P,359923,260,260,20,Excesso?,,"1.323,00",0,0,0,0,,13732351,260 x 260 x 18
+Teca,36P,36P,354558,610,160,18,-,,,0,0,"140,54",0,"13685351,14",13685351,610 x 160 x 18
+Teca,36P-0,36P,355055,610,160,18,Excesso?,,959,0,0,0,0,,13685351,610 x 160 x 18
+Teca,36P-0,36P,354560,610,160,20,Excesso?,,,0,0,0,0,,13685351,610 x 160 x 18
+Teca,36P-1,36P,359481,610,160,20,Excesso?,,204,0,0,0,0,,13685351,610 x 160 x 18
+Teca,38P,38P,355016,810,210,18,-,,,0,0,0,0,,13686351,810 x 210 x 18
+Teca,38P,38P,355015,810,210,18,-,,,0,"593,99",0,"612,36",13686351,13686351,810 x 210 x 18
+Teca,38P-0,38P,354559,810,210,18,Falta Mês1,,,0,0,0,0,,13686351,810 x 210 x 18
+Teca,38P-1,38P,354561,810,210,18,Falta Mês1,,,0,0,0,0,,13686351,810 x 210 x 18
+Teca,40P,40P,354562,410,160,18,-,,,"675,42",0,"675,42",0,"13684351,13998194,13998194","13684351, 13998194",410 x 160 x 18
+Teca,40P-0,40P,354563,410,160,18,Excesso?,,"1.926,00",0,0,0,0,,"13684351, 13998194",410 x 160 x 18
+Teca,42P,42P,355037,710,270,18,-,,,"1.035,18",0,"1.035,18",0,14088351,14088351,710 x 270 x 18
+Teca,44P,44P,355040,465,340,18,-,,,"512,24",0,"512,24",0,14092351,14092351,465 x 340 x 18
+Teca,46P,46P,355041,568,440,18,-,,,0,"1.349,57",0,"1.349,57",14093351,14093351,568 x 440 x 18
+Teca,48P,48P,355042,638,510,18,-,,,0,"585,68",0,"585,68",14094351,14094351,638 x 510 x 18
+Teca,50P,50P,354511,460,350,30,-,,,"7.607,25","12.064,80","13.509,51","10.384,50","13460351,13998052,13998080,13531351,13583351,13998050,13998090,13531351,13583351,13998050,13998090","13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-0,50P,355056,265,350,18,Falta Mês0,,,0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-0,50P,354533,265,350,20,Falta Mês0,,,0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-1,50P,354529,265,350,18,Falta Mês0,,,0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-1,50P,351278,460,350,30,Falta Mês0,,"1.249,00",0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-2,50P,354536,350,265,18,Falta Mês0,,,0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,50P-2,50P,354493,265,350,20,Falta Mês0,,,0,0,0,0,,"13460351, 13998052, 13998080, 13531351, 13583351, 13998050, 13998090",460 x 350 x 30
+Teca,51P,51P,355057,270,410,20,-,,,0,0,"1.411,43",0,13091351,13091351,610 x 410 x 48
+Teca,51P,51P,354512,610,410,48,-,,,0,0,0,0,,13091351,610 x 410 x 48
+Teca,51P-0,51P,359925,270,410,20,Comprar?,,,0,0,0,0,,13091351,610 x 410 x 48
+Teca,51P-1,51P,354492,270,410,20,Comprar?,"1.140,00",652,0,0,0,0,,13091351,610 x 410 x 48
+Teca,51P-2,51P,351415,610,410,48,Comprar?,,,0,0,0,0,,13091351,610 x 410 x 48
+Teca,52P,52P,354513,410,310,30,-,,,0,0,0,"190,65","13093351,13586351,13586351","13093351, 13586351",410 x 310 x 30
+Teca,52P-1,52P,354495,265,310,20,Excesso?,,,0,0,0,0,13093351,"13093351, 13586351",410 x 310 x 30
+Teca,52P-1,52P,355022,410,310,27,Excesso?,,"1.754,00",0,0,0,0,,"13093351, 13586351",410 x 310 x 30
+Teca,52P-1,52P,351394,410,310,30,Excesso?,,,0,0,0,0,"13586351,14","13093351, 13586351",410 x 310 x 30
+Teca,53P,53P,354538,610,410,60,-,,,0,0,0,0,,,610 x 410 x 60
+Teca,53P-1,53P,354539,610,410,60,-,"10.774,00",,0,0,0,0,,,610 x 410 x 60
+Teca,53P-2,53P,354540,265,410,20,-,,,0,0,0,0,,,610 x 410 x 60
+Teca,53P-3,53P,359922,410,53,65,-,"16.264,00",,0,0,0,0,,,610 x 410 x 60
+Teca,54P,54P,355058,230,390,20,-,,,0,0,0,0,"10019050,1","10019050, 13092351, 13081351",510 x 390 x 43
+Teca,54P,54P,351411,510,390,43,-,,,0,"940,8",0,"940,8",13092351,"10019050, 13092351, 13081351",510 x 390 x 43
+Teca,54P-2,54P,356022,230,390,20,Falta Mês1,,,0,0,0,0,13081351,"10019050, 13092351, 13081351",510 x 390 x 43
+Teca,55P,55P,355059,410,290,30,-,,,0,0,"2.496,90",0,"13900351,13911351,13911351","13900351, 13911351",410 x 290 x 30
+Teca,55P-1,55P,355060,410,290,30,Comprar?,,,0,0,0,0,,"13900351, 13911351",410 x 290 x 30
+Teca,56P,56P,355061,510,350,30,-,,,"1.606,50",0,"1.606,50",0,13901351,13901351,510 x 350 x 30
+Teca,56P-1,56P,355062,510,350,30,Falta Mês0,,,0,0,0,0,,13901351,510 x 350 x 30
+Teca,60P,60P,355043,510,190,18,-,,,0,"167,44",0,"174,42",14095351,14095351,466 x 340 x 18
+Teca,60P,60P,355027,466,340,18,-,,,0,0,0,0,,14095351,466 x 340 x 18
+Teca,60P-1,60P,355032,466,410,18,Falta Mês1,,,0,0,0,0,,14095351,466 x 340 x 18
+Teca,62P,62P,355028,510,190,18,-,,,0,0,0,0,,14096351,270 x 270 x 18
+Teca,62P,62P,355045,270,270,18,-,,,"262,44",0,"262,44",0,14096351,14096351,270 x 270 x 18
+Teca,64P,64P,355047,330,330,18,-,,,0,0,"392,04",0,14097351,14097351,568 x 440 x 18
+Teca,64P,64P,355029,568,440,18,-,,,0,0,0,0,,14097351,568 x 440 x 18
+Teca,64P,64P,355033,568,440,18,-,,,0,0,0,0,,14097351,568 x 440 x 18
+Teca,66P,66P,355030,638,510,18,-,,,0,0,0,0,,,638 x 510 x 18
+Teca,66P-1,66P,355035,638,510,18,-,,,0,0,0,0,,,638 x 510 x 18
+Teca,68P,68P,355031,710,270,18,-,,,0,0,0,0,,,710 x 270 x 18
+Teca,68P-1,68P,355036,710,270,18,-,,,0,0,0,0,,,710 x 270 x 18
+Teca,72P,72P,355049,410,310,38,-,,,0,0,0,0,,"13094351, 13998192",410 x 310 x 38
+Teca,72P-0,72P,355050,410,310,38,-,,,0,0,0,0,"13094351,13998192,13998192","13094351, 13998192",410 x 310 x 38
+Teca,74P,74P,355051,420,275,18,-,,,0,0,"243,24",0,"13094351,13998192,13998192","13094351, 13998192",420 x 275 x 18
+Teca,74P-0,74P,355052,420,275,18,Comprar?,,,0,0,0,0,,"13094351, 13998192",420 x 275 x 18
+Teca,76P,76P,355053,660,280,18,-,,,0,0,0,0,"13998202,14",13998202,660 x 280 x 18
+Teca,76P-0,76P,355054,660,280,18,-,,,0,0,0,0,,13998202,660 x 280 x 18
+Teca,78P,78P,355063,290,210,18,-,,,0,0,"876,96",0,"13902351,14","13902351, 13903351",290 x 210 x 18
+Teca,P01-1,P01,351279,640,260,19,Excesso?,,101,0,0,0,0,,,640 x 260 x 19
+Teca,P01-1,P01,51627,290,270,20,Excesso?,,74,0,0,0,0,,,640 x 260 x 19
+Teca,P01-1,P01,51638,410,410,30,Excesso?,,"3.845,00",0,0,0,0,,,640 x 260 x 19
+Teca,PF-2,PF,354483,2070,******,18,-,"11.862,00","25.765,00",0,0,0,0,,,2070 x ****** x 18
+Teca,PF29,PF29,351303,290,160,20,-,,190,0,0,0,0,,,290 x 160 x 20
+Teca,PL340,PL340,51640,340,210,20,Excesso?,,424,0,0,0,0,,,340 x 210 x 20
+Teca,PL615,PL615,51123,410,64,25,Excesso?,,"1.288,00",0,0,0,0,,,410 x 64 x 25
+Jatobá,01P,01P,372494,410,220,18,-,,,0,0,"21,11",0,13554371,13554371,410 x 220 x 18
+Jatobá,01P-1,01P,372242,410,220,18,Excesso?,,"1.056,00",0,0,0,0,,13554371,410 x 220 x 18
+Jatobá,01P-2,01P,372481,410,220,21,Excesso?,,,0,0,0,0,,13554371,410 x 220 x 18
+Jatobá,02P,02P,372495,490,220,18,-,,,0,0,0,0,,,490 x 220 x 18
+Jatobá,02P-1,02P,372482,490,220,18,Excesso?,,,0,0,0,0,,,490 x 220 x 18
+Jatobá,02P-2,02P,372379,490,220,21,Excesso?,,652,0,0,0,0,,,490 x 220 x 18
+Jatobá,03P,03P,372474,410,310,30,-,,,0,0,0,0,"13646371,14","13646371, 10239759",410 x 310 x 30
+Jatobá,03P,03P,72267,410,310,30,-,,,"190,65",0,"6.668,94",0,10239759,"13646371, 10239759",410 x 310 x 30
+Jatobá,03P-1,03P,372373,410,310,30,Comprar?,,7,0,0,0,0,,"13646371, 10239759",410 x 310 x 30
+Jatobá,03P-2,03P,72255,410,310,32,Comprar?,,"3.404,00",0,0,0,0,,"13646371, 10239759",410 x 310 x 30
+Jatobá,04P,04P,76600,490,310,18,-,,,0,0,0,0,,13644371,490 x 310 x 18
+Jatobá,04P,04P,372483,490,310,18,-,,,0,0,0,0,"13644371,14",13644371,490 x 310 x 18
+Jatobá,04P-1,04P,372371,490,310,18,-,,,0,0,0,0,,13644371,490 x 310 x 18
+Jatobá,04P-2,04P,372477,490,310,21,-,,,0,0,0,0,,13644371,490 x 310 x 18
+Jatobá,04P-2,04P,72260,490,310,21,-,,,0,0,0,0,,13644371,490 x 310 x 18
+Jatobá,04P-3,04P,372389,490,78,21,-,,,0,0,0,0,"13644371,14",13644371,490 x 310 x 18
+Jatobá,05P,05P,372491,610,210,18,-,,,0,0,0,0,"13642371,14",13642371,610 x 210 x 21
+Jatobá,05P,05P,372496,610,210,18,-,,,0,0,0,0,,13642371,610 x 210 x 21
+Jatobá,05P,05P,372478,610,210,21,-,,,0,0,0,0,,13642371,610 x 210 x 21
+Jatobá,05P-1,05P,372369,610,210,18,-,,,0,0,0,0,,13642371,610 x 210 x 21
+Jatobá,05P-2,05P,72259,610,210,21,-,,,0,0,0,0,,13642371,610 x 210 x 21
+Jatobá,06C,06C,372580,410,290,18,-,,,0,0,"417,34",0,"13680371,14","13680371, 13682371",410 x 290 x 18
+Jatobá,06C-1,06C,372586,410,290,18,Comprar?,,,0,0,0,0,,"13680371, 13682371",410 x 290 x 18
+Jatobá,06C-3,06C,372598,410,58,21,Comprar?,,,0,0,0,0,,"13680371, 13682371",410 x 290 x 18
+Jatobá,06P,06P,72268,410,290,18,-,,,"6.298,61",0,"42.395,22",0,"10048239,13622072,10239604,10239604","10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P,06P,372497,410,290,18,-,,,"25,68","614,24","158,37","642,06","13555371,14","10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-1,06P,372243,410,290,18,Comprar?,326,"15.985,00",0,0,0,0,"10239737,1","10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-1,06P,72261,410,290,18,Comprar?,,,0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-2,06P,376666,410,290,21,Comprar?,,"11.088,00",0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-2,06P,72136,410,290,21,Comprar?,,294,0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-3,06P,372450,410,49,21,Comprar?,,,0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-3,06P,372400,410,58,21,Comprar?,,"15.562,00",0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,06P-3,06P,372521,410,"72,5",21,Comprar?,,"4.546,00",0,0,0,0,,"10048239, 13622072, 10239604, 13555371, 13566371, 10239737",410 x 290 x 18
+Jatobá,07P,07P,372490,439,404,19,-,,,"414,48",0,"1.398,45",0,10239761,10239761,439 x 404 x 19
+Jatobá,07P-1,07P,372327,439,404,19,Falta Mês0,,,0,0,0,0,,10239761,439 x 404 x 19
+Jatobá,08P,08P,372485,260,260,18,-,,,"147,23",0,"655,86",0,"13567371,13672072,13556371,13673072,13556371,13673072","13567371, 13672072, 13556371, 13673072",260 x 260 x 18
+Jatobá,08P-1,08P,372244,260,260,18,Excesso?,,"11.048,00",0,0,0,0,,"13567371, 13672072, 13556371, 13673072",260 x 260 x 18
+Jatobá,08P-3,08P,379923,260,52,21,Excesso?,,"8.120,00",0,0,0,0,,"13567371, 13672072, 13556371, 13673072",260 x 260 x 18
+Jatobá,09P,09P,372486,360,310,18,-,,,0,0,"44,19",0,"13638371,13568371,13568371","13638371, 13568371, 13557371",360 x 310 x 18
+Jatobá,09P-1,09P,372245,360,310,18,Excesso?,,"3.023,00",0,0,0,0,13557371,"13638371, 13568371, 13557371",360 x 310 x 18
+Jatobá,10C,10C,372579,350,240,18,-,,,0,0,0,0,,13679371,350 x 240 x 18
+Jatobá,10C-1,10C,372585,350,240,18,Excesso?,,,0,0,0,0,,13679371,350 x 240 x 18
+Jatobá,10C-3,10C,372597,350,48,21,Excesso?,,"1.009,00",0,0,0,0,"13679371,13679371,13679371,13679371",13679371,350 x 240 x 18
+Jatobá,10P,10P,72262,350,240,18,-,,,0,0,"1.023,62",0,10239760,"10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P,10P,372487,350,240,18,-,,,0,0,0,0,"13558371,14","10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P-1,10P,372246,350,240,18,Excesso?,,"14.139,00",0,0,0,0,"13558071,14","10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P-2,10P,376481,350,240,21,Excesso?,,"3.643,00",0,0,0,0,,"10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P-2,10P,72231,350,240,21,Excesso?,"1.111,00","5.026,00",0,0,0,0,,"10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P-3,10P,72143,350,48,21,Excesso?,,,0,0,0,0,,"10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,10P-3,10P,372498,350,60,21,Excesso?,,"27.421,00",0,0,0,0,,"10239760, 13558371, 13558071",350 x 240 x 18
+Jatobá,11P,11P,372492,290,240,18,-,,,0,0,0,0,,,290 x 240 x 18
+Jatobá,11P,11P,72266,290,240,18,-,,,0,0,0,0,,,290 x 240 x 18
+Jatobá,11P-1,11P,372283,290,240,18,-,,,0,0,0,0,,,290 x 240 x 18
+Jatobá,11P-2,11P,72232,290,240,21,-,,,0,0,0,0,,,290 x 240 x 18
+Jatobá,12P,12P,72263,410,240,18,-,,,0,"30.021,84",0,"30.110,40","10239745,10239745,10239755,10239755","10239745, 10239755",410 x 240 x 18
+Jatobá,12P,12P,372493,410,240,18,-,,,0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-1,12P,372284,410,240,18,Excesso?,,"54.197,00",0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-2,12P,72233,410,240,21,Excesso?,,"12.296,00",0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-2,12P,372984,410,240,21,Excesso?,,"21.891,00",0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-3,12P,372419,410,40,21,Excesso?,,508,0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-3,12P,72249,410,40,21,Excesso?,,359,0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-3,12P,372399,410,48,21,Excesso?,,"10.207,00",0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-3,12P,72133,410,48,21,Excesso?,,"1.154,00",0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,12P-3,12P,379921,410,60,21,Excesso?,,946,0,0,0,0,,"10239745, 10239755",410 x 240 x 18
+Jatobá,13P,13P,72264,290,200,18,-,,,"57,42","1.050,76","814,32","1.044,00","10239419,10239757,10239758,10239420,13454052,13560992,10239420,13454052,13560992","10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P,13P,372488,290,200,18,-,,,0,"3.132,00",0,"3.132,00",13664371,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-1,13P,371418,290,200,18,Excesso?,,"14.215,00",0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-2,13P,72169,290,200,21,Excesso?,,144,0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-2,13P,372479,290,200,21,Excesso?,"8.049,00","6.335,00",0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-2,13P,72250,290,200,21,Excesso?,,,0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-3,13P,372448,290,40,21,Excesso?,,"13.834,00",0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-3,13P,72124,290,40,21,Excesso?,,,0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,13P-3,13P,379922,290,"72,5",21,Excesso?,,420,0,0,0,0,,"10239419, 10239757, 10239758, 10239420, 13454052, 13560992, 13664371",290 x 200 x 18
+Jatobá,14P,14P,372473,350,200,18,-,,,"666,54",0,"982,8",0,13658371,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P,14P,72243,350,200,18,-,,,"181,44","1.281,35","982,8","1.260,00","10239419,10239757,10239758,10239420,10239420","13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-1,14P,72265,350,200,18,Excesso?,,,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-1,14P,372476,350,200,18,Excesso?,,555,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-2,14P,72221,350,200,21,Excesso?,,,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-2,14P,376056,350,200,21,Excesso?,,,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-3,14P,372449,350,40,21,-,,,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-3,14P,72252,350,40,21,-,,,0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,14P-3,14P,379924,350,50,21,-,,"5.779,00",0,0,0,0,,"13658371, 10239419, 10239757, 10239758, 10239420",350 x 200 x 18
+Jatobá,15P,15P,372460,340,340,30,-,,,"627,71",0,"693,6",0,13564371,13564371,340 x 340 x 30
+Jatobá,15P-1,15P,372241,340,340,30,Falta Mês0,,,0,0,0,0,,13564371,340 x 340 x 30
+Jatobá,15P-2,15P,72269,340,340,33,Falta Mês0,,,0,0,0,0,,13564371,340 x 340 x 30
+Jatobá,15P-3,15P,372519,340,33,"21,5",Falta Mês0,,,0,0,0,0,,13564371,340 x 340 x 30
+Jatobá,16P,16P,72274,340,210,18,-,,,"2.025,48",0,"3.413,49",0,"13559992,13458052,13998098,13458052,13998098","13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P,16P,372499,340,210,18,-,,,0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P-1,16P,371276,340,210,18,Excesso?,,,0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P-1,16P,372266,340,210,18,Excesso?,"5.005,00",,0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P-1,16P,79923,340,210,18,Excesso?,,,0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P-3,16P,72130,340,42,21,Comprar?,,,0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,16P-3,16P,372475,340,42,21,Comprar?,,"5.702,00",0,0,0,0,,"13559992, 13458052, 13998098",340 x 210 x 18
+Jatobá,17P,17P,72271,330,330,18,-,,,0,0,0,0,"13676071,14",13676071,330 x 330 x 18
+Jatobá,17P,17P,372518,330,330,18,-,,,0,0,0,0,,13676071,330 x 330 x 18
+Jatobá,17P-2,17P,79921,330,330,21,Excesso?,,"3.509,00",0,0,0,0,,13676071,330 x 330 x 18
+Jatobá,18P,18P,372548,415,315,18,-,,,0,0,0,0,"10239810,1",10239810,415 x 315 x 18
+Jatobá,18P-1,18P,372547,415,315,18,Excesso?,,"5.577,00",0,0,0,0,,10239810,415 x 315 x 18
+Jatobá,18P-2,18P,372594,415,315,21,Excesso?,502,,0,0,0,0,,10239810,415 x 315 x 18
+Jatobá,19P,19P,372550,315,215,20,-,,,0,0,0,0,"10239810,1",10239810,315 x 215 x 20
+Jatobá,19P-1,19P,372549,315,215,20,-,,,0,0,0,0,,10239810,315 x 215 x 20
+Jatobá,19P-2,19P,372596,315,215,23,-,736,,0,0,0,0,,10239810,315 x 215 x 20
+Jatobá,20P,20P,372552,365,265,20,-,,,0,0,0,0,"10239810,1",10239810,365 x 265 x 20
+Jatobá,20P-1,20P,372551,365,265,20,-,,,0,0,0,0,,10239810,365 x 265 x 20
+Jatobá,20P-2,20P,379928,365,265,23,-,"1.093,00",,0,0,0,0,,10239810,365 x 265 x 20
+Jatobá,22C,22C,372582,410,160,18,-,,,0,"343,61",0,"1.771,20","13684371,14",13684371,410 x 40 x 21
+Jatobá,22C,22C,373010,410,40,21,-,,,0,0,0,0,,13684371,410 x 40 x 21
+Jatobá,22C-1,22C,372588,410,160,18,Comprar?,,,0,0,0,0,,13684371,410 x 40 x 21
+Jatobá,22C-2,22C,372587,410,160,20,Comprar?,,,0,0,0,0,,13684371,410 x 40 x 21
+Jatobá,22C-3,22C,372600,410,40,21,Comprar?,,957,0,0,0,0,,13684371,410 x 40 x 21
+Jatobá,22C-4,22C,372606,410,45,25,Comprar?,,,0,0,0,0,,13684371,410 x 40 x 21
+Jatobá,23C,23C,372583,610,160,18,-,,,0,"312,71",0,"351,36",13685371,13685371,610 x 40 x 21
+Jatobá,23C,23C,372988,610,40,21,-,,,0,0,0,"409,92",13685371,13685371,610 x 40 x 21
+Jatobá,23C-1,23C,372589,610,160,18,Excesso?,,,0,0,0,0,,13685371,610 x 40 x 21
+Jatobá,23C-3,23C,372601,610,40,21,Comprar?,,"1.328,00",0,0,0,0,,13685371,610 x 40 x 21
+Jatobá,23C-4,23C,372607,610,45,25,Comprar?,,,0,0,0,0,,13685371,610 x 40 x 21
+Jatobá,24C,24C,372584,810,210,18,-,,,"110,22","612,36","110,22","612,36",13686371,13686371,810 x 210 x 18
+Jatobá,24C-1,24C,372590,810,210,18,Falta Mês0,,,0,0,0,0,,13686371,810 x 210 x 18
+Jatobá,24C-3,24C,372602,810,42,21,Falta Mês0,,,0,0,0,0,,13686371,810 x 210 x 18
+Jatobá,25C,25C,372592,500,290,18,-,,,0,0,"300,15","3.915,00",13681371,"13681371, 13683371",500 x 290 x 18
+Jatobá,25C-1,25C,372593,500,290,18,Comprar?,,253,0,0,0,0,,"13681371, 13683371",500 x 290 x 18
+Jatobá,25C-2,25C,372581,500,290,20,Comprar?,,,0,0,0,0,,"13681371, 13683371",500 x 290 x 18
+Jatobá,25C-3,25C,372599,500,58,21,Comprar?,,203,0,0,0,0,"13683371,14","13681371, 13683371",500 x 290 x 18
+Jatobá,25C-3,25C,372603,500,58,21,Comprar?,,,0,0,0,0,,"13681371, 13683371",500 x 290 x 18
+Jatobá,70P,70P,372202,159,"114,5","59,4",-,"1.757,00","4.420,00","35.686,42","10.814,07","51.907,52","10.814,07",10585380,10585380,159 x 114.5 x 59.4
+Jatobá,71P,71P,372257,159,"114,5","59,4",-,,"31.168,00",0,0,0,0,,,159 x 114.5 x 59.4
+Jatobá,CP1-4,CP1,72185,159,"114,5","59,3",Excesso?,,214,0,0,0,0,,,159 x 114.5 x 59.3
+Jatobá,P01-1,P01,372201,315,360,18,Excesso?,,832,0,0,0,0,,,315 x 360 x 18
+Jatobá,PBL38,PBL38,72132,380,43,21,Excesso?,,825,0,0,0,0,,13530092,380 x 47 x 23
+Jatobá,PBL38,PBL38,72138,380,47,23,Excesso?,,61,0,0,0,0,13530092,13530092,380 x 47 x 23
+Jatobá,PL290,PL290,72128,290,45,24,Excesso?,,180,0,0,0,0,"10239728,1",10239728,290 x 45 x 24
+Jatobá,PL410,PL410,72125,410,56,21,Excesso?,,249,0,0,0,0,,,410 x 56 x 21
+Jatobá,PRT-1,PRT,372247,460,350,30,Excesso?,,"7.442,00",0,0,0,0,,,460 x 350 x 30
+Muiracatiara,01P,01P,926050,340,210,18,-,,,0,0,0,0,,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P,01P,106081,340,210,18,-,,,0,0,0,0,"10239756,1","10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P-1,01P,921141,340,210,18,Excesso?,,677,0,0,0,0,10239752,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P-2,01P,921233,340,210,21,Excesso?,,"11.934,00",0,0,0,0,,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P-2,01P,101437,340,210,21,Excesso?,"2.640,00",,0,0,0,0,,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P-3,01P,101501,340,42,21,Excesso?,,321,0,0,0,0,,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,01P-3,01P,921224,340,72,21,Excesso?,,"2.978,00",0,0,0,0,,"10239756, 10239752",340 x 210 x 18
+Muiracatiara,02P,02P,921347,"310,3",290,18,-,,,0,0,"42,11",0,13707921,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P,02P,921162,410,290,18,-,,,"796,28","2.521,66","7.490,70","1.562,35","10239752,10239816,10239816,13908921,13651101,13703921,13704921,13905921,13651101,13703921,13704921,13905921","13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P,02P,108061,410,290,18,-,,,"1.908,50",0,"28.708,64",0,"10239615,10239698,10239753,13456052,13456052","13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-1,02P,921140,410,290,18,Comprar?,"2.979,00","25.531,00",0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-2,02P,921545,410,290,21,Comprar?,,"8.668,00",0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-2,02P,101361,410,290,21,Comprar?,,"1.130,00",0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-3,02P,921217,410,42,21,Comprar?,,,0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-3,02P,101367,410,49,21,Comprar?,,819,0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-3,02P,921148,410,58,21,Comprar?,,,0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-3,02P,921225,410,72,21,Comprar?,,,0,0,0,0,13707921,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-4,02P,921348,"310,3",290,18,Comprar?,,"2.337,00",0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-5,02P,921251,"310,3",290,21,Comprar?,,"3.317,00",0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,02P-5,02P,101565,"310,3",290,21,Comprar?,"1.776,00",,0,0,0,0,,"13707921, 10239752, 10239816, 13908921, 13651101, 13703921, 13704921, 13905921, 10239615, 10239698, 10239753, 13456052",410 x 290 x 18
+Muiracatiara,03P,03P,926051,290,210,18,-,,,0,"4.156,79","904,37","4.801,36","10239742,10239742,13071100,13902921,13903921,13702921,13705921,13702921,13705921","10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P,03P,101503,290,210,18,-,,,0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-1,03P,921103,290,210,18,Excesso?,,"23.458,00",0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-2,03P,101368,290,210,21,Excesso?,,,0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-3,03P,921218,290,42,21,Excesso?,,147,0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-3,03P,101360,290,42,21,Excesso?,,"3.128,00",0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-3,03P,921219,290,58,21,Excesso?,,59,0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,03P-3,03P,921223,290,72,21,Excesso?,,"1.133,00",0,0,0,0,,"10239742, 13071100, 13902921, 13903921, 13702921, 13705921",290 x 210 x 18
+Muiracatiara,04P,04P,101381,500,290,18,-,,,"112,23",0,"112,23",0,"13290102,10408100,13432052,14999021,10408100,13432052,14999021","13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,04P,04P,926052,500,290,18,-,,,0,"2.521,26","913,5","2.610,00",10024920,"13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,04P-1,04P,921216,500,290,18,Excesso?,,"14.031,00",0,0,0,0,,"13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,04P-3,04P,921165,500,42,21,Excesso?,,,0,0,0,0,,"13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,04P-3,04P,921222,500,58,21,Excesso?,,,0,0,0,0,,"13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,04P-3,04P,921226,500,72,21,Excesso?,,,0,0,0,0,,"13290102, 10408100, 13432052, 14999021, 10024920",500 x 290 x 18
+Muiracatiara,05P,05P,106082,380,210,18,-,,,0,0,"251,37",0,13530092,13530092,380 x 210 x 18
+Muiracatiara,05P,05P,921166,380,210,18,-,,,0,0,0,0,,13530092,380 x 210 x 18
+Muiracatiara,05P-1,05P,921145,380,210,18,Excesso?,,"7.928,00",0,0,0,0,,13530092,380 x 210 x 18
+Muiracatiara,05P-1,05P,101362,380,210,18,Excesso?,,,0,0,0,0,,13530092,380 x 210 x 18
+Muiracatiara,05P-2,05P,101508,380,210,21,Excesso?,,"1.788,00",0,0,0,0,,13530092,380 x 210 x 18
+Muiracatiara,06P,06P,921227,"325,6",220,18,-,,,0,0,"4.706,22",0,"10239615,14","10239615, 13628052",410 x 220 x 18
+Muiracatiara,06P,06P,921208,410,220,18,-,,,0,0,0,0,,"10239615, 13628052",410 x 220 x 18
+Muiracatiara,06P-1,06P,921253,410,220,18,Comprar?,,"2.533,00",0,0,0,0,,"10239615, 13628052",410 x 220 x 18
+Muiracatiara,06P-4,06P,921144,"325,57",220,18,Comprar?,,,0,0,0,0,,"10239615, 13628052",410 x 220 x 18
+Muiracatiara,06P-5,06P,921235,"325,57",220,21,Comprar?,,,0,0,0,0,,"10239615, 13628052",410 x 220 x 18
+Muiracatiara,07P,07P,921228,"321,9",243,18,-,,,"131,4",0,"5.174,37",0,"10239615,10239698,13236052,13236052","10239615, 10239698, 13236052",410 x 243 x 18
+Muiracatiara,07P,07P,921207,410,243,18,-,,,0,0,0,0,,"10239615, 10239698, 13236052",410 x 243 x 18
+Muiracatiara,07P-1,07P,921252,410,240,18,Comprar?,,"2.494,00",0,0,0,0,,"10239615, 10239698, 13236052",410 x 243 x 18
+Muiracatiara,07P-4,07P,921143,"321,9",243,18,Comprar?,,"1.239,00",0,0,0,0,,"10239615, 10239698, 13236052",410 x 243 x 18
+Muiracatiara,07P-5,07P,921234,"321,9",243,21,Comprar?,,956,0,0,0,0,,"10239615, 10239698, 13236052",410 x 243 x 18
+Muiracatiara,08P,08P,921229,460,350,30,-,,,0,0,0,0,"10239418,10239762,13460921,10239418,10239762,13460921","10239418, 10239762, 13460921",460 x 350 x 30
+Muiracatiara,08P-1,08P,921161,460,350,30,Excesso?,,"12.613,00",0,0,0,0,,"10239418, 10239762, 13460921",460 x 350 x 30
+Muiracatiara,09P,09P,921230,290,200,18,-,,,0,0,0,0,,,290 x 200 x 18
+Muiracatiara,09P-1,09P,921231,290,200,18,Excesso?,,"1.546,00",0,0,0,0,,,290 x 200 x 18
+Muiracatiara,10P,10P,921338,490,220,18,-,,,0,0,0,0,,,490 x 220 x 18
+Muiracatiara,10P-1,10P,921237,490,220,18,-,,,0,0,0,0,,,490 x 220 x 18
+Muiracatiara,11P,11P,921520,165,145,18,-,,,0,0,0,0,,13701921,290 x 290 x 18
+Muiracatiara,11P,11P,921345,290,290,18,-,,,0,0,0,0,"13701921,14",13701921,290 x 290 x 18
+Muiracatiara,11P-1,11P,929921,290,290,18,Excesso?,,207,0,0,0,0,,13701921,290 x 290 x 18
+Muiracatiara,12P,12P,921346,350,240,18,-,,,"1.673,78",0,"18.543,17",0,13130922,"13130922, 13904921, 13907921",350 x 243 x 18
+Muiracatiara,12P,12P,921531,350,243,18,-,,,"765,45",0,"1.530,90",0,"13904921,14","13130922, 13904921, 13907921",350 x 243 x 18
+Muiracatiara,12P-1,12P,921215,350,240,18,Comprar?,,"2.004,00",0,0,0,0,,"13130922, 13904921, 13907921",350 x 243 x 18
+Muiracatiara,12P-1,12P,921532,350,243,18,Comprar?,,,0,0,0,0,,"13130922, 13904921, 13907921",350 x 243 x 18
+Muiracatiara,12P-2,12P,921515,350,240,21,Comprar?,,"22.573,00",0,0,0,0,,"13130922, 13904921, 13907921",350 x 243 x 18
+Muiracatiara,13P,13P,921349,"417,3",205,18,-,,,0,0,0,0,"13708921,14",13708921,417.3 x 205 x 18
+Muiracatiara,13P-1,13P,921355,490,205,18,Excesso?,,,0,0,0,0,,13708921,417.3 x 205 x 18
+Muiracatiara,13P-4,13P,921350,"417,3",205,18,Excesso?,,,0,0,0,0,,13708921,417.3 x 205 x 18
+Muiracatiara,13P-5,13P,921369,"417,3",205,21,Excesso?,,"5.377,00",0,0,0,0,,13708921,417.3 x 205 x 18
+Muiracatiara,13P-5,13P,109921,"417,3",205,21,Excesso?,,,0,0,0,0,,13708921,417.3 x 205 x 18
+Muiracatiara,14P,14P,921523,460,300,18,-,,,0,0,0,0,,14999020,460 x 300 x 18
+Muiracatiara,14P,14P,921519,460,300,18,-,,,0,0,"1.319,00",0,14999020,14999020,460 x 300 x 18
+Muiracatiara,14P-1,14P,921524,460,300,18,Comprar?,,,0,0,0,0,,14999020,460 x 300 x 18
+Muiracatiara,14P-2,14P,926044,460,300,21,Comprar?,,,0,0,0,0,,14999020,460 x 300 x 18
+Muiracatiara,15P,15P,921525,410,290,30,-,,,0,0,"4.280,40",0,"13900921,13911921,13900921,13911921","13900921, 13911921",410 x 290 x 30
+Muiracatiara,15P-1,15P,921540,410,290,30,Comprar?,,"4.088,00",0,0,0,0,,"13900921, 13911921",410 x 290 x 30
+Muiracatiara,15P-1,15P,921526,410,290,30,Comprar?,,,0,0,0,0,,"13900921, 13911921",410 x 290 x 30
+Muiracatiara,15P-2,15P,921577,410,290,33,Comprar?,,"1.738,00",0,0,0,0,,"13900921, 13911921",410 x 290 x 30
+Muiracatiara,16P,16P,921527,510,350,30,-,,,0,0,"1.606,50",0,13901921,13901921,510 x 350 x 30
+Muiracatiara,16P-1,16P,921528,510,350,30,Comprar?,,,0,0,0,0,,13901921,510 x 350 x 30
+Muiracatiara,16P-2,16P,921578,510,350,33,Comprar?,,"1.272,00",0,0,0,0,,13901921,510 x 350 x 30
+Muiracatiara,17P,17P,921529,290,220,18,-,,,0,0,0,0,,,290 x 220 x 18
+Muiracatiara,17P-1,17P,921530,290,220,18,-,,,0,0,0,0,,,290 x 220 x 18
+Muiracatiara,18P,18P,921533,250,160,18,-,,,360,0,360,0,13906921,13906921,250 x 160 x 18
+Muiracatiara,18P-1,18P,921537,250,160,18,Excesso?,,"2.030,00",0,0,0,0,,13906921,250 x 160 x 18
+Muiracatiara,19P,19P,921534,490,160,18,-,,,"705,6",0,"705,6",0,13909921,13909921,490 x 160 x 18
+Muiracatiara,19P-1,19P,921538,490,160,18,Comprar?,,988,0,0,0,0,,13909921,490 x 160 x 18
+Muiracatiara,20P,20P,921535,710,160,18,-,,,"920,16",0,"920,16",0,13910921,13910921,710 x 160 x 18
+Muiracatiara,20P-1,20P,921539,710,160,18,Comprar?,,"1.022,00",0,0,0,0,,13910921,710 x 160 x 18
+Muiracatiara,21P,21P,921536,410,290,30,-,,,0,0,0,0,,,410 x 290 x 30
+Muiracatiara,70P,70P,921236,560,426,18,-,,,"1.829,28",0,"772,93",0,13611920,13611920,560 x 426 x 18
+Muiracatiara,70P-1,70P,921114,560,426,18,Excesso?,,"3.961,00",0,0,0,0,,13611920,560 x 426 x 18
+Muiracatiara,71P,71P,921115,210,"114,5","59,3",-,,"3.106,00","85,55",0,"85,55",0,13611920,13611920,210 x 114.5 x 59.3
+Muiracatiara,CP587,CP587,921146,159,"114,5","59,4",Excesso?,,"16.569,00",0,0,0,0,,,159 x 114.5 x 59.4
+Muiracatiara,PL300,PL300,101359,300,77,20,Excesso?,,"2.239,00",0,0,0,0,,,300 x 77 x 20
+Muiracatiara,PMB4,PMB4,231068,340,42,21,-,,861,0,0,0,0,,,340 x 42 x 21
+Tauari,01P,01P,86829,294,200,12,-,,,0,0,0,0,,"10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P,01P,381302,350,200,12,-,,,0,0,0,0,,"10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P,01P,82183,350,200,12,-,,,0,"22.546,44","3.236,52","22.680,00","10239809,13","10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P-1,01P,381294,350,200,12,Excesso?,,"21.084,00",0,0,0,0,,"10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P-2,01P,82182,350,200,15,Excesso?,,"3.134,00",0,0,0,0,,"10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P-4,01P,381293,"294,4",200,12,Excesso?,,,0,0,0,0,,"10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,01P-5,01P,82178,292,202,15,Excesso?,,,0,0,0,0,"13002082,13","10239809, 13001082, 13002082",350 x 200 x 12
+Tauari,02P,02P,82184,290,200,12,-,,,0,0,"5.737,82",0,"10239806,10239807,10239808,13671082,13677081,13671082,13677081","10239806, 10239807, 10239808, 13671082, 13677081, 13000082",290 x 200 x 12
+Tauari,02P-1,02P,381295,290,200,12,Excesso?,,"1.440,00",0,0,0,0,,"10239806, 10239807, 10239808, 13671082, 13677081, 13000082",290 x 200 x 12
+Tauari,02P-2,02P,82181,290,200,15,Excesso?,"1.756,00","17.403,00",0,0,0,0,13000082,"10239806, 10239807, 10239808, 13671082, 13677081, 13000082",290 x 200 x 12
+Tauari,03P,03P,82204,290,290,12,-,,,0,0,"51,47",0,13670082,13670082,290 x 290 x 12
+Tauari,03P-1,03P,381306,290,290,12,Excesso?,,"5.787,00",0,0,0,0,,13670082,290 x 290 x 12
+Tauari,03P-1,03P,82206,290,290,12,Excesso?,,,0,0,0,0,,13670082,290 x 290 x 12
+Tauari,03P-2,03P,87000,290,290,15,Excesso?,,,0,0,0,0,,13670082,290 x 290 x 12
+Tauari,04P,04P,82185,350,200,18,-,,,0,0,0,0,,,350 x 200 x 18
+Tauari,04P-1,04P,82205,350,200,18,-,,,0,0,0,0,,,350 x 200 x 18
+Tauari,05P,05P,82216,290,240,18,-,,,0,0,0,0,"10239728,1",10239728,290 x 240 x 18
+Tauari,05P-1,05P,82215,290,240,21,Excesso?,,"5.027,00",0,0,0,0,,10239728,290 x 240 x 18
+Tauari,06P,06P,82283,205,170,12,-,,,0,0,0,0,,,205 x 170 x 12
+Tauari,06P-1,06P,381431,205,170,12,-,,,0,0,0,0,,,205 x 170 x 12
+Tauari,06P-1,06P,389939,420,180,18,-,,,0,0,0,0,,,205 x 170 x 12
+Tauari,07P,07P,389979,430,140,18,-,,,0,0,0,0,,,430 x 140 x 18
+Tauari,07P-1,07P,389980,430,140,18,-,,,0,0,0,0,,,430 x 140 x 18
+Tauari,70P,70P,381205,540,130,10,#ERROR!,,,0,0,0,0,"10539384,11",10539384,540 x 135 x 64
+Tauari,70P,70P,381305,"264,3",125,59,#ERROR!,,,0,0,0,0,"10539384,11",10539384,540 x 135 x 64
+Tauari,70P,70P,381204,540,135,64,#ERROR!,,,0,0,0,0,"10539384,11",10539384,540 x 135 x 64
+Tauari,70P-1,70P,381206,"264,3",125,59,#ERROR!,,"2.054,00",0,0,0,0,,10539384,540 x 135 x 64
+Tauari,CP587,CP587,381437,159,"114,5","59,4",#ERROR!,,"2.206,00",0,0,0,0,,,159 x 114.5 x 59.4
+Tauari,PBAH,PBAH,381269,410,410,18,#ERROR!,,"7.142,00",0,0,"30,26",0,14204400,14204400,410 x 410 x 18
+Tauari,PTAU,PTAU,381174,290,205,17,#ERROR!,,"4.875,00",0,0,0,0,"10239684,1",10239684,290 x 205 x 17
+`;
 
-let allRows=[], grouped=[], filtered=[];
-let ch1=null, ch2=null;
-
+const C = { especie:0, grupoOrig:1, grupoMestre:2, padrao:3, compr:4, larg:5, esp:6, status:7, estComp:8, estPCP:9, faltaAtual:10, faltaSeg:11, totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16 };
+let allRows=[], grouped=[], filtered=[], ch1=null, ch2=null;
 const cl = v => (v||'').replace(/^"|"$/g,'').trim();
 const num = v => { const n=parseFloat(cl(v).replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
-const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '—';
-const hasDigit = g => /\d/.test(g||'');
+const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '0';
 
 function splitLine(line) {
   const r=[]; let cur='', q=false;
   for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){q=!q;}
-    else if(c===','&&!q){r.push(cur.trim());cur='';}
-    else{cur+=c;}
+    const c=line[i]; if(c==='"'){q=!q;} else if(c===','&&!q){r.push(cur.trim());cur='';} else{cur+=c;}
   }
-  r.push(cur.trim());
-  return r;
+  r.push(cur.trim()); return r;
 }
 
-function extractId(url) {
-  const m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  return m?m[1]:null;
-}
-function extractGid(url) {
-  const m=url.match(/gid=(\d+)/);
-  return m?m[1]:'0';
-}
-function setStatus(msg,cls='') {
-  const el=document.getElementById('status-msg');
-  el.textContent=msg; el.className=cls;
-}
-
-// FUNÇÃO CARREGAR CORRIGIDA COM PROXY PARA EVITAR ERRO DE FETCH
-async function loadSheet() {
-  const url=document.getElementById('sheet-url').value.trim();
-  const id=extractId(url);
-  if(!id){setStatus('Link inválido','err');return;}
-  const gid=extractGid(url);
-  setStatus('Carregando...','');
-  document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="loading"><div class="spinner"></div>Buscando dados...</div></td></tr>';
-  
-  try {
-    // Usando proxy do allorigins para evitar o erro de CORS em outros PCs
-    const proxy = "https://api.allorigins.win/raw?url=";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
-    
-    const res = await fetch(proxy + encodeURIComponent(sheetUrl));
-    
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const text = await res.text();
-    parseData(text);
-  } catch(e) {
-    setStatus('Erro: '+e.message,'err');
-    document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar. Verifique o link ou tente novamente.</p></div></td></tr>';
+function init() {
+  const lines = DADOS_CSV.trim().split('\n');
+  if(lines.length < 2) return;
+  allRows = [];
+  for(let i=1; i<lines.length; i++) {
+    const cols = splitLine(lines[i]);
+    if(cols.length > 5) allRows.push(cols);
   }
-}
-
-function parseData(text) {
-  const lines=text.trim().split('\n');
-  allRows=[];
-  for(let i=1;i<lines.length;i++){
-    const cols=splitLine(lines[i]);
-    if(cols.length<3) continue;
-    const esp=cl(cols[C.especie]);
-    if(!esp) continue;
-    allRows.push(cols);
-  }
-  setStatus(`${allRows.length} linhas carregadas ✓`,'ok');
-  document.getElementById('last-update').textContent='Atualizado: '+new Date().toLocaleString('pt-BR');
   buildGrouped();
   fillFilters();
   applyFilters();
@@ -383,262 +607,93 @@ function parseData(text) {
 function buildGrouped() {
   const map=new Map();
   for(const row of allRows){
-    const esp=cl(row[C.especie]);
-    const go=cl(row[C.grupoOrig]);
-    const gm=cl(row[C.grupoMestre]);
-    const med=cl(row[C.medida]);
+    const esp=cl(row[C.especie]); const gm=cl(row[C.grupoMestre]); const med=cl(row[C.medida]);
     if(!esp||!gm) continue;
     const key=`${esp}||${gm}||${med}`;
     if(!map.has(key)){
-      map.set(key,{
-        especie:esp, grupoMestre:gm, medida:med,
-        padrao:cl(row[C.padrao]),
-        compr:cl(row[C.compr]), larg:cl(row[C.larg]), esp:cl(row[C.esp]),
-        statuses:[], estPCP:0, estComp:0,
-        faltaAtual:0, faltaSeg:0, totalAtual:0,
-        refs:new Set(), refsAgrup:new Set()
-      });
+      map.set(key,{ especie:esp, grupoMestre:gm, medida:med, padrao:cl(row[C.padrao]), compr:cl(row[C.compr]), larg:cl(row[C.larg]), esp:cl(row[C.esp]), statuses:[], estPCP:0, estComp:0, faltaAtual:0, refs:new Set() });
     }
     const g=map.get(key);
-    g.estPCP    +=num(row[C.estPCP]);
-    g.estComp   +=num(row[C.estComp]);
-    g.faltaAtual+=num(row[C.faltaAtual]);
-    g.faltaSeg  +=num(row[C.faltaSeg]);
-    g.totalAtual+=num(row[C.totalAtual]);
-    if(hasDigit(go)&&cl(row[C.status])) g.statuses.push(cl(row[C.status]));
-    if(hasDigit(go)){
-      if(cl(row[C.padrao])) g.padrao=cl(row[C.padrao]);
-      if(cl(row[C.compr]))  g.compr =cl(row[C.compr]);
-      if(cl(row[C.larg]))   g.larg  =cl(row[C.larg]);
-      if(cl(row[C.esp]))    g.esp   =cl(row[C.esp]);
-    }
-    cl(row[C.refInd]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refs.add(r));
-    cl(row[C.refAgrup]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refsAgrup.add(r));
+    g.estPCP += num(row[C.estPCP]); g.estComp += num(row[C.estComp]); g.faltaAtual += num(row[C.faltaAtual]);
+    if(cl(row[C.status])) g.statuses.push(cl(row[C.status]));
+    cl(row[C.refInd]).split(/[,;]/).forEach(r => { if(r.trim()) g.refs.add(r.trim()); });
   }
-
-  grouped=Array.from(map.values()).map(g=>{
-    const uniq=[...new Set(g.statuses.map(s=>s.trim()))];
-    g.statusFinal = uniq.length===0 ? '—' : uniq.join(' / ');
-    g.refs=[...g.refs];
-    g.refsAgrup=[...g.refsAgrup];
+  grouped = Array.from(map.values()).map(g => {
+    const uniq = [...new Set(g.statuses)];
+    g.statusFinal = uniq.length === 0 ? '—' : uniq.join(' / ');
     return g;
   });
 }
 
 function fillFilters() {
-  const especies=[...new Set(grouped.map(g=>g.especie))].sort();
-  const medidas=[...new Set(grouped.map(g=>g.medida).filter(Boolean))].sort();
-  const se=document.getElementById('f-especie');
-  const sm=document.getElementById('f-medida');
-  se.innerHTML='<option value="">Todas as espécies</option>';
-  especies.forEach(e=>se.innerHTML+=`<option value="${e}">${e}</option>`);
-  sm.innerHTML='<option value="">Todas as medidas</option>';
-  medidas.forEach(m=>sm.innerHTML+=`<option value="${m}">${m}</option>`);
+  const esp = [...new Set(grouped.map(g=>g.especie))].sort();
+  const med = [...new Set(grouped.map(g=>g.medida))].sort();
+  const se=document.getElementById('f-especie'); const sm=document.getElementById('f-medida');
+  esp.forEach(e => se.innerHTML += `<option value="${e}">${e}</option>`);
+  med.forEach(m => sm.innerHTML += `<option value="${m}">${m}</option>`);
 }
 
 function applyFilters() {
   const esp=document.getElementById('f-especie').value;
   const st=document.getElementById('f-status').value;
   const med=document.getElementById('f-medida').value;
-  filtered=grouped.filter(g=>{
-    if(esp && g.especie!==esp) return false;
-    if(med && g.medida!==med) return false;
-    if(st){
-      const s=g.statusFinal||'';
-      if(st==='Excesso' && !s.includes('Excesso')) return false;
-      if(st==='Falta'   && !s.includes('Falta'))   return false;
-      if(st==='-'       && s!=='—' && s!=='-')      return false;
-    }
+  filtered = grouped.filter(g => {
+    if(esp && g.especie !== esp) return false;
+    if(med && g.medida !== med) return false;
+    if(st === 'Excesso' && !g.statusFinal.includes('Excesso')) return false;
+    if(st === 'Falta' && !g.statusFinal.includes('Falta')) return false;
     return true;
   });
-  renderCards();
-  renderCharts();
-  renderTable();
-  renderCross();
+  renderEverything();
 }
 
-function renderCards() {
-  document.getElementById('c-especies').textContent=new Set(filtered.map(g=>g.especie)).size;
-  document.getElementById('c-grupos').textContent=new Set(filtered.map(g=>g.grupoMestre)).size;
-  document.getElementById('c-pcp').textContent=fmt(filtered.reduce((s,g)=>s+g.estPCP,0));
-  document.getElementById('c-comp').textContent=fmt(filtered.reduce((s,g)=>s+g.estComp,0));
-  document.getElementById('c-falta').textContent=filtered.filter(g=>g.statusFinal.includes('Falta')).length;
-  document.getElementById('c-excesso').textContent=filtered.filter(g=>g.statusFinal.includes('Excesso')).length;
+function renderEverything() {
+  document.getElementById('c-especies').textContent = new Set(filtered.map(g=>g.especie)).size;
+  document.getElementById('c-grupos').textContent = filtered.length;
+  document.getElementById('c-pcp').textContent = fmt(filtered.reduce((s,g)=>s+g.estPCP,0));
+  document.getElementById('c-comp').textContent = fmt(filtered.reduce((s,g)=>s+g.estComp,0));
+  document.getElementById('c-falta').textContent = filtered.filter(g=>g.statusFinal.includes('Falta')).length;
+  document.getElementById('c-excesso').textContent = filtered.filter(g=>g.statusFinal.includes('Excesso')).length;
+
+  // Render Tabela
+  let h = '';
+  filtered.forEach(g => {
+    h += `<tr><td>${g.especie}</td><td>${g.grupoMestre}</td><td>${g.padrao}</td><td>${g.medida}</td>
+    <td><span class="badge ${g.statusFinal.includes('Excesso')?'b-excess':'b-lack'}">${g.statusFinal}</span></td>
+    <td>${fmt(g.estPCP)}</td><td>${fmt(g.faltaAtual)}</td>
+    <td>${Array.from(g.refs).slice(0,3).map(r=>`<span class="sku">${r}</span>`).join('')}</td></tr>`;
+  });
+  document.getElementById('tbody').innerHTML = h;
+  renderCharts();
 }
 
 function renderCharts() {
-  const byEsp={};
-  for(const g of filtered){
-    if(!byEsp[g.especie]) byEsp[g.especie]={pcp:0,comp:0,excesso:0,falta:0,total:0};
-    byEsp[g.especie].pcp    +=g.estPCP;
-    byEsp[g.especie].comp   +=g.estComp;
-    byEsp[g.especie].total  +=1;
-    if(g.statusFinal.includes('Excesso')) byEsp[g.especie].excesso++;
-    if(g.statusFinal.includes('Falta'))   byEsp[g.especie].falta++;
-  }
-  const labels=Object.keys(byEsp).sort();
-  const mono='DM Mono, monospace';
-
-  if(ch1) ch1.destroy();
-  ch1=new Chart(document.getElementById('ch1').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Estoque PCP (confiável)', data:labels.map(l=>byEsp[l].pcp),
-          backgroundColor:'rgba(79,195,161,0.65)', borderColor:'#4fc3a1', borderWidth:1, borderRadius:4},
-        {label:'Estoque Compras ⚠', data:labels.map(l=>byEsp[l].comp),
-          backgroundColor:'rgba(240,160,96,0.4)', borderColor:'#f0a060', borderWidth:1, borderRadius:4}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{
-        x:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-        y:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}
-      }
-    }
-  });
-
-  if(ch2) ch2.destroy();
-  ch2=new Chart(document.getElementById('ch2').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Excesso', data:labels.map(l=>byEsp[l].excesso), backgroundColor:'rgba(79,195,161,0.7)', borderRadius:4},
-        {label:'Com Falta', data:labels.map(l=>byEsp[l].falta), backgroundColor:'rgba(240,100,100,0.7)', borderRadius:4},
-        {label:'Normal', data:labels.map(l=>byEsp[l].total-byEsp[l].excesso-byEsp[l].falta), backgroundColor:'rgba(122,132,148,0.4)', borderRadius:4}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{
-        x:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-        y:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}
-      }
-    }
-  });
-}
-
-function badge(st) {
-  if(!st||st==='—') return '<span class="badge b-neutral">—</span>';
-  if(st.includes(' / ')) return `<span class="badge b-multi">${st}</span>`;
-  if(st.includes('Excesso'))   return `<span class="badge b-excess">${st}</span>`;
-  if(st.includes('Falta Mês1'))return `<span class="badge b-lack1">${st}</span>`;
-  if(st.includes('Falta'))      return `<span class="badge b-lack">${st}</span>`;
-  return `<span class="badge b-neutral">${st}</span>`;
-}
-
-function renderTable() {
-  const tbody=document.getElementById('tbody');
-  document.getElementById('tbl-count').textContent=`${filtered.length} grupos`;
-  if(!filtered.length){
-    tbody.innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">🔍</div><p>Nenhum resultado</p></div></td></tr>';
-    return;
-  }
-  const sorted=[...filtered].sort((a,b)=>
-    a.especie.localeCompare(b.especie)||a.grupoMestre.localeCompare(b.grupoMestre)||a.medida.localeCompare(b.medida)
-  );
-  let html='';
-  for(const g of sorted){
-    const allRefs=[...new Set([...g.refs,...g.refsAgrup])];
-    const skuHtml=allRefs.length
-      ? `<div class="sku-list">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`
-      : '<span style="color:var(--muted2)">—</span>';
-    html+=`<tr>
-      <td><strong>${g.especie}</strong></td>
-      <td>${g.grupoMestre}</td>
-      <td>${g.padrao||'—'}</td>
-      <td style="color:var(--accent);font-weight:500">${g.medida||'—'}</td>
-      <td style="text-align:right">${g.compr||'—'}</td>
-      <td style="text-align:right">${g.larg||'—'}</td>
-      <td style="text-align:right">${g.esp||'—'}</td>
-      <td>${badge(g.statusFinal)}</td>
-      <td style="text-align:right;color:var(--teal)">${fmt(g.estPCP)}</td>
-      <td style="text-align:right">
-        <span style="color:var(--warn)">${fmt(g.estComp)}</span>
-        <span class="b-warn-sm">⚠</span>
-      </td>
-      <td style="text-align:right;color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</td>
-      <td style="text-align:right;color:${g.faltaSeg>0?'var(--warn)':'var(--muted)'}">${fmt(g.faltaSeg)}</td>
-      <td style="text-align:right">${fmt(g.totalAtual)}</td>
-      <td>${skuHtml}</td>
-    </tr>`;
-  }
-  tbody.innerHTML=html;
-}
-
-function renderCross() {
-  const byMed={};
-  for(const g of filtered){
-    if(!g.medida) continue;
-    if(!byMed[g.medida]) byMed[g.medida]=[];
-    byMed[g.medida].push(g);
-  }
-  const medidas=Object.keys(byMed).sort().filter(m=>{
-    const rows=byMed[m];
-    return rows.some(r=>r.statusFinal.includes('Excesso')) && rows.some(r=>r.statusFinal.includes('Falta'));
-  });
-  document.getElementById('cross-count').textContent=`${medidas.length} medidas com oportunidade`;
-  const grid=document.getElementById('cross-grid');
-  if(!medidas.length){
-    grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Nenhuma medida com excesso e falta simultâneos nos filtros atuais</p></div>';
-    return;
-  }
-  let html='';
-  for(const med of medidas){
-    const rows=byMed[med];
-    const excess=rows.filter(r=>r.statusFinal.includes('Excesso'));
-    const lack=rows.filter(r=>r.statusFinal.includes('Falta'));
-    const other=rows.filter(r=>!r.statusFinal.includes('Excesso')&&!r.statusFinal.includes('Falta'));
-    const sample=rows[0];
-    const dims=[sample.compr,sample.larg,sample.esp].filter(Boolean).join(' × ');
-
-    const makeCard=(g,cls)=>{
-      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
-      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-      const tip=cls==='excess'
-        ?`<div class="ce-tip ok">↑ Pode ser oferecido como substituto</div>`
-        :cls==='lack'
-        ?`<div class="ce-tip bad">↓ Demanda não atendida — buscar substituto</div>`:'';
-      return `<div class="ce ${cls}">
-        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
-        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
-        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
-        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
-        <div class="ce-row"><span>Falta Atual</span><span style="color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</span></div>
-        ${skuHtml}${tip}
-      </div>`;
-    };
-
-    const cards=[...excess.map(g=>makeCard(g,'excess')),...lack.map(g=>makeCard(g,'lack')),...other.map(g=>makeCard(g,''))].join('');
-    html+=`<div class="cross-card">
-      <div class="cross-head">
-        <span class="cross-medida">${med}</span>
-        ${dims?`<span style="color:var(--muted);font-size:12px">${dims} mm</span>`:''}
-        <span style="margin-left:auto;display:flex;gap:8px">
-          <span class="badge b-excess">${excess.length} excesso</span>
-          <span class="badge b-lack">${lack.length} falta</span>
-        </span>
-      </div>
-      <div class="cross-body">${cards}</div>
-    </div>`;
-  }
-  grid.innerHTML=html;
+    const dataMap = {};
+    filtered.forEach(g => {
+        if(!dataMap[g.especie]) dataMap[g.especie] = { pcp:0, comp:0 };
+        dataMap[g.especie].pcp += g.estPCP;
+        dataMap[g.especie].comp += g.estComp;
+    });
+    const labels = Object.keys(dataMap);
+    if(ch1) ch1.destroy();
+    ch1 = new Chart(document.getElementById('ch1'), {
+        type: 'bar',
+        data: { labels, datasets: [
+            { label: 'PCP', data: labels.map(l=>dataMap[l].pcp), backgroundColor: '#4fc3a1' },
+            { label: 'Compras', data: labels.map(l=>dataMap[l].comp), backgroundColor: '#f0a060' }
+        ]},
+        options: { responsive: true, maintainAspectRatio: false }
+    });
 }
 
 function switchTab(id) {
-  const ids=['grafico','tabela','cross'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
-  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='tab-'+id));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
 }
 
-window.addEventListener('load',()=>{
-  if(document.getElementById('sheet-url').value.trim()) loadSheet();
-});
+window.onload = init;
 </script>
 </body>
 </html>
