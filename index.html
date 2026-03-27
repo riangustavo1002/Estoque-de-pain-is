@@ -13,14 +13,22 @@
   --surface2: #1e2430;
   --border: rgba(255,255,255,0.07);
   --border2: rgba(255,255,255,0.13);
-  --accent: #e8c547;
-  --accent-dim: rgba(232,197,71,0.12);
+  --accent: #22c55e;
+  --accent-dim: rgba(34, 197, 94, 0.12);
   --teal: #4fc3a1;
   --teal-dim: rgba(79,195,161,0.12);
   --danger: #f06464;
   --danger-dim: rgba(240,100,100,0.12);
   --warn: #f0a060;
   --warn-dim: rgba(240,160,96,0.12);
+  --blue: #7eb8f7;
+  --blue-dim: rgba(126,184,247,0.12);
+  --purple: #b07ef7;
+  --purple-dim: rgba(176,126,247,0.12);
+  --fsc-color: #5dba7d;
+  --fsc-dim: rgba(93,186,125,0.12);
+  --nfsc-color: #a0a8b8;
+  --nfsc-dim: rgba(160,168,184,0.1);
   --text: #e2e4ec;
   --muted: #7a8494;
   --muted2: #4a5260;
@@ -28,22 +36,12 @@
   --font-mono: 'DM Mono', monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: var(--font-mono);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 13px;
-}
+body { font-family: var(--font-mono); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; }
 body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 10% 10%, rgba(232,197,71,0.03) 0%, transparent 55%),
-    radial-gradient(ellipse at 90% 90%, rgba(79,195,161,0.03) 0%, transparent 55%);
-  pointer-events: none;
-  z-index: 0;
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 10% 10%, rgba(232,197,71,0.03) 0%, transparent 55%),
+              radial-gradient(ellipse at 90% 90%, rgba(79,195,161,0.03) 0%, transparent 55%);
+  pointer-events: none; z-index: 0;
 }
 .wrap { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
 
@@ -54,45 +52,11 @@ body::before {
 .header p { color: var(--muted); margin-top: 4px; font-size: 12px; }
 
 /* SHEET BAR */
-.sheet-bar {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 14px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
+.sheet-bar { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 20px; margin-bottom: 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .sheet-bar label { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.sheet-bar input {
-  flex: 1;
-  min-width: 260px;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  outline: none;
-  transition: border-color 0.2s;
-}
+.sheet-bar input { flex: 1; min-width: 260px; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: var(--font-mono); font-size: 12px; outline: none; transition: border-color 0.2s; }
 .sheet-bar input:focus { border-color: var(--accent); }
-.btn {
-  background: var(--accent);
-  color: #0d0f14;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s;
-}
+.btn { background: var(--accent); color: #0d0f14; border: none; border-radius: 6px; padding: 8px 18px; font-family: var(--font-head); font-weight: 700; font-size: 12px; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; }
 .btn:hover { opacity: 0.85; }
 #status-msg { font-size: 12px; color: var(--muted); }
 #status-msg.ok  { color: var(--teal); }
@@ -101,47 +65,25 @@ body::before {
 /* FILTROS */
 .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
 .filter-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-select {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 7px 12px;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  outline: none;
-  cursor: pointer;
-}
+select { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 7px 12px; color: var(--text); font-family: var(--font-mono); font-size: 12px; outline: none; cursor: pointer; }
 select:focus { border-color: var(--accent); }
 
-/* CARDS */
+/* CARDS RESUMO */
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
 .card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .card-value { font-family: var(--font-head); font-size: 26px; font-weight: 800; line-height: 1; }
 .card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-.card.c-accent { border-color: rgba(232,197,71,0.25); }  .card.c-accent .card-value { color: var(--accent); }
-.card.c-teal   { border-color: rgba(79,195,161,0.25); }  .card.c-teal   .card-value { color: var(--teal); }
-.card.c-danger { border-color: rgba(240,100,100,0.25); } .card.c-danger .card-value { color: var(--danger); }
-.card.c-warn   { border-color: rgba(240,160,96,0.25); }  .card.c-warn   .card-value { color: var(--warn); }
+.card.c-accent { border-color: rgba(232,197,71,0.25); } .card.c-accent .card-value { color: var(--accent); }
+.card.c-teal   { border-color: rgba(79,195,161,0.25); } .card.c-teal   .card-value { color: var(--teal); }
+.card.c-danger { border-color: rgba(240,100,100,0.25);} .card.c-danger .card-value { color: var(--danger); }
+.card.c-warn   { border-color: rgba(240,160,96,0.25); } .card.c-warn   .card-value { color: var(--warn); }
 
 /* TABS */
 .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.tab {
-  padding: 10px 18px;
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
+.tab { padding: 10px 18px; font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
 .section { display: none; }
 .section.active { display: block; }
 
@@ -163,48 +105,97 @@ td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 12px;
 tbody tr:hover { background: rgba(255,255,255,0.02); }
 tbody tr:last-child td { border-bottom: none; }
 
-/* BADGES */
+/* FSC badges */
+.fsc-badge    { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; background:var(--fsc-dim); color:var(--fsc-color); border:1px solid rgba(93,186,125,0.3); }
+.nfsc-badge   { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; background:var(--nfsc-dim); color:var(--nfsc-color); border:1px solid rgba(160,168,184,0.2); }
+
+/* STATUS BADGES */
 .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
 .b-excess  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.25); }
-.b-lack     { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
+.b-lack    { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
 .b-lack1   { background: var(--warn-dim);   color: var(--warn);   border: 1px solid rgba(240,160,96,0.25); }
 .b-neutral { background: rgba(122,132,148,0.1); color: var(--muted); border: 1px solid var(--border2); }
 .b-multi   { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(232,197,71,0.25); }
 .b-warn-sm { display:inline-block; font-size:9px; padding:1px 5px; border-radius:3px; background:var(--warn-dim); color:var(--warn); border:1px solid rgba(240,160,96,0.3); margin-left:4px; vertical-align:middle; }
 
+/* TOP 3 highlight na tabela */
+.top1-row td:first-child { border-left: 3px solid #ffd700; }
+.top2-row td:first-child { border-left: 3px solid #c0c0c0; }
+.top3-row td:first-child { border-left: 3px solid #cd7f32; }
+.top1-row { background: rgba(255,215,0,0.04) !important; }
+.top2-row { background: rgba(192,192,192,0.04) !important; }
+.top3-row { background: rgba(205,127,50,0.04) !important; }
+.rank-medal { font-size: 14px; margin-right: 4px; }
+
 /* SKUS */
 .sku-list { display: flex; flex-wrap: wrap; gap: 3px; }
 .sku { background: var(--surface2); border: 1px solid var(--border2); border-radius: 3px; padding: 2px 5px; font-size: 10px; color: var(--muted); }
 
-/* CROSS */
-.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-.cross-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-.cross-medida { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
-.cross-body { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px; }
-.ce {
-  flex: 1; min-width: 200px;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 10px 12px;
-}
-.ce.excess  { border-color: rgba(79,195,161,0.35);  background: rgba(79,195,161,0.04); }
-.ce.lack     { border-color: rgba(240,100,100,0.35); background: rgba(240,100,100,0.04); }
-.ce-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-.ce-row { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: var(--muted); }
-.ce-row span:last-child { color: var(--text); font-weight: 500; }
-.ce-tip { margin-top: 8px; padding: 5px 8px; border-radius: 5px; font-size: 10px; }
-.ce-tip.ok  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.2); }
-.ce-tip.bad { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.2); }
+/* ── CROSS / SUBSTITUIÇÃO ─────────────────────────── */
 
-/* MISC */
-.placeholder { text-align: center; padding: 50px 20px; color: var(--muted); }
-.placeholder .ico { font-size: 32px; opacity: 0.35; margin-bottom: 10px; }
-.loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 50px 20px; color: var(--muted); }
-.spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* Subtabs */
+.subtabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.subtab { padding: 7px 14px; font-family: var(--font-head); font-size: 12px; font-weight: 600; border-radius: 20px; cursor: pointer; border: 1px solid var(--border2); color: var(--muted); background: transparent; transition: all 0.15s; white-space: nowrap; }
+.subtab:hover { color: var(--text); border-color: var(--text); }
+.subtab.active-exact  { background: var(--teal-dim);   color: var(--teal);   border-color: rgba(79,195,161,0.4); }
+.subtab.active-cut    { background: var(--blue-dim);   color: var(--blue);   border-color: rgba(126,184,247,0.4); }
+.subtab.active-excess { background: var(--accent-dim); color: var(--accent); border-color: rgba(232,197,71,0.4); }
+.subtab.active-risk   { background: var(--danger-dim); color: var(--danger); border-color: rgba(240,100,100,0.4); }
+.subtab-count { display:inline-block; background:var(--surface2); border-radius:10px; padding:1px 6px; font-size:10px; margin-left:4px; }
+
+.cross-legend { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:11px; color:var(--muted); }
+.legend-item { display:flex; align-items:center; gap:6px; }
+.legend-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* Card de medida */
+.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+.cross-head { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface2); border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.cross-medida { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
+.cross-type-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:10px; font-family:var(--font-head); white-space:nowrap; }
+.ctb-exact  { background:var(--teal-dim);   color:var(--teal);   border:1px solid rgba(79,195,161,0.3); }
+.ctb-cut    { background:var(--blue-dim);   color:var(--blue);   border:1px solid rgba(126,184,247,0.3); }
+.ctb-excess { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(232,197,71,0.3); }
+.ctb-risk   { background:var(--danger-dim); color:var(--danger); border:1px solid rgba(240,100,100,0.3); }
+.cross-body { padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; }
+
+/* Cartão de espécie */
+.ce { flex:1; min-width:200px; border:1px solid var(--border2); border-radius:8px; padding:10px 12px; position:relative; }
+.ce.excess       { border-color:rgba(79,195,161,0.35);  background:rgba(79,195,161,0.04); }
+.ce.lack         { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
+.ce.source       { border-color:rgba(126,184,247,0.35); background:rgba(126,184,247,0.04); }
+.ce.target       { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
+.ce.alert-excess { border-color:rgba(232,197,71,0.35);  background:rgba(232,197,71,0.04); }
+.ce.alert-risk   { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
+
+/* TOP 3 destaque no cartão de espécie */
+.ce.top1 { border-color:#ffd700 !important; box-shadow: 0 0 0 1px rgba(255,215,0,0.2), inset 0 0 20px rgba(255,215,0,0.04); }
+.ce.top2 { border-color:#c0c0c0 !important; box-shadow: 0 0 0 1px rgba(192,192,192,0.2); }
+.ce.top3 { border-color:#cd7f32 !important; box-shadow: 0 0 0 1px rgba(205,127,50,0.2); }
+.top-crown { position:absolute; top:-10px; right:10px; font-size:18px; line-height:1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+
+.ce-name { font-family:var(--font-head); font-size:13px; font-weight:700; margin-bottom:6px; }
+.ce-row  { display:flex; justify-content:space-between; margin-top:4px; font-size:11px; color:var(--muted); }
+.ce-row span:last-child { color:var(--text); font-weight:500; }
+.ce-tip  { margin-top:8px; padding:5px 8px; border-radius:5px; font-size:10px; line-height:1.4; }
+.ce-tip.ok     { background:var(--teal-dim);   color:var(--teal);   border:1px solid rgba(79,195,161,0.2); }
+.ce-tip.bad    { background:var(--danger-dim); color:var(--danger); border:1px solid rgba(240,100,100,0.2); }
+.ce-tip.info   { background:var(--blue-dim);   color:var(--blue);   border:1px solid rgba(126,184,247,0.2); }
+.ce-tip.warn   { background:var(--warn-dim);   color:var(--warn);   border:1px solid rgba(240,160,96,0.2); }
+.ce-tip.accent { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(232,197,71,0.2); }
+.ce-tip.fsc    { background:var(--fsc-dim);    color:var(--fsc-color); border:1px solid rgba(93,186,125,0.2); }
+
+.cut-arrow { display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; padding:8px 4px; color:var(--blue); font-size:18px; min-width:28px; }
+.cut-arrow span { font-size:9px; color:var(--muted); white-space:nowrap; text-align:center; }
+
+.placeholder { text-align:center; padding:50px 20px; color:var(--muted); }
+.placeholder .ico { font-size:32px; opacity:0.35; margin-bottom:10px; }
+.loading { display:flex; align-items:center; justify-content:center; gap:10px; padding:50px 20px; color:var(--muted); }
+.spinner { width:16px; height:16px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
 @media (max-width: 600px) {
-  .wrap { padding: 16px 12px; }
-  .cards { grid-template-columns: repeat(2, 1fr); }
+  .wrap { padding:16px 12px; }
+  .cards { grid-template-columns:repeat(2,1fr); }
 }
 </style>
 </head>
@@ -213,7 +204,7 @@ tbody tr:last-child td { border-bottom: none; }
 
   <div class="header">
     <div>
-      <h1>Estoque <span>Painéis</span></h1>
+      <h1> <span> AVIDES </span> <span> - Estoque de Painéis</span></h1>
       <p id="last-update">Conecte a planilha para carregar os dados</p>
     </div>
   </div>
@@ -222,7 +213,7 @@ tbody tr:last-child td { border-bottom: none; }
     <label>🔗 Google Sheets</label>
     <input type="text" id="sheet-url"
       placeholder="Cole o link da planilha..."
-      value="https://docs.google.com/spreadsheets/d/10OnOUkR3pla1eNCfFRt_16mJ0eK_RyG1r095vmIp9Eg/edit?gid=0" />
+      value="https://docs.google.com/spreadsheets/d/1C9tUTh4QVT67UbAdx0j04CBnHAqrrV-28ozhG0RfTQ8/edit?gid=1769742644#gid=1769742644" />
     <button class="btn" onclick="loadSheet()">Carregar</button>
     <span id="status-msg">Aguardando...</span>
   </div>
@@ -237,6 +228,11 @@ tbody tr:last-child td { border-bottom: none; }
       <option value="-">Normal</option>
     </select>
     <select id="f-medida" onchange="applyFilters()"><option value="">Todas as medidas</option></select>
+    <select id="f-cert" onchange="applyFilters()">
+      <option value="">FSC + Não FSC</option>
+      <option value="FSC">Somente FSC</option>
+      <option value="Não FSC">Somente Não FSC</option>
+    </select>
   </div>
 
   <div class="cards">
@@ -254,6 +250,7 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="tab" onclick="switchTab('cross')">Substituição por Medida</div>
   </div>
 
+  <!-- TAB GRÁFICOS -->
   <div class="section active" id="tab-grafico">
     <div class="chart-wrap">
       <div class="chart-title">Estoque PCP por Espécie</div>
@@ -265,6 +262,7 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+  <!-- TAB TABELA -->
   <div class="section" id="tab-tabela">
     <div class="table-wrap">
       <div class="table-header">
@@ -276,7 +274,7 @@ tbody tr:last-child td { border-bottom: none; }
           <thead>
             <tr>
               <th>Espécie</th><th>Grupo Mestre</th><th>Padrão</th><th>Medida Mestre</th>
-              <th>Comp</th><th>Larg</th><th>Esp</th><th>Status</th>
+              <th>Cert.</th><th>Comp</th><th>Larg</th><th>Esp</th><th>Status</th>
               <th>Est. PCP ✓</th><th>Est. Compras ⚠</th>
               <th>Falta Atual</th><th>Falta Seg</th><th>Total Atual</th>
               <th>SKUs Produzíveis</th>
@@ -288,35 +286,44 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+  <!-- TAB SUBSTITUIÇÃO -->
   <div class="section" id="tab-cross">
-    <div class="table-header" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;">
-      <span class="table-title">Medidas com Excesso e Falta simultâneos</span>
-      <span class="table-count" id="cross-count">—</span>
+    <div class="subtabs">
+      <div class="subtab active-exact" id="st-exact"  onclick="switchSubtab('exact')">⇄ Mesma Medida <span class="subtab-count" id="cnt-exact">0</span></div>
+      <div class="subtab" id="st-cut"   onclick="switchSubtab('cut')">✂ Corte: maior → menor <span class="subtab-count" id="cnt-cut">0</span></div>
+      <div class="subtab" id="st-excess" onclick="switchSubtab('excess')">↑ Excessos sem par <span class="subtab-count" id="cnt-excess">0</span></div>
+      <div class="subtab" id="st-risk"  onclick="switchSubtab('risk')">⚠ Em risco sem par <span class="subtab-count" id="cnt-risk">0</span></div>
     </div>
+    <div class="cross-legend" id="cross-legend"></div>
     <div id="cross-grid"><div class="placeholder"><div class="ico">🔀</div><p>Carregue os dados para ver oportunidades de substituição</p></div></div>
   </div>
 
 </div>
 <script>
-// MAPEAMENTO CORRIGIDO PARA A PLANILHA 10OnOUkR3pla...
+// ── COLUNAS (0-based) ────────────────────────────────────────
 const C = {
   especie:0, grupoOrig:1, grupoMestre:2, padrao:3,
   compr:4, larg:5, esp:6, status:7,
   estComp:8, estPCP:9, faltaAtual:10, faltaSeg:11,
-  totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16
+  totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16,
+  cert:17  // coluna R — 'FSC' ou 'Não FSC'
 };
 
 let allRows=[], grouped=[], filtered=[];
 let ch1=null, ch2=null;
+let currentSubtab='exact';
 
-const cl = v => (v||'').replace(/^"|"$/g,'').trim();
-const num = v => { 
-  const val = cl(v).replace(/\./g,'').replace(',','.');
-  const n = parseFloat(val);
-  return isNaN(n) ? 0 : n; 
-};
+// ── HELPERS ─────────────────────────────────────────────────
+const cl  = v => (v||'').replace(/^"|"$/g,'').trim();
+const num = v => { const n=parseFloat(cl(v).replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
 const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '0';
 const hasDigit = g => /\d/.test(g||'');
+const isFSC = cert => cl(cert).toUpperCase().includes('FSC') && !cl(cert).toUpperCase().includes('NÃO') && !cl(cert).toUpperCase().includes('NAO');
+// FSC pode fazer FSC e não-FSC; não-FSC só pode fazer não-FSC
+const certCanSupply = (srcCert, tgtCert) => {
+  if(srcCert === 'FSC') return true;          // FSC atende ambos
+  return tgtCert !== 'FSC';                   // Não FSC só atende Não FSC
+};
 
 function splitLine(line) {
   const r=[]; let cur='', q=false;
@@ -326,74 +333,51 @@ function splitLine(line) {
     else if(c===','&&!q){r.push(cur.trim());cur='';}
     else{cur+=c;}
   }
-  r.push(cur.trim());
-  return r;
+  r.push(cur.trim()); return r;
 }
+function extractId(url) { const m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/); return m?m[1]:null; }
+function extractGid(url){ const m=url.match(/gid=(\d+)/); return m?m[1]:'0'; }
+function setStatus(msg,cls=''){ const el=document.getElementById('status-msg'); el.textContent=msg; el.className=cls; }
 
-function extractId(url) {
-  const m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  return m?m[1]:null;
-}
-function extractGid(url) {
-  const m=url.match(/gid=(\d+)/);
-  return m?m[1]:'0';
-}
-function setStatus(msg,cls='') {
-  const el=document.getElementById('status-msg');
-  el.textContent=msg; el.className=cls;
-}
-
+// ── LOAD ────────────────────────────────────────────────────
 async function loadSheet() {
   const url=document.getElementById('sheet-url').value.trim();
-  const id=extractId(url);
-  if(!id){setStatus('Link inválido','err');return;}
+  const id=extractId(url); if(!id){setStatus('Link inválido','err');return;}
   const gid=extractGid(url);
-  
   setStatus('Conectando...','');
-  document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="loading"><div class="spinner"></div>Buscando dados no Google...</div></td></tr>';
-  
+  document.getElementById('tbody').innerHTML='<tr><td colspan="15"><div class="loading"><div class="spinner"></div>Buscando dados...</div></td></tr>';
   try {
-    // TENTATIVA 1: Busca Direta (Mais rápido)
-    const directUrl = `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
-    const res = await fetch(directUrl);
-    
-    if(!res.ok) throw new Error('CORS_OR_PRIVATE');
-    
-    const text = await res.text();
-    if(text.startsWith('<!DOCTYPE')) throw new Error('PRIVATE_SHEET');
-    
+    const res=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const text=await res.text();
+    if(text.startsWith('<!DOCTYPE')) throw new Error('PRIVATE');
     parseData(text);
   } catch(e) {
-    // TENTATIVA 2: Proxy (Se a primeira falhar por bloqueio do navegador)
-    console.warn("Tentativa direta falhou, tentando via Proxy...");
     try {
-      const proxy = "https://api.allorigins.win/raw?url=";
-      const sheetUrl = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
-      const resProxy = await fetch(proxy + encodeURIComponent(sheetUrl));
-      if(!resProxy.ok) throw new Error('FALHA_TOTAL');
-      const textProxy = await resProxy.text();
-      parseData(textProxy);
-    } catch(err) {
+      const proxy='https://api.allorigins.win/raw?url=';
+      const su=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
+      const r2=await fetch(proxy+encodeURIComponent(su));
+      if(!r2.ok) throw new Error('PROXY_FAIL');
+      parseData(await r2.text());
+    } catch(e2){
       setStatus('Erro: Verifique se a planilha está pública','err');
-      document.getElementById('tbody').innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar. Certifique-se que a planilha está em "Qualquer pessoa com o link".</p></div></td></tr>';
+      document.getElementById('tbody').innerHTML='<tr><td colspan="15"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar.</p></div></td></tr>';
     }
   }
 }
 
+// ── PARSE ───────────────────────────────────────────────────
 function parseData(text) {
   const lines=text.trim().split('\n');
   allRows=[];
   for(let i=1;i<lines.length;i++){
     const cols=splitLine(lines[i]);
-    if(cols.length < 10) continue;
+    if(cols.length<10) continue;
     const esp=cl(cols[C.especie]);
-    if(!esp || esp.toLowerCase() === 'espécie') continue;
+    if(!esp||esp.toLowerCase()==='espécie') continue;
     allRows.push(cols);
   }
-  if(allRows.length === 0) {
-    setStatus('Planilha vazia ou colunas erradas','err');
-    return;
-  }
+  if(!allRows.length){setStatus('Planilha vazia ou colunas erradas','err');return;}
   setStatus(`${allRows.length} linhas carregadas ✓`,'ok');
   document.getElementById('last-update').textContent='Atualizado: '+new Date().toLocaleString('pt-BR');
   buildGrouped();
@@ -401,72 +385,92 @@ function parseData(text) {
   applyFilters();
 }
 
+// ── AGRUPAMENTO ─────────────────────────────────────────────
+// Chave: Espécie + Grupo Mestre + Medida Mestre + Certificação
+function normalizeCert(raw) {
+  const v = cl(raw);
+  if(!v) return 'Não FSC';
+  const up = v.toUpperCase();
+  if(up.includes('NÃO')||up.includes('NAO')||up==='N') return 'Não FSC';
+  if(up.includes('FSC')||up==='S') return 'FSC';
+  return 'Não FSC';
+}
+
 function buildGrouped() {
   const map=new Map();
   for(const row of allRows){
     const esp=cl(row[C.especie]);
-    const go=cl(row[C.grupoOrig]);
-    const gm=cl(row[C.grupoMestre]);
-    const med=cl(row[C.medida]) || "Sem Medida";
+    const go =cl(row[C.grupoOrig]);
+    const gm =cl(row[C.grupoMestre]);
+    const med=cl(row[C.medida])||'Sem Medida';
+    const cert=normalizeCert(row[C.cert]);
     if(!esp||!gm) continue;
-    
-    const key=`${esp}||${gm}||${med}`;
+    const key=`${esp}||${gm}||${med}||${cert}`;
     if(!map.has(key)){
       map.set(key,{
-        especie:esp, grupoMestre:gm, medida:med,
+        especie:esp, grupoMestre:gm, medida:med, cert,
         padrao:cl(row[C.padrao]),
         compr:cl(row[C.compr]), larg:cl(row[C.larg]), esp:cl(row[C.esp]),
+        comprN:0, largN:0, espN:0,
         statuses:[], estPCP:0, estComp:0,
         faltaAtual:0, faltaSeg:0, totalAtual:0,
         refs:new Set(), refsAgrup:new Set()
       });
     }
     const g=map.get(key);
-    g.estPCP    += num(row[C.estPCP]);
-    g.estComp   += num(row[C.estComp]);
-    g.faltaAtual+= num(row[C.faltaAtual]);
-    g.faltaSeg  += num(row[C.faltaSeg]);
-    g.totalAtual+= num(row[C.totalAtual]);
-    
-    const st = cl(row[C.status]);
-    if(st && st !== '-' && st !== '—') g.statuses.push(st);
-
+    g.estPCP    +=num(row[C.estPCP]);
+    g.estComp   +=num(row[C.estComp]);
+    g.faltaAtual+=num(row[C.faltaAtual]);
+    g.faltaSeg  +=num(row[C.faltaSeg]);
+    g.totalAtual+=num(row[C.totalAtual]);
+    const st=cl(row[C.status]);
+    if(hasDigit(go)&&st&&st!=='-'&&st!=='—') g.statuses.push(st);
+    if(hasDigit(go)){
+      if(cl(row[C.padrao])) g.padrao=cl(row[C.padrao]);
+      if(cl(row[C.compr]))  g.compr =cl(row[C.compr]);
+      if(cl(row[C.larg]))   g.larg  =cl(row[C.larg]);
+      if(cl(row[C.esp]))    g.esp   =cl(row[C.esp]);
+    }
     cl(row[C.refInd]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refs.add(r));
     cl(row[C.refAgrup]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refsAgrup.add(r));
   }
-
   grouped=Array.from(map.values()).map(g=>{
     const uniq=[...new Set(g.statuses)];
-    g.statusFinal = uniq.length===0 ? '—' : uniq.join(' / ');
-    g.refs=[...g.refs];
-    g.refsAgrup=[...g.refsAgrup];
+    g.statusFinal=uniq.length===0?'—':uniq.join(' / ');
+    g.refs=[...g.refs]; g.refsAgrup=[...g.refsAgrup];
+    g.comprN=parseInt(g.compr)||0;
+    g.largN =parseInt(g.larg)||0;
+    g.espN  =parseInt(g.esp)||0;
     return g;
   });
 }
 
-function fillFilters() {
-  const especies=[...new Set(grouped.map(g=>g.especie))].sort();
-  const medidas=[...new Set(grouped.map(g=>g.medida))].sort();
+// ── FILTROS ─────────────────────────────────────────────────
+function fillFilters(){
+  const esp=[...new Set(grouped.map(g=>g.especie))].sort();
+  const med=[...new Set(grouped.map(g=>g.medida))].sort();
   const se=document.getElementById('f-especie');
   const sm=document.getElementById('f-medida');
   se.innerHTML='<option value="">Todas as espécies</option>';
-  especies.forEach(e=>se.innerHTML+=`<option value="${e}">${e}</option>`);
+  esp.forEach(e=>se.innerHTML+=`<option value="${e}">${e}</option>`);
   sm.innerHTML='<option value="">Todas as medidas</option>';
-  medidas.forEach(m=>sm.innerHTML+=`<option value="${m}">${m}</option>`);
+  med.forEach(m=>sm.innerHTML+=`<option value="${m}">${m}</option>`);
 }
 
-function applyFilters() {
-  const esp=document.getElementById('f-especie').value;
-  const st=document.getElementById('f-status').value;
-  const med=document.getElementById('f-medida').value;
+function applyFilters(){
+  const esp =document.getElementById('f-especie').value;
+  const st  =document.getElementById('f-status').value;
+  const med =document.getElementById('f-medida').value;
+  const cert=document.getElementById('f-cert').value;
   filtered=grouped.filter(g=>{
-    if(esp && g.especie!==esp) return false;
-    if(med && g.medida!==med) return false;
+    if(esp  && g.especie!==esp)  return false;
+    if(med  && g.medida!==med)   return false;
+    if(cert && g.cert!==cert)    return false;
     if(st){
       const s=g.statusFinal||'';
-      if(st==='Excesso' && !s.includes('Excesso')) return false;
-      if(st==='Falta'   && !s.includes('Falta'))   return false;
-      if(st==='-'       && s!=='—' && s!=='-')      return false;
+      if(st==='Excesso'&&!s.includes('Excesso')) return false;
+      if(st==='Falta'  &&!s.includes('Falta'))   return false;
+      if(st==='-'      &&s!=='—'&&s!=='-')        return false;
     }
     return true;
   });
@@ -476,111 +480,113 @@ function applyFilters() {
   renderCross();
 }
 
-function renderCards() {
+// ── CARDS ───────────────────────────────────────────────────
+function renderCards(){
   document.getElementById('c-especies').textContent=new Set(filtered.map(g=>g.especie)).size;
-  document.getElementById('c-grupos').textContent=new Set(filtered.map(g=>g.grupoMestre)).size;
-  document.getElementById('c-pcp').textContent=fmt(filtered.reduce((s,g)=>s+g.estPCP,0));
-  document.getElementById('c-comp').textContent=fmt(filtered.reduce((s,g)=>s+g.estComp,0));
-  document.getElementById('c-falta').textContent=filtered.filter(g=>g.statusFinal.includes('Falta')).length;
-  document.getElementById('c-excesso').textContent=filtered.filter(g=>g.statusFinal.includes('Excesso')).length;
+  document.getElementById('c-grupos').textContent  =new Set(filtered.map(g=>g.especie+'||'+g.grupoMestre)).size;
+  document.getElementById('c-pcp').textContent     =fmt(filtered.reduce((s,g)=>s+g.estPCP,0));
+  document.getElementById('c-comp').textContent    =fmt(filtered.reduce((s,g)=>s+g.estComp,0));
+  document.getElementById('c-falta').textContent   =filtered.filter(g=>g.statusFinal.includes('Falta')).length;
+  document.getElementById('c-excesso').textContent =filtered.filter(g=>g.statusFinal.includes('Excesso')).length;
 }
 
-function renderCharts() {
+// ── CHARTS ──────────────────────────────────────────────────
+function renderCharts(){
   const byEsp={};
   for(const g of filtered){
     if(!byEsp[g.especie]) byEsp[g.especie]={pcp:0,comp:0,excesso:0,falta:0,total:0};
-    byEsp[g.especie].pcp    +=g.estPCP;
-    byEsp[g.especie].comp   +=g.estComp;
-    byEsp[g.especie].total  +=1;
+    byEsp[g.especie].pcp  +=g.estPCP;
+    byEsp[g.especie].comp +=g.estComp;
+    byEsp[g.especie].total+=1;
     if(g.statusFinal.includes('Excesso')) byEsp[g.especie].excesso++;
     if(g.statusFinal.includes('Falta'))   byEsp[g.especie].falta++;
   }
   const labels=Object.keys(byEsp).sort();
   const mono='DM Mono, monospace';
-
   if(ch1) ch1.destroy();
   ch1=new Chart(document.getElementById('ch1').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Estoque PCP (confiável)', data:labels.map(l=>byEsp[l].pcp),
-          backgroundColor:'rgba(79,195,161,0.65)', borderColor:'#4fc3a1', borderWidth:1, borderRadius:4},
-        {label:'Estoque Compras ⚠', data:labels.map(l=>byEsp[l].comp),
-          backgroundColor:'rgba(240,160,96,0.4)', borderColor:'#f0a060', borderWidth:1, borderRadius:4}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
+    type:'bar',data:{labels,datasets:[
+      {label:'Estoque PCP (confiável)',data:labels.map(l=>byEsp[l].pcp),backgroundColor:'rgba(79,195,161,0.65)',borderColor:'#4fc3a1',borderWidth:1,borderRadius:4},
+      {label:'Estoque Compras ⚠',data:labels.map(l=>byEsp[l].comp),backgroundColor:'rgba(240,160,96,0.4)',borderColor:'#f0a060',borderWidth:1,borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{
-        x:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-        y:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}
-      }
-    }
+      scales:{x:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+              y:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}}}
   });
-
   if(ch2) ch2.destroy();
   ch2=new Chart(document.getElementById('ch2').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Excesso', data:labels.map(l=>byEsp[l].excesso), backgroundColor:'rgba(79,195,161,0.7)', borderRadius:4},
-        {label:'Com Falta', data:labels.map(l=>byEsp[l].falta), backgroundColor:'rgba(240,100,100,0.7)', borderRadius:4},
-        {label:'Normal', data:labels.map(l=>byEsp[l].total-byEsp[l].excesso-byEsp[l].falta), backgroundColor:'rgba(122,132,148,0.4)', borderRadius:4}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
+    type:'bar',data:{labels,datasets:[
+      {label:'Excesso',data:labels.map(l=>byEsp[l].excesso),backgroundColor:'rgba(79,195,161,0.7)',borderRadius:4},
+      {label:'Com Falta',data:labels.map(l=>byEsp[l].falta),backgroundColor:'rgba(240,100,100,0.7)',borderRadius:4},
+      {label:'Normal',data:labels.map(l=>byEsp[l].total-byEsp[l].excesso-byEsp[l].falta),backgroundColor:'rgba(122,132,148,0.4)',borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{
-        x:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-        y:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}
-      }
-    }
+      scales:{x:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+              y:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}}}
   });
 }
 
-function badge(st) {
-  if(!st||st==='—' || st === '-') return '<span class="badge b-neutral">—</span>';
-  if(st.includes(' / ')) return `<span class="badge b-multi">${st}</span>`;
-  if(st.includes('Excesso'))    return `<span class="badge b-excess">${st}</span>`;
+// ── BADGES ──────────────────────────────────────────────────
+function badge(st){
+  if(!st||st==='—'||st==='-') return '<span class="badge b-neutral">—</span>';
+  if(st.includes(' / '))       return `<span class="badge b-multi">${st}</span>`;
+  if(st.includes('Excesso'))   return `<span class="badge b-excess">${st}</span>`;
   if(st.includes('Falta Mês1'))return `<span class="badge b-lack1">${st}</span>`;
-  if(st.includes('Falta'))      return `<span class="badge b-lack">${st}</span>`;
+  if(st.includes('Falta'))     return `<span class="badge b-lack">${st}</span>`;
   return `<span class="badge b-neutral">${st}</span>`;
 }
+function certBadge(cert){
+  return cert==='FSC'
+    ? `<span class="fsc-badge">🌲 FSC</span>`
+    : `<span class="nfsc-badge">Não FSC</span>`;
+}
 
-function renderTable() {
+// ── TOP 3 (estoques em excesso com maior PCP) ────────────────
+function getTop3Set(rows){
+  const excess=rows.filter(g=>g.statusFinal.includes('Excesso'));
+  const sorted=[...excess].sort((a,b)=>b.estPCP-a.estPCP);
+  const top3=new Set();
+  sorted.slice(0,3).forEach((g,i)=>top3.set ? top3.set(g,i+1) : null);
+  // usa Map para guardar posição
+  const rankMap=new Map();
+  sorted.slice(0,3).forEach((g,i)=>rankMap.set(g,i+1));
+  return rankMap;
+}
+
+// ── TABELA ──────────────────────────────────────────────────
+function renderTable(){
   const tbody=document.getElementById('tbody');
-  document.getElementById('tbl-count').textContent=`${filtered.length} grupos`;
-  if(!filtered.length){
-    tbody.innerHTML='<tr><td colspan="14"><div class="placeholder"><div class="ico">🔍</div><p>Nenhum resultado</p></div></td></tr>';
-    return;
-  }
+  document.getElementById('tbl-count').textContent=`${filtered.length} linhas`;
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="15"><div class="placeholder"><div class="ico">🔍</div><p>Nenhum resultado</p></div></td></tr>';return;}
+
+  // top 3 globais (sobre os filtrados em excesso)
+  const rankMap=getTop3Set(filtered);
+  const medals=['','🥇','🥈','🥉'];
+
   const sorted=[...filtered].sort((a,b)=>
-    a.especie.localeCompare(b.especie)||a.grupoMestre.localeCompare(b.grupoMestre)||a.medida.localeCompare(b.medida)
+    a.especie.localeCompare(b.especie)||a.grupoMestre.localeCompare(b.grupoMestre)||a.medida.localeCompare(b.medida)||a.cert.localeCompare(b.cert)
   );
   let html='';
   for(const g of sorted){
+    const rank=rankMap.get(g)||0;
+    const rowCls=rank===1?'top1-row':rank===2?'top2-row':rank===3?'top3-row':'';
+    const medal=rank?`<span class="rank-medal">${medals[rank]}</span>`:'';
     const allRefs=[...new Set([...g.refs,...g.refsAgrup])];
-    const skuHtml=allRefs.length
-      ? `<div class="sku-list">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`
-      : '<span style="color:var(--muted2)">—</span>';
-    html+=`<tr>
-      <td><strong>${g.especie}</strong></td>
+    const skuHtml=allRefs.length?`<div class="sku-list">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'<span style="color:var(--muted2)">—</span>';
+    html+=`<tr class="${rowCls}">
+      <td>${medal}<strong>${g.especie}</strong></td>
       <td>${g.grupoMestre}</td>
       <td>${g.padrao||'—'}</td>
       <td style="color:var(--accent);font-weight:500">${g.medida||'—'}</td>
+      <td>${certBadge(g.cert)}</td>
       <td style="text-align:right">${g.compr||'—'}</td>
       <td style="text-align:right">${g.larg||'—'}</td>
       <td style="text-align:right">${g.esp||'—'}</td>
       <td>${badge(g.statusFinal)}</td>
       <td style="text-align:right;color:var(--teal)">${fmt(g.estPCP)}</td>
-      <td style="text-align:right">
-        <span style="color:var(--warn)">${fmt(g.estComp)}</span>
-        <span class="b-warn-sm">⚠</span>
-      </td>
+      <td style="text-align:right"><span style="color:var(--warn)">${fmt(g.estComp)}</span><span class="b-warn-sm">⚠</span></td>
       <td style="text-align:right;color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</td>
       <td style="text-align:right;color:${g.faltaSeg>0?'var(--warn)':'var(--muted)'}">${fmt(g.faltaSeg)}</td>
       <td style="text-align:right">${fmt(g.totalAtual)}</td>
@@ -590,74 +596,295 @@ function renderTable() {
   tbody.innerHTML=html;
 }
 
-function renderCross() {
+// ══════════════════════════════════════════════════════════════
+// ── LÓGICA DE SUBSTITUIÇÃO ────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+
+function canCut(src, tgt){
+  if(!src.comprN||!src.largN||!tgt.comprN||!tgt.largN) return false;
+  if(src.espN!==tgt.espN) return false;
+  if(src.comprN===tgt.comprN&&src.largN===tgt.largN) return false;
+  return src.comprN>=tgt.comprN && src.largN>=tgt.largN;
+}
+
+function buildCrossData(){
+  const excesso=filtered.filter(g=>g.statusFinal.includes('Excesso'));
+  const falta  =filtered.filter(g=>g.statusFinal.includes('Falta'));
+
+  // top 3 para destacar nos cartões
+  const rankMap=getTop3Set(filtered);
+
+  // ── 1. MESMA MEDIDA ──────────────────────────────────────
+  // Agrupa por medida (sem cert na chave, pois mistura na mesma medida)
   const byMed={};
   for(const g of filtered){
-    if(!g.medida || g.medida === "Sem Medida") continue;
+    if(!g.medida||g.medida==='Sem Medida') continue;
     if(!byMed[g.medida]) byMed[g.medida]=[];
     byMed[g.medida].push(g);
   }
-  const medidas=Object.keys(byMed).sort().filter(m=>{
+  // Para mesma medida: considera que FSC-excesso pode suprir Não-FSC-falta, mas não o contrário
+  const exactMedidas=Object.keys(byMed).sort().filter(m=>{
     const rows=byMed[m];
-    return rows.some(r=>r.statusFinal.includes('Excesso')) && rows.some(r=>r.statusFinal.includes('Falta'));
+    const exRows=rows.filter(r=>r.statusFinal.includes('Excesso'));
+    const fRows =rows.filter(r=>r.statusFinal.includes('Falta'));
+    if(!exRows.length||!fRows.length) return false;
+    // verifica se há ao menos um par válido (cert compatível)
+    return exRows.some(src=>fRows.some(tgt=>certCanSupply(src.cert,tgt.cert)));
   });
-  document.getElementById('cross-count').textContent=`${medidas.length} medidas com oportunidade`;
-  const grid=document.getElementById('cross-grid');
-  if(!medidas.length){
-    grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Nenhuma medida com excesso e falta simultâneos nos filtros atuais</p></div>';
-    return;
-  }
-  let html='';
-  for(const med of medidas){
-    const rows=byMed[med];
-    const excess=rows.filter(r=>r.statusFinal.includes('Excesso'));
-    const lack=rows.filter(r=>r.statusFinal.includes('Falta'));
-    const other=rows.filter(r=>!r.statusFinal.includes('Excesso')&&!r.statusFinal.includes('Falta'));
-    const sample=rows[0];
-    const dims=[sample.compr,sample.larg,sample.esp].filter(Boolean).join(' × ');
+  const exactCards=exactMedidas.map(m=>({type:'exact',medida:m,rows:byMed[m]}));
 
-    const makeCard=(g,cls)=>{
-      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
-      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-      const tip=cls==='excess'
-        ?`<div class="ce-tip ok">↑ Pode ser oferecido como substituto</div>`
-        :cls==='lack'
-        ?`<div class="ce-tip bad">↓ Demanda não atendida — buscar substituto</div>`:'';
-      return `<div class="ce ${cls}">
-        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
-        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
-        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
-        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
-        <div class="ce-row"><span>Falta Atual</span><span style="color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</span></div>
-        ${skuHtml}${tip}
-      </div>`;
-    };
-
-    const cards=[...excess.map(g=>makeCard(g,'excess')),...lack.map(g=>makeCard(g,'lack')),...other.map(g=>makeCard(g,''))].join('');
-    html+=`<div class="cross-card">
-      <div class="cross-head">
-        <span class="cross-medida">${med}</span>
-        ${dims?`<span style="color:var(--muted);font-size:12px">${dims} mm</span>`:''}
-        <span style="margin-left:auto;display:flex;gap:8px">
-          <span class="badge b-excess">${excess.length} excesso</span>
-          <span class="badge b-lack">${lack.length} falta</span>
-        </span>
-      </div>
-      <div class="cross-body">${cards}</div>
-    </div>`;
+  // ── 2. CORTE ─────────────────────────────────────────────
+  const cutPairs=[];
+  const usedPairs=new Set();
+  for(const src of excesso){
+    for(const tgt of falta){
+      if(!canCut(src,tgt)) continue;
+      if(!certCanSupply(src.cert,tgt.cert)) continue; // regra FSC
+      const pkey=`${src.especie}||${src.grupoMestre}||${src.cert}||${src.medida}→${tgt.especie}||${tgt.medida}||${tgt.cert}`;
+      if(usedPairs.has(pkey)) continue;
+      usedPairs.add(pkey);
+      const crossSpecies=src.especie!==tgt.especie;
+      const crossCert=src.cert!==tgt.cert;
+      cutPairs.push({type:'cut',source:src,target:tgt,crossSpecies,crossCert});
+    }
   }
-  grid.innerHTML=html;
+
+  // ── 3. EXCESSOS SEM PAR ───────────────────────────────────
+  const excessSolo=excesso.filter(src=>{
+    const temExato=byMed[src.medida]&&byMed[src.medida].some(r=>r.statusFinal.includes('Falta')&&certCanSupply(src.cert,r.cert));
+    const temCorte=falta.some(tgt=>canCut(src,tgt)&&certCanSupply(src.cert,tgt.cert));
+    return !temExato&&!temCorte;
+  });
+
+  // ── 4. FALTAS SEM PAR ────────────────────────────────────
+  const riskSolo=falta.filter(tgt=>{
+    const temExato=byMed[tgt.medida]&&byMed[tgt.medida].some(r=>r.statusFinal.includes('Excesso')&&certCanSupply(r.cert,tgt.cert));
+    const temCorte=excesso.some(src=>canCut(src,tgt)&&certCanSupply(src.cert,tgt.cert));
+    return !temExato&&!temCorte;
+  });
+
+  return {exactCards,cutPairs,excessSolo,riskSolo,rankMap};
 }
 
-function switchTab(id) {
+// ── RENDER CROSS ────────────────────────────────────────────
+function renderCross(){
+  const data=buildCrossData();
+  document.getElementById('cnt-exact').textContent =data.exactCards.length;
+  document.getElementById('cnt-cut').textContent   =data.cutPairs.length;
+  document.getElementById('cnt-excess').textContent=data.excessSolo.length;
+  document.getElementById('cnt-risk').textContent  =data.riskSolo.length;
+  renderSubtab(data);
+}
+
+function renderSubtab(data){
+  const grid=document.getElementById('cross-grid');
+  const legend=document.getElementById('cross-legend');
+  const medals=['','🥇','🥈','🥉'];
+  const crownColor={1:'#ffd700',2:'#c0c0c0',3:'#cd7f32'};
+
+  if(currentSubtab==='exact'){
+    legend.innerHTML=`
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Espécie com Excesso — pode ser ofertada como substituta</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Espécie com Falta — demanda não atendida</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC pode suprir FSC e Não FSC · Não FSC só supre Não FSC</div>
+      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores estoques em excesso</div>`;
+    if(!data.exactCards.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Nenhuma medida com excesso e falta simultâneos</p></div>';return;}
+    let html='';
+    for(const item of data.exactCards){
+      const rows=item.rows;
+      const excess=rows.filter(r=>r.statusFinal.includes('Excesso'));
+      const lack  =rows.filter(r=>r.statusFinal.includes('Falta'));
+      const other =rows.filter(r=>!r.statusFinal.includes('Excesso')&&!r.statusFinal.includes('Falta'));
+      const sample=rows[0];
+      const dims=[sample.compr,sample.larg,sample.esp].filter(Boolean).join(' × ');
+      const cards=[
+        ...excess.map(g=>makeEspecieCard(g,'excess','↑ Pode ser ofertado como substituto',   'ok',   data.rankMap)),
+        ...lack.map(g=>  makeEspecieCard(g,'lack',  '↓ Demanda não atendida',               'bad',  data.rankMap)),
+        ...other.map(g=> makeEspecieCard(g,'',      '',                                      '',     data.rankMap))
+      ].join('');
+      html+=`<div class="cross-card">
+        <div class="cross-head">
+          <span class="cross-medida">${item.medida}</span>
+          ${dims?`<span style="color:var(--muted);font-size:12px">${dims} mm</span>`:''}
+          <span class="cross-type-badge ctb-exact">Mesma medida</span>
+          <span style="margin-left:auto;display:flex;gap:8px">
+            <span class="badge b-excess">${excess.length} excesso</span>
+            <span class="badge b-lack">${lack.length} falta</span>
+          </span>
+        </div>
+        <div class="cross-body">${cards}</div>
+      </div>`;
+    }
+    grid.innerHTML=html;
+
+  } else if(currentSubtab==='cut'){
+    legend.innerHTML=`
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Origem — painel maior com excesso (candidato a corte)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Destino — painel menor em falta (seria atendido)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC pode cortar para Não FSC · inverso não permitido</div>
+      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores estoques em excesso</div>`;
+    if(!data.cutPairs.length){grid.innerHTML='<div class="placeholder"><div class="ico">✂</div><p>Nenhuma oportunidade de corte identificada</p></div>';return;}
+    let html='';
+    for(const pair of data.cutPairs){
+      const src=pair.source, tgt=pair.target;
+      const srcDims=[src.compr,src.larg,src.esp].filter(Boolean).join(' × ');
+      const tgtDims=[tgt.compr,tgt.larg,tgt.esp].filter(Boolean).join(' × ');
+      const rank=data.rankMap.get(src)||0;
+      const topCls=rank?`top${rank}`:'';
+      const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
+      html+=`<div class="cross-card">
+        <div class="cross-head">
+          <span class="cross-medida">${src.medida}</span>
+          <span style="color:var(--muted);font-size:18px;margin:0 4px">→</span>
+          <span class="cross-medida" style="color:var(--blue)">${tgt.medida}</span>
+          <span class="cross-type-badge ${pair.crossSpecies?'ctb-excess':'ctb-cut'}">${pair.crossSpecies?'Entre espécies':'Corte'}</span>
+          ${pair.crossCert?`<span class="cross-type-badge ctb-excess" style="margin-left:4px">FSC → Não FSC</span>`:''}
+          <span style="margin-left:auto;font-size:11px;color:var(--muted)">esp. ${src.espN}mm</span>
+        </div>
+        <div class="cross-body" style="align-items:center">
+          <div class="ce source ${topCls}" style="flex:2;position:relative">
+            ${crown}
+            <div class="ce-name">${src.especie} · ${src.grupoMestre}</div>
+            <div class="ce-row"><span>Medida</span><span>${src.medida}</span></div>
+            <div class="ce-row"><span>Dimensões</span><span>${srcDims} mm</span></div>
+            <div class="ce-row"><span>Certificação</span><span>${certBadge(src.cert)}</span></div>
+            <div class="ce-row"><span>Status</span><span>${badge(src.statusFinal)}</span></div>
+            <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(src.estPCP)}</span></div>
+            ${makeSkuHtml(src)}
+            <div class="ce-tip info">↑ Excesso disponível — candidato a corte</div>
+          </div>
+          <div class="cut-arrow"><span style="font-size:22px">✂</span><span>cortar para</span></div>
+          <div class="ce target" style="flex:2">
+            <div class="ce-name">${tgt.especie} · ${tgt.grupoMestre}</div>
+            <div class="ce-row"><span>Medida</span><span>${tgt.medida}</span></div>
+            <div class="ce-row"><span>Dimensões</span><span>${tgtDims} mm</span></div>
+            <div class="ce-row"><span>Certificação</span><span>${certBadge(tgt.cert)}</span></div>
+            <div class="ce-row"><span>Status</span><span>${badge(tgt.statusFinal)}</span></div>
+            <div class="ce-row"><span>Falta Atual</span><span style="color:var(--danger)">${fmt(tgt.faltaAtual)}</span></div>
+            <div class="ce-row"><span>Falta Seg</span><span style="color:var(--warn)">${fmt(tgt.faltaSeg)}</span></div>
+            ${makeSkuHtml(tgt)}
+            <div class="ce-tip bad">↓ Em falta — pode ser atendido pelo corte acima</div>
+            ${pair.crossSpecies?`<div class="ce-tip warn">⚠ Espécies diferentes — confirmar com PCP</div>`:''}
+            ${pair.crossCert?`<div class="ce-tip fsc">🌲 FSC suprimindo Não FSC — permitido</div>`:''}
+          </div>
+        </div>
+      </div>`;
+    }
+    grid.innerHTML=html;
+
+  } else if(currentSubtab==='excess'){
+    legend.innerHTML=`
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Excesso sem demanda correspondente — avaliar oferta comercial ativa</div>
+      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores — prioridade máxima para ação comercial</div>`;
+    if(!data.excessSolo.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Todos os excessos têm uma falta correspondente</p></div>';return;}
+    const sorted=[...data.excessSolo].sort((a,b)=>b.estPCP-a.estPCP);
+    let html='<div style="display:flex;flex-wrap:wrap;gap:10px">';
+    for(const g of sorted){
+      const rank=data.rankMap.get(g)||0;
+      const topCls=rank?`top${rank}`:'alert-excess';
+      const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
+      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
+      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
+      html+=`<div class="ce ${topCls}" style="min-width:220px;max-width:320px;flex:1;position:relative">
+        ${crown}
+        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
+        <div class="ce-row"><span>Medida</span><span style="color:var(--accent)">${g.medida}</span></div>
+        <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
+        <div class="ce-row"><span>Dimensões</span><span>${[g.compr,g.larg,g.esp].filter(Boolean).join(' × ')} mm</span></div>
+        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
+        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
+        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
+        ${skuHtml}
+        <div class="ce-tip accent">↑ Excesso sem demanda — oferecer ao comercial ou avaliar corte</div>
+      </div>`;
+    }
+    html+='</div>';
+    grid.innerHTML=html;
+
+  } else if(currentSubtab==='risk'){
+    legend.innerHTML=`
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Falta iminente — sem fonte de excesso compatível (nem mesma medida, nem corte)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC em falta é mais crítico — Não FSC não pode cobrir</div>`;
+    if(!data.riskSolo.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Todas as faltas têm uma fonte de excesso identificada</p></div>';return;}
+    const sorted=[...data.riskSolo].sort((a,b)=>{
+      const aF=a.statusFinal.includes('Mês1')?0:1;
+      const bF=b.statusFinal.includes('Mês1')?0:1;
+      return aF-bF||b.faltaAtual-a.faltaAtual;
+    });
+    let html='<div style="display:flex;flex-wrap:wrap;gap:10px">';
+    for(const g of sorted){
+      const isMes1=g.statusFinal.includes('Mês1')||g.statusFinal.includes('Mes1');
+      const isFSCItem=g.cert==='FSC';
+      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
+      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
+      html+=`<div class="ce alert-risk" style="min-width:220px;max-width:320px;flex:1">
+        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
+        <div class="ce-row"><span>Medida</span><span style="color:var(--accent)">${g.medida}</span></div>
+        <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
+        <div class="ce-row"><span>Dimensões</span><span>${[g.compr,g.larg,g.esp].filter(Boolean).join(' × ')} mm</span></div>
+        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
+        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
+        <div class="ce-row"><span>Falta Atual</span><span style="color:var(--danger)">${fmt(g.faltaAtual)}</span></div>
+        <div class="ce-row"><span>Falta Seg</span><span style="color:var(--warn)">${fmt(g.faltaSeg)}</span></div>
+        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
+        ${skuHtml}
+        <div class="ce-tip ${isMes1?'bad':'warn'}">
+          ${isMes1?'🚨 Falta iminente — sem fonte de excesso compatível. Ação urgente.':'⚠ Risco no próximo mês — planejar reposição.'}
+        </div>
+        ${isFSCItem?`<div class="ce-tip fsc">🌲 FSC em falta — Não FSC não pode cobrir. Requer estoque FSC.</div>`:''}
+      </div>`;
+    }
+    html+='</div>';
+    grid.innerHTML=html;
+  }
+}
+
+// ── HELPERS DE CARD ─────────────────────────────────────────
+function makeEspecieCard(g, cls, tipText, tipCls, rankMap){
+  const rank=rankMap.get(g)||0;
+  const medals=['','🥇','🥈','🥉'];
+  const topCls=rank?(cls?`${cls} top${rank}`:`top${rank}`):'';
+  const finalCls=topCls||cls;
+  const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
+  const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
+  const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
+  const tip=tipText?`<div class="ce-tip ${tipCls}">${tipText}</div>`:'';
+  return `<div class="ce ${finalCls}" style="position:relative">
+    ${crown}
+    <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
+    <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
+    <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
+    <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
+    <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
+    <div class="ce-row"><span>Falta Atual</span><span style="color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</span></div>
+    ${skuHtml}${tip}
+  </div>`;
+}
+
+function makeSkuHtml(g){
+  const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,6);
+  return allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
+}
+
+// ── SUBTABS / TABS ───────────────────────────────────────────
+function switchSubtab(id){
+  currentSubtab=id;
+  const map={exact:'active-exact',cut:'active-cut',excess:'active-excess',risk:'active-risk'};
+  ['exact','cut','excess','risk'].forEach(k=>{
+    const el=document.getElementById('st-'+k);
+    el.className='subtab'+(k===id?' '+map[k]:'');
+  });
+  const data=buildCrossData();
+  renderSubtab(data);
+}
+
+function switchTab(id){
   const ids=['grafico','tabela','cross'];
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
   document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='tab-'+id));
 }
 
-window.addEventListener('load',()=>{
-  if(document.getElementById('sheet-url').value.trim()) loadSheet();
-});
+window.addEventListener('load',()=>{ if(document.getElementById('sheet-url').value.trim()) loadSheet(); });
 </script>
 </body>
 </html>
