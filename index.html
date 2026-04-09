@@ -3,888 +3,1291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Estoque — Painéis</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<title>Portfólio — Automação Supply Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0d0f14;
-  --surface: #161a22;
-  --surface2: #1e2430;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --accent: #22c55e;
-  --accent-dim: rgba(34, 197, 94, 0.12);
-  --teal: #4fc3a1;
-  --teal-dim: rgba(79,195,161,0.12);
-  --danger: #f06464;
-  --danger-dim: rgba(240,100,100,0.12);
-  --warn: #f0a060;
-  --warn-dim: rgba(240,160,96,0.12);
-  --blue: #7eb8f7;
-  --blue-dim: rgba(126,184,247,0.12);
-  --purple: #b07ef7;
-  --purple-dim: rgba(176,126,247,0.12);
-  --fsc-color: #5dba7d;
-  --fsc-dim: rgba(93,186,125,0.12);
-  --nfsc-color: #a0a8b8;
-  --nfsc-dim: rgba(160,168,184,0.1);
-  --text: #e2e4ec;
-  --muted: #7a8494;
-  --muted2: #4a5260;
-  --font-head: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-mono); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 13px; }
-body::before {
-  content: ''; position: fixed; inset: 0;
-  background: radial-gradient(ellipse at 10% 10%, rgba(232,197,71,0.03) 0%, transparent 55%),
-              radial-gradient(ellipse at 90% 90%, rgba(79,195,161,0.03) 0%, transparent 55%);
-  pointer-events: none; z-index: 0;
-}
-.wrap { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111a15;
+    --surface2: #162019;
+    --border: #1f2e23;
+    --accent: #3ecf6e;
+    --accent2: #27a855;
+    --accent3: #0d6e35;
+    --text: #e8f2eb;
+    --muted: #7a9882;
+    --dim: #3a4e3f;
+    --card-bg: #0e1812;
+    --highlight: #4ade80;
+  }
 
-/* HEADER */
-.header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
-.header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
-.header h1 span { color: var(--accent); }
-.header p { color: var(--muted); margin-top: 4px; font-size: 12px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* SHEET BAR */
-.sheet-bar { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 20px; margin-bottom: 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.sheet-bar label { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.sheet-bar input { flex: 1; min-width: 260px; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: var(--font-mono); font-size: 12px; outline: none; transition: border-color 0.2s; }
-.sheet-bar input:focus { border-color: var(--accent); }
-.btn { background: var(--accent); color: #0d0f14; border: none; border-radius: 6px; padding: 8px 18px; font-family: var(--font-head); font-weight: 700; font-size: 12px; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; }
-.btn:hover { opacity: 0.85; }
-#status-msg { font-size: 12px; color: var(--muted); }
-#status-msg.ok  { color: var(--teal); }
-#status-msg.err { color: var(--danger); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
 
-/* FILTROS */
-.filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.filter-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-select { background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 7px 12px; color: var(--text); font-family: var(--font-mono); font-size: 12px; outline: none; cursor: pointer; }
-select:focus { border-color: var(--accent); }
+  /* ---- NOISE OVERLAY ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
 
-/* CARDS RESUMO */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-.card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.card-value { font-family: var(--font-head); font-size: 26px; font-weight: 800; line-height: 1; }
-.card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-.card.c-accent { border-color: rgba(232,197,71,0.25); } .card.c-accent .card-value { color: var(--accent); }
-.card.c-teal   { border-color: rgba(79,195,161,0.25); } .card.c-teal   .card-value { color: var(--teal); }
-.card.c-danger { border-color: rgba(240,100,100,0.25);} .card.c-danger .card-value { color: var(--danger); }
-.card.c-warn   { border-color: rgba(240,160,96,0.25); } .card.c-warn   .card-value { color: var(--warn); }
+  /* ---- HERO ---- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 6vw;
+    overflow: hidden;
+  }
 
-/* TABS */
-.tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.tab { padding: 10px 18px; font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.section { display: none; }
-.section.active { display: block; }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(62,207,110,0.12) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(62,207,110,0.07) 0%, transparent 70%);
+    bottom: 100px; left: -100px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
 
-/* CHARTS */
-.chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-.chart-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; margin-bottom: 16px; }
-.chart-container { position: relative; width: 100%; height: 280px; }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent3);
+    background: rgba(62,207,110,0.06);
+    padding: 5px 14px;
+    border-radius: 2px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
 
-/* TABLE */
-.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-.table-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.table-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; }
-.table-count { font-size: 11px; color: var(--muted); }
-.table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-thead tr { background: var(--surface2); }
-th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); white-space: nowrap; border-bottom: 1px solid var(--border); }
-td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
-tbody tr:hover { background: rgba(255,255,255,0.02); }
-tbody tr:last-child td { border-bottom: none; }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
 
-/* FSC badges */
-.fsc-badge    { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; background:var(--fsc-dim); color:var(--fsc-color); border:1px solid rgba(93,186,125,0.3); }
-.nfsc-badge   { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; background:var(--nfsc-dim); color:var(--nfsc-color); border:1px solid rgba(160,168,184,0.2); }
+  h1 span.green { color: var(--accent); }
+  h1 span.line2 { display: block; color: var(--muted); font-weight: 400; font-size: 0.55em; margin-top: 8px; letter-spacing: 0; }
 
-/* STATUS BADGES */
-.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
-.b-excess  { background: var(--teal-dim);   color: var(--teal);   border: 1px solid rgba(79,195,161,0.25); }
-.b-lack    { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(240,100,100,0.25); }
-.b-lack1   { background: var(--warn-dim);   color: var(--warn);   border: 1px solid rgba(240,160,96,0.25); }
-.b-neutral { background: rgba(122,132,148,0.1); color: var(--muted); border: 1px solid var(--border2); }
-.b-multi   { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(232,197,71,0.25); }
-.b-warn-sm { display:inline-block; font-size:9px; padding:1px 5px; border-radius:3px; background:var(--warn-dim); color:var(--warn); border:1px solid rgba(240,160,96,0.3); margin-left:4px; vertical-align:middle; }
+  .hero-desc {
+    max-width: 580px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-bottom: 48px;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
 
-/* TOP 3 highlight na tabela */
-.top1-row td:first-child { border-left: 3px solid #ffd700; }
-.top2-row td:first-child { border-left: 3px solid #c0c0c0; }
-.top3-row td:first-child { border-left: 3px solid #cd7f32; }
-.top1-row { background: rgba(255,215,0,0.04) !important; }
-.top2-row { background: rgba(192,192,192,0.04) !important; }
-.top3-row { background: rgba(205,127,50,0.04) !important; }
-.rank-medal { font-size: 14px; margin-right: 4px; }
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
 
-/* SKUS */
-.sku-list { display: flex; flex-wrap: wrap; gap: 3px; }
-.sku { background: var(--surface2); border: 1px solid var(--border2); border-radius: 3px; padding: 2px 5px; font-size: 10px; color: var(--muted); }
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-top: 4px;
+  }
 
-/* ── CROSS / SUBSTITUIÇÃO ─────────────────────────── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 6vw;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--dim);
+    animation: expand 2s 1s ease infinite alternate;
+  }
+  @keyframes expand { from { width: 24px; } to { width: 56px; } }
 
-/* Subtabs */
-.subtabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-.subtab { padding: 7px 14px; font-family: var(--font-head); font-size: 12px; font-weight: 600; border-radius: 20px; cursor: pointer; border: 1px solid var(--border2); color: var(--muted); background: transparent; transition: all 0.15s; white-space: nowrap; }
-.subtab:hover { color: var(--text); border-color: var(--text); }
-.subtab.active-exact  { background: var(--teal-dim);   color: var(--teal);   border-color: rgba(79,195,161,0.4); }
-.subtab.active-cut    { background: var(--blue-dim);   color: var(--blue);   border-color: rgba(126,184,247,0.4); }
-.subtab.active-excess { background: var(--accent-dim); color: var(--accent); border-color: rgba(232,197,71,0.4); }
-.subtab.active-risk   { background: var(--danger-dim); color: var(--danger); border-color: rgba(240,100,100,0.4); }
-.subtab-count { display:inline-block; background:var(--surface2); border-radius:10px; padding:1px 6px; font-size:10px; margin-left:4px; }
+  /* ---- SECTIONS ---- */
+  section {
+    padding: 100px 6vw;
+    position: relative;
+  }
 
-.cross-legend { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:11px; color:var(--muted); }
-.legend-item { display:flex; align-items:center; gap:6px; }
-.legend-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 16px;
+  }
 
-/* Card de medida */
-.cross-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-.cross-head { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface2); border-bottom:1px solid var(--border); flex-wrap:wrap; }
-.cross-medida { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
-.cross-type-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:10px; font-family:var(--font-head); white-space:nowrap; }
-.ctb-exact  { background:var(--teal-dim);   color:var(--teal);   border:1px solid rgba(79,195,161,0.3); }
-.ctb-cut    { background:var(--blue-dim);   color:var(--blue);   border:1px solid rgba(126,184,247,0.3); }
-.ctb-excess { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(232,197,71,0.3); }
-.ctb-risk   { background:var(--danger-dim); color:var(--danger); border:1px solid rgba(240,100,100,0.3); }
-.cross-body { padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
 
-/* Cartão de espécie */
-.ce { flex:1; min-width:200px; border:1px solid var(--border2); border-radius:8px; padding:10px 12px; position:relative; }
-.ce.excess       { border-color:rgba(79,195,161,0.35);  background:rgba(79,195,161,0.04); }
-.ce.lack         { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
-.ce.source       { border-color:rgba(126,184,247,0.35); background:rgba(126,184,247,0.04); }
-.ce.target       { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
-.ce.alert-excess { border-color:rgba(232,197,71,0.35);  background:rgba(232,197,71,0.04); }
-.ce.alert-risk   { border-color:rgba(240,100,100,0.35); background:rgba(240,100,100,0.04); }
+  h2 em {
+    font-style: normal;
+    color: var(--accent);
+  }
 
-/* TOP 3 destaque no cartão de espécie */
-.ce.top1 { border-color:#ffd700 !important; box-shadow: 0 0 0 1px rgba(255,215,0,0.2), inset 0 0 20px rgba(255,215,0,0.04); }
-.ce.top2 { border-color:#c0c0c0 !important; box-shadow: 0 0 0 1px rgba(192,192,192,0.2); }
-.ce.top3 { border-color:#cd7f32 !important; box-shadow: 0 0 0 1px rgba(205,127,50,0.2); }
-.top-crown { position:absolute; top:-10px; right:10px; font-size:18px; line-height:1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+  /* ---- PROBLEM / BEFORE ---- */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 60px;
+  }
 
-.ce-name { font-family:var(--font-head); font-size:13px; font-weight:700; margin-bottom:6px; }
-.ce-row  { display:flex; justify-content:space-between; margin-top:4px; font-size:11px; color:var(--muted); }
-.ce-row span:last-child { color:var(--text); font-weight:500; }
-.ce-tip  { margin-top:8px; padding:5px 8px; border-radius:5px; font-size:10px; line-height:1.4; }
-.ce-tip.ok     { background:var(--teal-dim);   color:var(--teal);   border:1px solid rgba(79,195,161,0.2); }
-.ce-tip.bad    { background:var(--danger-dim); color:var(--danger); border:1px solid rgba(240,100,100,0.2); }
-.ce-tip.info   { background:var(--blue-dim);   color:var(--blue);   border:1px solid rgba(126,184,247,0.2); }
-.ce-tip.warn   { background:var(--warn-dim);   color:var(--warn);   border:1px solid rgba(240,160,96,0.2); }
-.ce-tip.accent { background:var(--accent-dim); color:var(--accent); border:1px solid rgba(232,197,71,0.2); }
-.ce-tip.fsc    { background:var(--fsc-dim);    color:var(--fsc-color); border:1px solid rgba(93,186,125,0.2); }
+  .problem-card {
+    background: var(--card-bg);
+    padding: 36px;
+  }
 
-.cut-arrow { display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; padding:8px 4px; color:var(--blue); font-size:18px; min-width:28px; }
-.cut-arrow span { font-size:9px; color:var(--muted); white-space:nowrap; text-align:center; }
+  .problem-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.placeholder { text-align:center; padding:50px 20px; color:var(--muted); }
-.placeholder .ico { font-size:32px; opacity:0.35; margin-bottom:10px; }
-.loading { display:flex; align-items:center; justify-content:center; gap:10px; padding:50px 20px; color:var(--muted); }
-.spinner { width:16px; height:16px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
+  .icon-bad { color: #ef4444; }
+  .icon-good { color: var(--accent); }
 
-@media (max-width: 600px) {
-  .wrap { padding:16px 12px; }
-  .cards { grid-template-columns:repeat(2,1fr); }
-}
+  .problem-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .problem-card ul li {
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .problem-card ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+    font-size: 0.8rem;
+  }
+
+  /* ---- SPREADSHEET MOCK ---- */
+  .spreadsheet-mock {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .ss-topbar {
+    background: var(--surface);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ss-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .ss-title {
+    margin-left: 8px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+
+  .ss-tabs {
+    display: flex;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    gap: 2px;
+    padding: 0 8px;
+  }
+
+  .ss-tab {
+    padding: 6px 16px;
+    font-size: 0.65rem;
+    color: var(--dim);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: default;
+    transition: color 0.2s;
+  }
+
+  .ss-tab.active {
+    background: var(--card-bg);
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .ss-tab.highlight { color: var(--accent2); }
+
+  table.ss-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+  }
+
+  .ss-table th {
+    background: var(--surface);
+    padding: 8px 12px;
+    text-align: left;
+    color: var(--dim);
+    font-weight: 400;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .ss-table td {
+    padding: 7px 12px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid rgba(31,46,35,0.5);
+    color: var(--muted);
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .ss-table tr:nth-child(even) td { background: rgba(22,32,25,0.4); }
+  .ss-table td.blur-cell {
+    filter: blur(5px);
+    user-select: none;
+    color: var(--text);
+    opacity: 0.4;
+  }
+  .ss-table td.green-cell { color: var(--accent); }
+  .ss-table th.month-group { background: rgba(62,207,110,0.08); color: var(--accent3); }
+
+  .chaos-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10,15,13,0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--accent3);
+    border-radius: 4px;
+    padding: 16px 28px;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .chaos-label p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .chaos-label strong {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ef4444;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ---- ARROW ---- */
+  .transform-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 40px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .transform-arrow .arrow-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent3), transparent);
+  }
+
+  .transform-arrow .arrow-icon {
+    font-size: 1.4rem;
+    color: var(--accent);
+    animation: bounceRight 1.5s infinite;
+  }
+
+  @keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+
+  /* ---- AFTER TABLE ---- */
+  .after-table-wrap {
+    border: 1px solid var(--accent3);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(62,207,110,0.06);
+  }
+
+  .after-topbar {
+    background: rgba(62,207,110,0.08);
+    border-bottom: 1px solid var(--accent3);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .after-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .after-topbar-right {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    letter-spacing: 0.08em;
+  }
+
+  table.after-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .after-table th {
+    background: var(--surface);
+    padding: 10px 14px;
+    text-align: left;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .after-table td {
+    padding: 8px 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid rgba(31,46,35,0.4);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .after-table tr:hover td { background: rgba(62,207,110,0.03); }
+  .after-table td.blur-cell {
+    filter: blur(5px);
+    user-select: none;
+    opacity: 0.35;
+    color: var(--text);
+  }
+  .after-table td.date-cell { color: var(--accent2); }
+
+  /* ---- CODE SECTION ---- */
+  .code-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .code-topbar {
+    background: var(--surface2);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .code-lang {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(62,207,110,0.1);
+    padding: 2px 10px;
+    border-radius: 2px;
+  }
+
+  .code-filename {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  pre.code-block {
+    padding: 28px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: var(--muted);
+    background: var(--card-bg);
+    margin: 0;
+  }
+
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: var(--accent); }
+  .cm { color: var(--dim); font-style: italic; }
+  .var { color: #f78c6c; }
+
+  /* ---- DASHBOARD PREVIEW ---- */
+  .dashboard-preview {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .dash-topbar {
+    background: var(--surface);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dash-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    filter: blur(6px);
+    user-select: none;
+  }
+
+  .dash-filters {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dash-filter {
+    background: rgba(62,207,110,0.1);
+    border: 1px solid var(--accent3);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dash-kpis {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .kpi-box {
+    flex: 1;
+    background: var(--card-bg);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .kpi-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    filter: blur(6px);
+    user-select: none;
+  }
+
+  .dash-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 200px 200px;
+    gap: 2px;
+    background: var(--border);
+    padding: 2px;
+  }
+
+  .dash-cell {
+    background: var(--card-bg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .dash-cell-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  /* SVG chart placeholder */
+  .mini-chart svg { width: 100%; }
+
+  /* Donut */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .legend-items { display: flex; flex-direction: column; gap: 6px; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Map placeholder */
+  .map-placeholder {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-placeholder svg { opacity: 0.3; }
+
+  /* Table in dash */
+  .dash-mini-table {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+  }
+
+  .dash-mini-table th {
+    text-align: left;
+    color: var(--dim);
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .dash-mini-table td {
+    padding: 5px 8px;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(31,46,35,0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 120px;
+    text-overflow: ellipsis;
+  }
+
+  .dash-mini-table tr:nth-child(even) td { background: rgba(22,32,25,0.4); }
+  .dash-mini-table td.blur-cell { filter: blur(4px); user-select: none; opacity: 0.3; }
+
+  /* ---- SKILLS ---- */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .skill-card {
+    background: var(--card-bg);
+    padding: 28px;
+  }
+
+  .skill-icon {
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+
+  .skill-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .skill-card p {
+    font-size: 0.8rem;
+    color: var(--dim);
+    line-height: 1.6;
+  }
+
+  /* ---- IMPACT ---- */
+  .impact-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .impact-item {
+    background: var(--card-bg);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .impact-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .impact-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 6vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  footer .footer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .footer-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .footer-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    border: 1px solid var(--accent3);
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .problem-grid { grid-template-columns: 1fr; }
+    .impact-row { grid-template-columns: 1fr; }
+    .dash-body { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .hero-stats { gap: 24px; }
+    .dash-filters { display: none; }
+    .dash-kpis { flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="header">
-    <div>
-      <h1> <span> Industria </span> <span> - Estoque de Painéis</span></h1>
-      <p id="last-update">Conecte a planilha para carregar os dados</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  
+  <div class="tag">Automação · Supply Chain · Google Apps Script</div>
+  
+  <h1>
+    Consolidação<br>
+    <span class="green">Inteligente</span> de<br>
+    Dados de Suprimentos
+    <span class="line2">Transformação de dados fragmentados em inteligência de compras</span>
+  </h1>
+
+  <p class="hero-desc">
+    Automação de coleta e consolidação de dados de múltiplos fornecedores dispersos em dezenas de abas de planilha — gerando uma base estruturada e um painel analítico para suporte à decisão em tempo real.
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">25+</span>
+      <span class="stat-label">Fornecedores</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">12</span>
+      <span class="stat-label">Meses de histórico</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">1</span>
+      <span class="stat-label">Base unificada</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Erros manuais</span>
     </div>
   </div>
 
-  <div class="sheet-bar">
-    <label>🔗 Google Sheets</label>
-    <input type="text" id="sheet-url"
-      placeholder="Cole o link da planilha..."
-      value="https://docs.google.com/spreadsheets/d/1C9tUTh4QVT67UbAdx0j04CBnHAqrrV-28ozhG0RfTQ8/edit?gid=1769742644#gid=1769742644" />
-    <button class="btn" onclick="loadSheet()">Carregar</button>
-    <span id="status-msg">Aguardando...</span>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    <span>Ver o projeto</span>
+    <span>↓</span>
   </div>
+</section>
 
-  <div class="filters">
-    <span class="filter-label">Filtrar:</span>
-    <select id="f-especie" onchange="applyFilters()"><option value="">Todas as espécies</option></select>
-    <select id="f-status" onchange="applyFilters()">
-      <option value="">Todos os status</option>
-      <option value="Excesso">Excesso</option>
-      <option value="Falta">Com Falta</option>
-      <option value="-">Normal</option>
-    </select>
-    <select id="f-medida" onchange="applyFilters()"><option value="">Todas as medidas</option></select>
-    <select id="f-cert" onchange="applyFilters()">
-      <option value="">FSC + Não FSC</option>
-      <option value="FSC">Somente FSC</option>
-      <option value="Não FSC">Somente Não FSC</option>
-    </select>
-  </div>
+<!-- PROBLEMA -->
+<section>
+  <p class="section-label fade-in">01 — O Problema</p>
+  <h2 class="fade-in">Dados <em>fragmentados</em>,<br>decisões às cegas</h2>
 
-  <div class="cards">
-    <div class="card c-accent"><div class="card-label">Espécies</div><div class="card-value" id="c-especies">—</div><div class="card-sub">tipos distintos</div></div>
-    <div class="card"><div class="card-label">Grupos</div><div class="card-value" id="c-grupos">—</div><div class="card-sub">grupos mestre</div></div>
-    <div class="card c-teal"><div class="card-label">Estoque PCP</div><div class="card-value" id="c-pcp">—</div><div class="card-sub">confiável</div></div>
-    <div class="card c-warn"><div class="card-label">Est. Compras</div><div class="card-value" id="c-comp">—</div><div class="card-sub">⚠ não confiável</div></div>
-    <div class="card c-danger"><div class="card-label">Em Falta</div><div class="card-value" id="c-falta">—</div><div class="card-sub">grupos com falta</div></div>
-    <div class="card c-teal"><div class="card-label">Com Excesso</div><div class="card-value" id="c-excesso">—</div><div class="card-sub">grupos com excesso</div></div>
-  </div>
-
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('grafico')">Gráficos</div>
-    <div class="tab" onclick="switchTab('tabela')">Por Espécie · Grupo · Medida</div>
-    <div class="tab" onclick="switchTab('cross')">Substituição por Medida</div>
-  </div>
-
-  <!-- TAB GRÁFICOS -->
-  <div class="section active" id="tab-grafico">
-    <div class="chart-wrap">
-      <div class="chart-title">Estoque PCP por Espécie</div>
-      <div class="chart-container"><canvas id="ch1"></canvas></div>
+  <div class="problem-grid fade-in">
+    <div class="problem-card">
+      <h3><span class="icon-bad">✕</span> Situação inicial</h3>
+      <ul>
+        <li>Uma aba por fornecedor — dezenas de abas sem padrão</li>
+        <li>Colunas no formato: Qtd Mês1 | Valor Mês1 | Qtd Mês2 | Valor Mês2...</li>
+        <li>Dados de diferentes planilhas sem integração</li>
+        <li>Impossível cruzar fornecedores ou analisar períodos</li>
+        <li>Relatórios manuais consumindo horas semanais</li>
+        <li>Decisões de compra sem visibilidade histórica</li>
+      </ul>
     </div>
-    <div class="chart-wrap">
-      <div class="chart-title">Status por Espécie (grupos)</div>
-      <div class="chart-container"><canvas id="ch2"></canvas></div>
+    <div class="problem-card">
+      <h3><span class="icon-good">✓</span> Resultado entregue</h3>
+      <ul>
+        <li>Base única consolidada com todas as movimentações</li>
+        <li>Estrutura normalizada: um registro por fornecedor/mês</li>
+        <li>Cruzamento automático com outras planilhas via PROCX e SOMASES</li>
+        <li>Tabela dinâmica para análise imediata</li>
+        <li>Dashboard visual para tomada de decisão</li>
+        <li>Execução com 1 clique via Google Apps Script</li>
+      </ul>
     </div>
   </div>
 
-  <!-- TAB TABELA -->
-  <div class="section" id="tab-tabela">
-    <div class="table-wrap">
-      <div class="table-header">
-        <span class="table-title">Estoque detalhado</span>
-        <span class="table-count" id="tbl-count">—</span>
+  <!-- ANTES: Planilha caótica -->
+  <p class="section-label fade-in" style="margin-bottom:12px;">Estrutura original — dados horizontais por mês</p>
+  <div class="spreadsheet-mock fade-in">
+    <div class="ss-topbar">
+      <div class="ss-dot" style="background:#ef4444"></div>
+      <div class="ss-dot" style="background:#f59e0b"></div>
+      <div class="ss-dot" style="background:#22c55e"></div>
+      <span class="ss-title">compras_2025.xlsx — BASE ORIGINAL</span>
+    </div>
+    <div class="ss-tabs">
+      <div class="ss-tab">RESULTADO</div>
+      <div class="ss-tab highlight active">13600 - Forn A</div>
+      <div class="ss-tab highlight">24150 - Forn B</div>
+      <div class="ss-tab highlight">38002 - Forn C</div>
+      <div class="ss-tab">PARÂMETROS</div>
+      <div class="ss-tab highlight">51900 - Forn D</div>
+      <div class="ss-tab highlight">60345 - Forn E</div>
+      <div class="ss-tab">CONTROLE</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ss-table">
+        <thead>
+          <tr>
+            <th>Cód / Fornecedor</th>
+            <th>Cód Item</th>
+            <th>Desc</th>
+            <th>...</th>
+            <th class="month-group">Qtd Jan</th>
+            <th class="month-group">Vlr Jan</th>
+            <th class="month-group">Qtd Fev</th>
+            <th class="month-group">Vlr Fev</th>
+            <th class="month-group">Qtd Mar</th>
+            <th class="month-group">Vlr Mar</th>
+            <th class="month-group">Qtd Abr</th>
+            <th class="month-group">Vlr Abr</th>
+            <th>... +16 colunas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="blur-cell">13600 - Fornecedor Alpha...</td>
+            <td class="blur-cell">93XXX2</td>
+            <td class="blur-cell">DESCRIÇÃO DO ITEM</td>
+            <td class="blur-cell">—</td>
+            <td class="blur-cell">1.200</td>
+            <td class="blur-cell">R$ 45.200</td>
+            <td class="blur-cell">980</td>
+            <td class="blur-cell">R$ 38.100</td>
+            <td class="blur-cell">1.450</td>
+            <td class="blur-cell">R$ 52.800</td>
+            <td class="blur-cell">0</td>
+            <td class="blur-cell">—</td>
+            <td style="color:var(--dim)">...</td>
+          </tr>
+          <tr>
+            <td class="blur-cell">13600 - Fornecedor Alpha...</td>
+            <td class="blur-cell">16XXXX</td>
+            <td class="blur-cell">DESCRIÇÃO DO ITEM</td>
+            <td class="blur-cell">—</td>
+            <td class="blur-cell">0</td>
+            <td class="blur-cell">—</td>
+            <td class="blur-cell">500</td>
+            <td class="blur-cell">R$ 22.000</td>
+            <td class="blur-cell">500</td>
+            <td class="blur-cell">R$ 22.400</td>
+            <td class="blur-cell">750</td>
+            <td class="blur-cell">R$ 33.100</td>
+            <td style="color:var(--dim)">...</td>
+          </tr>
+          <tr>
+            <td class="blur-cell">13600 - Fornecedor Alpha...</td>
+            <td class="blur-cell">24XXXX</td>
+            <td class="blur-cell">DESCRIÇÃO DO ITEM</td>
+            <td class="blur-cell">—</td>
+            <td class="blur-cell">300</td>
+            <td class="blur-cell">R$ 18.600</td>
+            <td class="blur-cell">300</td>
+            <td class="blur-cell">R$ 18.600</td>
+            <td class="blur-cell">0</td>
+            <td class="blur-cell">—</td>
+            <td class="blur-cell">600</td>
+            <td class="blur-cell">R$ 36.800</td>
+            <td style="color:var(--dim)">...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chaos-label">
+      <strong>ESTRUTURA PROBLEMÁTICA</strong>
+      <p>Dados na horizontal · 1 aba por fornecedor · Sem padrão · Impossível de analisar</p>
+    </div>
+  </div>
+
+  <div class="transform-arrow fade-in">
+    <span class="arrow-line"></span>
+    <span class="arrow-icon">→</span>
+    <span>consolidarApenasAbasNumericas()</span>
+    <span class="arrow-icon">→</span>
+    <span class="arrow-line"></span>
+  </div>
+
+  <!-- DEPOIS: Base consolidada -->
+  <p class="section-label fade-in" style="margin-bottom:12px;">BASE_CONSOLIDADA_FINAL — estrutura normalizada</p>
+  <div class="after-table-wrap fade-in">
+    <div class="after-topbar">
+      <div class="after-topbar-left">
+        <span>✓</span>
+        <span>BASE_CONSOLIDADA_FINAL</span>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Espécie</th><th>Grupo Mestre</th><th>Padrão</th><th>Medida Mestre</th>
-              <th>Cert.</th><th>Comp</th><th>Larg</th><th>Esp</th><th>Status</th>
-              <th>Est. PCP ✓</th><th>Est. Compras ⚠</th>
-              <th>Falta Atual</th><th>Falta Seg</th><th>Total Atual</th>
-              <th>SKUs Produzíveis</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+      <div class="after-topbar-right">● 900+ linhas geradas automaticamente</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="after-table">
+        <thead>
+          <tr>
+            <th>Cód Fornecedor</th>
+            <th>Nome Fornecedor</th>
+            <th>Cód Item</th>
+            <th>Descrição</th>
+            <th>Período (Mês)</th>
+            <th>Qtd Comprada</th>
+            <th>Valor Comprado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="blur-cell">13600</td><td class="blur-cell">Fornecedor Alpha Ltda</td><td class="blur-cell">93XXX2</td><td class="blur-cell">Item de Embalagem</td><td class="date-cell">2025-01</td><td class="blur-cell">1.200</td><td class="blur-cell">R$ 45.200,00</td></tr>
+          <tr><td class="blur-cell">13600</td><td class="blur-cell">Fornecedor Alpha Ltda</td><td class="blur-cell">93XXX2</td><td class="blur-cell">Item de Embalagem</td><td class="date-cell">2025-02</td><td class="blur-cell">980</td><td class="blur-cell">R$ 38.100,00</td></tr>
+          <tr><td class="blur-cell">13600</td><td class="blur-cell">Fornecedor Alpha Ltda</td><td class="blur-cell">93XXX2</td><td class="blur-cell">Item de Embalagem</td><td class="date-cell">2025-03</td><td class="blur-cell">1.450</td><td class="blur-cell">R$ 52.800,00</td></tr>
+          <tr><td class="blur-cell">13600</td><td class="blur-cell">Fornecedor Alpha Ltda</td><td class="blur-cell">16XXXX</td><td class="blur-cell">Matéria Prima</td><td class="date-cell">2025-02</td><td class="blur-cell">500</td><td class="blur-cell">R$ 22.000,00</td></tr>
+          <tr><td class="blur-cell">24150</td><td class="blur-cell">Fornecedor Beta S/A</td><td class="blur-cell">24XXXX</td><td class="blur-cell">Compensado</td><td class="date-cell">2025-01</td><td class="blur-cell">300</td><td class="blur-cell">R$ 18.600,00</td></tr>
+          <tr><td class="blur-cell">24150</td><td class="blur-cell">Fornecedor Beta S/A</td><td class="blur-cell">24XXXX</td><td class="blur-cell">Compensado</td><td class="date-cell">2025-02</td><td class="blur-cell">300</td><td class="blur-cell">R$ 18.600,00</td></tr>
+          <tr><td class="blur-cell">38002</td><td class="blur-cell">Fornecedor Gama Ind.</td><td class="blur-cell">19XXXX</td><td class="blur-cell">Aço Carbono</td><td class="date-cell">2025-01</td><td class="blur-cell">150</td><td class="blur-cell">R$ 72.000,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CÓDIGO -->
+<section style="padding-top: 0;">
+  <p class="section-label fade-in">02 — A Solução</p>
+  <h2 class="fade-in">Google Apps Script:<br><em>lógica que automatiza</em> o trabalho</h2>
+
+  <div class="code-section fade-in">
+    <div class="code-topbar">
+      <div class="code-topbar-left">
+        <span class="code-lang">GAS · JavaScript</span>
+        <span class="code-filename">consolidarApenasAbasNumericas.gs</span>
       </div>
     </div>
-  </div>
+    <pre class="code-block"><span class="cm">// REGRA DE OURO: só consolida abas cujo nome contém números</span>
+<span class="cm">// Ex: "13600" ✓ | "123 - Forn" ✓ | "RESULTADO" ✗</span>
 
-  <!-- TAB SUBSTITUIÇÃO -->
-  <div class="section" id="tab-cross">
-    <div class="subtabs">
-      <div class="subtab active-exact" id="st-exact"  onclick="switchSubtab('exact')">⇄ Mesma Medida <span class="subtab-count" id="cnt-exact">0</span></div>
-      <div class="subtab" id="st-cut"   onclick="switchSubtab('cut')">✂ Corte: maior → menor <span class="subtab-count" id="cnt-cut">0</span></div>
-      <div class="subtab" id="st-excess" onclick="switchSubtab('excess')">↑ Excessos sem par <span class="subtab-count" id="cnt-excess">0</span></div>
-      <div class="subtab" id="st-risk"  onclick="switchSubtab('risk')">⚠ Em risco sem par <span class="subtab-count" id="cnt-risk">0</span></div>
-    </div>
-    <div class="cross-legend" id="cross-legend"></div>
-    <div id="cross-grid"><div class="placeholder"><div class="ico">🔀</div><p>Carregue os dados para ver oportunidades de substituição</p></div></div>
-  </div>
+<span class="kw">function</span> <span class="fn">consolidarApenasAbasNumericas</span>() {
+  <span class="kw">const</span> <span class="var">ss</span> = SpreadsheetApp.<span class="fn">getActiveSpreadsheet</span>();
+  <span class="kw">const</span> <span class="var">abas</span> = <span class="var">ss</span>.<span class="fn">getSheets</span>();
+  <span class="kw">const</span> <span class="var">abaDestinoNome</span> = <span class="str">"BASE_CONSOLIDADA_FINAL"</span>;
+  <span class="kw">let</span> <span class="var">abaDestino</span> = <span class="var">ss</span>.<span class="fn">getSheetByName</span>(<span class="var">abaDestinoNome</span>) || <span class="var">ss</span>.<span class="fn">insertSheet</span>(<span class="var">abaDestinoNome</span>);
 
-</div>
-<script>
-// ── COLUNAS (0-based) ────────────────────────────────────────
-const C = {
-  especie:0, grupoOrig:1, grupoMestre:2, padrao:3,
-  compr:4, larg:5, esp:6, status:7,
-  estComp:8, estPCP:9, faltaAtual:10, faltaSeg:11,
-  totalAtual:12, totalSeg:13, refInd:14, refAgrup:15, medida:16,
-  cert:17  // coluna R — 'FSC' ou 'Não FSC'
-};
+  <span class="cm">// Cabeçalho normalizado</span>
+  <span class="kw">const</span> <span class="var">cabecalho</span> = [[<span class="str">"Cód Fornecedor"</span>, <span class="str">"Nome Fornecedor"</span>, <span class="str">"Cód Item"</span>,
+                       <span class="str">"Descrição"</span>, <span class="str">"Período (Mês)"</span>, <span class="str">"Qtd Comprada"</span>, <span class="str">"Valor Comprado"</span>]];
 
-let allRows=[], grouped=[], filtered=[];
-let ch1=null, ch2=null;
-let currentSubtab='exact';
+  <span class="kw">const</span> <span class="var">meses</span> = [<span class="str">"2025-01"</span>, <span class="str">"2025-02"</span>, ... , <span class="str">"2025-12"</span>];
+  <span class="kw">let</span> <span class="var">dadosFinais</span> = [];
 
-// ── HELPERS ─────────────────────────────────────────────────
-const cl  = v => (v||'').replace(/^"|"$/g,'').trim();
-const num = v => { const n=parseFloat(cl(v).replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
-const fmt = n => n ? n.toLocaleString('pt-BR',{maximumFractionDigits:0}) : '0';
-const hasDigit = g => /\d/.test(g||'');
-const isFSC = cert => cl(cert).toUpperCase().includes('FSC') && !cl(cert).toUpperCase().includes('NÃO') && !cl(cert).toUpperCase().includes('NAO');
-// FSC pode fazer FSC e não-FSC; não-FSC só pode fazer não-FSC
-const certCanSupply = (srcCert, tgtCert) => {
-  if(srcCert === 'FSC') return true;          // FSC atende ambos
-  return tgtCert !== 'FSC';                   // Não FSC só atende Não FSC
-};
+  <span class="var">abas</span>.<span class="fn">forEach</span>(<span class="var">aba</span> => {
+    <span class="cm">// Filtra somente abas com código numérico (fornecedor)</span>
+    <span class="kw">if</span> (<span class="str">/\d/</span>.<span class="fn">test</span>(<span class="var">aba</span>.<span class="fn">getName</span>())) {
 
-function splitLine(line) {
-  const r=[]; let cur='', q=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){q=!q;}
-    else if(c===','&&!q){r.push(cur.trim());cur='';}
-    else{cur+=c;}
-  }
-  r.push(cur.trim()); return r;
-}
-function extractId(url) { const m=url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/); return m?m[1]:null; }
-function extractGid(url){ const m=url.match(/gid=(\d+)/); return m?m[1]:'0'; }
-function setStatus(msg,cls=''){ const el=document.getElementById('status-msg'); el.textContent=msg; el.className=cls; }
+      <span class="kw">let</span> <span class="var">dados</span> = <span class="var">aba</span>.<span class="fn">getDataRange</span>().<span class="fn">getValues</span>();
 
-// ── LOAD ────────────────────────────────────────────────────
-async function loadSheet() {
-  const url=document.getElementById('sheet-url').value.trim();
-  const id=extractId(url); if(!id){setStatus('Link inválido','err');return;}
-  const gid=extractGid(url);
-  setStatus('Conectando...','');
-  document.getElementById('tbody').innerHTML='<tr><td colspan="15"><div class="loading"><div class="spinner"></div>Buscando dados...</div></td></tr>';
-  try {
-    const res=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const text=await res.text();
-    if(text.startsWith('<!DOCTYPE')) throw new Error('PRIVATE');
-    parseData(text);
-  } catch(e) {
-    try {
-      const proxy='https://api.allorigins.win/raw?url=';
-      const su=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
-      const r2=await fetch(proxy+encodeURIComponent(su));
-      if(!r2.ok) throw new Error('PROXY_FAIL');
-      parseData(await r2.text());
-    } catch(e2){
-      setStatus('Erro: Verifique se a planilha está pública','err');
-      document.getElementById('tbody').innerHTML='<tr><td colspan="15"><div class="placeholder"><div class="ico">⚠</div><p>Não foi possível carregar.</p></div></td></tr>';
-    }
-  }
-}
+      <span class="cm">// Percorre linhas que começam com número (evita cabeçalhos)</span>
+      <span class="var">dados</span>.<span class="fn">forEach</span>(<span class="var">linha</span> => {
+        <span class="kw">if</span> (<span class="str">/^\d/</span>.<span class="fn">test</span>(<span class="var">linha</span>[<span class="num">0</span>])) {
 
-// ── PARSE ───────────────────────────────────────────────────
-function parseData(text) {
-  const lines=text.trim().split('\n');
-  allRows=[];
-  for(let i=1;i<lines.length;i++){
-    const cols=splitLine(lines[i]);
-    if(cols.length<10) continue;
-    const esp=cl(cols[C.especie]);
-    if(!esp||esp.toLowerCase()==='espécie') continue;
-    allRows.push(cols);
-  }
-  if(!allRows.length){setStatus('Planilha vazia ou colunas erradas','err');return;}
-  setStatus(`${allRows.length} linhas carregadas ✓`,'ok');
-  document.getElementById('last-update').textContent='Atualizado: '+new Date().toLocaleString('pt-BR');
-  buildGrouped();
-  fillFilters();
-  applyFilters();
-}
+          <span class="cm">// Transpõe colunas horizontais de mês → linhas verticais</span>
+          <span class="kw">for</span> (<span class="kw">let</span> <span class="var">col</span> = <span class="num">4</span>; <span class="var">col</span> <= <span class="num">27</span>; <span class="var">col</span> += <span class="num">2</span>) {
+            <span class="kw">const</span> <span class="var">qtd</span> = <span class="var">linha</span>[<span class="var">col</span>];
+            <span class="kw">const</span> <span class="var">valor</span> = <span class="var">linha</span>[<span class="var">col</span> + <span class="num">1</span>];
 
-// ── AGRUPAMENTO ─────────────────────────────────────────────
-// Chave: Espécie + Grupo Mestre + Medida Mestre + Certificação
-function normalizeCert(raw) {
-  const v = cl(raw);
-  if(!v) return 'Não FSC';
-  const up = v.toUpperCase();
-  if(up.includes('NÃO')||up.includes('NAO')||up==='N') return 'Não FSC';
-  if(up.includes('FSC')||up==='S') return 'FSC';
-  return 'Não FSC';
-}
-
-function buildGrouped() {
-  const map=new Map();
-  for(const row of allRows){
-    const esp=cl(row[C.especie]);
-    const go =cl(row[C.grupoOrig]);
-    const gm =cl(row[C.grupoMestre]);
-    const med=cl(row[C.medida])||'Sem Medida';
-    const cert=normalizeCert(row[C.cert]);
-    if(!esp||!gm) continue;
-    const key=`${esp}||${gm}||${med}||${cert}`;
-    if(!map.has(key)){
-      map.set(key,{
-        especie:esp, grupoMestre:gm, medida:med, cert,
-        padrao:cl(row[C.padrao]),
-        compr:cl(row[C.compr]), larg:cl(row[C.larg]), esp:cl(row[C.esp]),
-        comprN:0, largN:0, espN:0,
-        statuses:[], estPCP:0, estComp:0,
-        faltaAtual:0, faltaSeg:0, totalAtual:0,
-        refs:new Set(), refsAgrup:new Set()
+            <span class="cm">// Só grava se houver movimentação real</span>
+            <span class="kw">if</span> (<span class="var">valor</span> > <span class="num">0</span> || <span class="var">qtd</span> > <span class="num">0</span>) {
+              <span class="var">dadosFinais</span>.<span class="fn">push</span>([<span class="var">codForn</span>, <span class="var">nomeForn</span>, <span class="var">codItem</span>,
+                               <span class="var">descItem</span>, <span class="var">meses</span>[<span class="var">mesIdx</span>], <span class="var">qtd</span>, <span class="var">valor</span>]);
+            }
+          }
+        }
       });
     }
-    const g=map.get(key);
-    g.estPCP    +=num(row[C.estPCP]);
-    g.estComp   +=num(row[C.estComp]);
-    g.faltaAtual+=num(row[C.faltaAtual]);
-    g.faltaSeg  +=num(row[C.faltaSeg]);
-    g.totalAtual+=num(row[C.totalAtual]);
-    const st=cl(row[C.status]);
-    if(hasDigit(go)&&st&&st!=='-'&&st!=='—') g.statuses.push(st);
-    if(hasDigit(go)){
-      if(cl(row[C.padrao])) g.padrao=cl(row[C.padrao]);
-      if(cl(row[C.compr]))  g.compr =cl(row[C.compr]);
-      if(cl(row[C.larg]))   g.larg  =cl(row[C.larg]);
-      if(cl(row[C.esp]))    g.esp   =cl(row[C.esp]);
-    }
-    cl(row[C.refInd]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refs.add(r));
-    cl(row[C.refAgrup]).split(/[,;]/).map(s=>s.trim()).filter(Boolean).forEach(r=>g.refsAgrup.add(r));
-  }
-  grouped=Array.from(map.values()).map(g=>{
-    const uniq=[...new Set(g.statuses)];
-    g.statusFinal=uniq.length===0?'—':uniq.join(' / ');
-    g.refs=[...g.refs]; g.refsAgrup=[...g.refsAgrup];
-    g.comprN=parseInt(g.compr)||0;
-    g.largN =parseInt(g.larg)||0;
-    g.espN  =parseInt(g.esp)||0;
-    return g;
-  });
-}
-
-// ── FILTROS ─────────────────────────────────────────────────
-function fillFilters(){
-  const esp=[...new Set(grouped.map(g=>g.especie))].sort();
-  const med=[...new Set(grouped.map(g=>g.medida))].sort();
-  const se=document.getElementById('f-especie');
-  const sm=document.getElementById('f-medida');
-  se.innerHTML='<option value="">Todas as espécies</option>';
-  esp.forEach(e=>se.innerHTML+=`<option value="${e}">${e}</option>`);
-  sm.innerHTML='<option value="">Todas as medidas</option>';
-  med.forEach(m=>sm.innerHTML+=`<option value="${m}">${m}</option>`);
-}
-
-function applyFilters(){
-  const esp =document.getElementById('f-especie').value;
-  const st  =document.getElementById('f-status').value;
-  const med =document.getElementById('f-medida').value;
-  const cert=document.getElementById('f-cert').value;
-  filtered=grouped.filter(g=>{
-    if(esp  && g.especie!==esp)  return false;
-    if(med  && g.medida!==med)   return false;
-    if(cert && g.cert!==cert)    return false;
-    if(st){
-      const s=g.statusFinal||'';
-      if(st==='Excesso'&&!s.includes('Excesso')) return false;
-      if(st==='Falta'  &&!s.includes('Falta'))   return false;
-      if(st==='-'      &&s!=='—'&&s!=='-')        return false;
-    }
-    return true;
-  });
-  renderCards();
-  renderCharts();
-  renderTable();
-  renderCross();
-}
-
-// ── CARDS ───────────────────────────────────────────────────
-function renderCards(){
-  document.getElementById('c-especies').textContent=new Set(filtered.map(g=>g.especie)).size;
-  document.getElementById('c-grupos').textContent  =new Set(filtered.map(g=>g.especie+'||'+g.grupoMestre)).size;
-  document.getElementById('c-pcp').textContent     =fmt(filtered.reduce((s,g)=>s+g.estPCP,0));
-  document.getElementById('c-comp').textContent    =fmt(filtered.reduce((s,g)=>s+g.estComp,0));
-  document.getElementById('c-falta').textContent   =filtered.filter(g=>g.statusFinal.includes('Falta')).length;
-  document.getElementById('c-excesso').textContent =filtered.filter(g=>g.statusFinal.includes('Excesso')).length;
-}
-
-// ── CHARTS ──────────────────────────────────────────────────
-function renderCharts(){
-  const byEsp={};
-  for(const g of filtered){
-    if(!byEsp[g.especie]) byEsp[g.especie]={pcp:0,comp:0,excesso:0,falta:0,total:0};
-    byEsp[g.especie].pcp  +=g.estPCP;
-    byEsp[g.especie].comp +=g.estComp;
-    byEsp[g.especie].total+=1;
-    if(g.statusFinal.includes('Excesso')) byEsp[g.especie].excesso++;
-    if(g.statusFinal.includes('Falta'))   byEsp[g.especie].falta++;
-  }
-  const labels=Object.keys(byEsp).sort();
-  const mono='DM Mono, monospace';
-  if(ch1) ch1.destroy();
-  ch1=new Chart(document.getElementById('ch1').getContext('2d'),{
-    type:'bar',data:{labels,datasets:[
-      {label:'Estoque PCP (confiável)',data:labels.map(l=>byEsp[l].pcp),backgroundColor:'rgba(79,195,161,0.65)',borderColor:'#4fc3a1',borderWidth:1,borderRadius:4},
-      {label:'Estoque Compras ⚠',data:labels.map(l=>byEsp[l].comp),backgroundColor:'rgba(240,160,96,0.4)',borderColor:'#f0a060',borderWidth:1,borderRadius:4}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{x:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-              y:{ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}}}
-  });
-  if(ch2) ch2.destroy();
-  ch2=new Chart(document.getElementById('ch2').getContext('2d'),{
-    type:'bar',data:{labels,datasets:[
-      {label:'Excesso',data:labels.map(l=>byEsp[l].excesso),backgroundColor:'rgba(79,195,161,0.7)',borderRadius:4},
-      {label:'Com Falta',data:labels.map(l=>byEsp[l].falta),backgroundColor:'rgba(240,100,100,0.7)',borderRadius:4},
-      {label:'Normal',data:labels.map(l=>byEsp[l].total-byEsp[l].excesso-byEsp[l].falta),backgroundColor:'rgba(122,132,148,0.4)',borderRadius:4}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{color:'#7a8494',font:{family:mono,size:11},boxWidth:12,padding:14}}},
-      scales:{x:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-              y:{stacked:true,ticks:{color:'#7a8494',font:{family:mono,size:11}},grid:{color:'rgba(255,255,255,0.05)'}}}}
-  });
-}
-
-// ── BADGES ──────────────────────────────────────────────────
-function badge(st){
-  if(!st||st==='—'||st==='-') return '<span class="badge b-neutral">—</span>';
-  if(st.includes(' / '))       return `<span class="badge b-multi">${st}</span>`;
-  if(st.includes('Excesso'))   return `<span class="badge b-excess">${st}</span>`;
-  if(st.includes('Falta Mês1'))return `<span class="badge b-lack1">${st}</span>`;
-  if(st.includes('Falta'))     return `<span class="badge b-lack">${st}</span>`;
-  return `<span class="badge b-neutral">${st}</span>`;
-}
-function certBadge(cert){
-  return cert==='FSC'
-    ? `<span class="fsc-badge">🌲 FSC</span>`
-    : `<span class="nfsc-badge">Não FSC</span>`;
-}
-
-// ── TOP 3 (estoques em excesso com maior PCP) ────────────────
-function getTop3Set(rows){
-  const excess=rows.filter(g=>g.statusFinal.includes('Excesso'));
-  const sorted=[...excess].sort((a,b)=>b.estPCP-a.estPCP);
-  const top3=new Set();
-  sorted.slice(0,3).forEach((g,i)=>top3.set ? top3.set(g,i+1) : null);
-  // usa Map para guardar posição
-  const rankMap=new Map();
-  sorted.slice(0,3).forEach((g,i)=>rankMap.set(g,i+1));
-  return rankMap;
-}
-
-// ── TABELA ──────────────────────────────────────────────────
-function renderTable(){
-  const tbody=document.getElementById('tbody');
-  document.getElementById('tbl-count').textContent=`${filtered.length} linhas`;
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="15"><div class="placeholder"><div class="ico">🔍</div><p>Nenhum resultado</p></div></td></tr>';return;}
-
-  // top 3 globais (sobre os filtrados em excesso)
-  const rankMap=getTop3Set(filtered);
-  const medals=['','🥇','🥈','🥉'];
-
-  const sorted=[...filtered].sort((a,b)=>
-    a.especie.localeCompare(b.especie)||a.grupoMestre.localeCompare(b.grupoMestre)||a.medida.localeCompare(b.medida)||a.cert.localeCompare(b.cert)
-  );
-  let html='';
-  for(const g of sorted){
-    const rank=rankMap.get(g)||0;
-    const rowCls=rank===1?'top1-row':rank===2?'top2-row':rank===3?'top3-row':'';
-    const medal=rank?`<span class="rank-medal">${medals[rank]}</span>`:'';
-    const allRefs=[...new Set([...g.refs,...g.refsAgrup])];
-    const skuHtml=allRefs.length?`<div class="sku-list">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'<span style="color:var(--muted2)">—</span>';
-    html+=`<tr class="${rowCls}">
-      <td>${medal}<strong>${g.especie}</strong></td>
-      <td>${g.grupoMestre}</td>
-      <td>${g.padrao||'—'}</td>
-      <td style="color:var(--accent);font-weight:500">${g.medida||'—'}</td>
-      <td>${certBadge(g.cert)}</td>
-      <td style="text-align:right">${g.compr||'—'}</td>
-      <td style="text-align:right">${g.larg||'—'}</td>
-      <td style="text-align:right">${g.esp||'—'}</td>
-      <td>${badge(g.statusFinal)}</td>
-      <td style="text-align:right;color:var(--teal)">${fmt(g.estPCP)}</td>
-      <td style="text-align:right"><span style="color:var(--warn)">${fmt(g.estComp)}</span><span class="b-warn-sm">⚠</span></td>
-      <td style="text-align:right;color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</td>
-      <td style="text-align:right;color:${g.faltaSeg>0?'var(--warn)':'var(--muted)'}">${fmt(g.faltaSeg)}</td>
-      <td style="text-align:right">${fmt(g.totalAtual)}</td>
-      <td>${skuHtml}</td>
-    </tr>`;
-  }
-  tbody.innerHTML=html;
-}
-
-// ══════════════════════════════════════════════════════════════
-// ── LÓGICA DE SUBSTITUIÇÃO ────────────────────────────────────
-// ══════════════════════════════════════════════════════════════
-
-function canCut(src, tgt){
-  if(!src.comprN||!src.largN||!tgt.comprN||!tgt.largN) return false;
-  if(src.espN!==tgt.espN) return false;
-  if(src.comprN===tgt.comprN&&src.largN===tgt.largN) return false;
-  return src.comprN>=tgt.comprN && src.largN>=tgt.largN;
-}
-
-function buildCrossData(){
-  const excesso=filtered.filter(g=>g.statusFinal.includes('Excesso'));
-  const falta  =filtered.filter(g=>g.statusFinal.includes('Falta'));
-
-  // top 3 para destacar nos cartões
-  const rankMap=getTop3Set(filtered);
-
-  // ── 1. MESMA MEDIDA ──────────────────────────────────────
-  // Agrupa por medida (sem cert na chave, pois mistura na mesma medida)
-  const byMed={};
-  for(const g of filtered){
-    if(!g.medida||g.medida==='Sem Medida') continue;
-    if(!byMed[g.medida]) byMed[g.medida]=[];
-    byMed[g.medida].push(g);
-  }
-  // Para mesma medida: considera que FSC-excesso pode suprir Não-FSC-falta, mas não o contrário
-  const exactMedidas=Object.keys(byMed).sort().filter(m=>{
-    const rows=byMed[m];
-    const exRows=rows.filter(r=>r.statusFinal.includes('Excesso'));
-    const fRows =rows.filter(r=>r.statusFinal.includes('Falta'));
-    if(!exRows.length||!fRows.length) return false;
-    // verifica se há ao menos um par válido (cert compatível)
-    return exRows.some(src=>fRows.some(tgt=>certCanSupply(src.cert,tgt.cert)));
-  });
-  const exactCards=exactMedidas.map(m=>({type:'exact',medida:m,rows:byMed[m]}));
-
-  // ── 2. CORTE ─────────────────────────────────────────────
-  const cutPairs=[];
-  const usedPairs=new Set();
-  for(const src of excesso){
-    for(const tgt of falta){
-      if(!canCut(src,tgt)) continue;
-      if(!certCanSupply(src.cert,tgt.cert)) continue; // regra FSC
-      const pkey=`${src.especie}||${src.grupoMestre}||${src.cert}||${src.medida}→${tgt.especie}||${tgt.medida}||${tgt.cert}`;
-      if(usedPairs.has(pkey)) continue;
-      usedPairs.add(pkey);
-      const crossSpecies=src.especie!==tgt.especie;
-      const crossCert=src.cert!==tgt.cert;
-      cutPairs.push({type:'cut',source:src,target:tgt,crossSpecies,crossCert});
-    }
-  }
-
-  // ── 3. EXCESSOS SEM PAR ───────────────────────────────────
-  const excessSolo=excesso.filter(src=>{
-    const temExato=byMed[src.medida]&&byMed[src.medida].some(r=>r.statusFinal.includes('Falta')&&certCanSupply(src.cert,r.cert));
-    const temCorte=falta.some(tgt=>canCut(src,tgt)&&certCanSupply(src.cert,tgt.cert));
-    return !temExato&&!temCorte;
   });
 
-  // ── 4. FALTAS SEM PAR ────────────────────────────────────
-  const riskSolo=falta.filter(tgt=>{
-    const temExato=byMed[tgt.medida]&&byMed[tgt.medida].some(r=>r.statusFinal.includes('Excesso')&&certCanSupply(r.cert,tgt.cert));
-    const temCorte=excesso.some(src=>canCut(src,tgt)&&certCanSupply(src.cert,tgt.cert));
-    return !temExato&&!temCorte;
-  });
+  <span class="cm">// Escrita em lote — performance máxima</span>
+  <span class="var">abaDestino</span>.<span class="fn">getRange</span>(<span class="num">2</span>, <span class="num">1</span>, <span class="var">dadosFinais</span>.length, <span class="num">7</span>).<span class="fn">setValues</span>(<span class="var">dadosFinais</span>);
+}</pre>
+  </div>
 
-  return {exactCards,cutPairs,excessSolo,riskSolo,rankMap};
-}
+  <!-- Anotações sobre lógica -->
+  <div class="skills-grid fade-in" style="margin-top: 2px;">
+    <div class="skill-card">
+      <div class="skill-icon">🔍</div>
+      <h4>Regex de Filtro de Abas</h4>
+      <p><code style="color:var(--accent);font-family:'DM Mono',monospace">/\d/.test(nome)</code> — identifica abas de fornecedor pelo código numérico, ignorando abas auxiliares como "RESULTADO" e "PARÂMETROS".</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">↕️</div>
+      <h4>Transposição Horizontal → Vertical</h4>
+      <p>Converte o layout de colunas por mês (Qtd Jan | Vlr Jan | Qtd Fev...) em registros normalizados, um por período — viabilizando análise temporal.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">⚡</div>
+      <h4>Escrita em Lote (Batch Write)</h4>
+      <p>Toda a consolidação é acumulada em array e escrita de uma vez com <code style="color:var(--accent);font-family:'DM Mono',monospace">setValues()</code> — evitando chamadas repetidas à API e garantindo performance.</p>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🔗</div>
+      <h4>Cruzamento com PROCX + SOMASES</h4>
+      <p>Base consolidada enriquecida com dados de outras planilhas via fórmulas avançadas — preço médio, categoria, localização e totais por período.</p>
+    </div>
+  </div>
+</section>
 
-// ── RENDER CROSS ────────────────────────────────────────────
-function renderCross(){
-  const data=buildCrossData();
-  document.getElementById('cnt-exact').textContent =data.exactCards.length;
-  document.getElementById('cnt-cut').textContent   =data.cutPairs.length;
-  document.getElementById('cnt-excess').textContent=data.excessSolo.length;
-  document.getElementById('cnt-risk').textContent  =data.riskSolo.length;
-  renderSubtab(data);
-}
+<!-- DASHBOARD -->
+<section style="padding-top: 0;">
+  <p class="section-label fade-in">03 — O Resultado</p>
+  <h2 class="fade-in">Painel de <em>inteligência</em><br>para suprimentos</h2>
 
-function renderSubtab(data){
-  const grid=document.getElementById('cross-grid');
-  const legend=document.getElementById('cross-legend');
-  const medals=['','🥇','🥈','🥉'];
-  const crownColor={1:'#ffd700',2:'#c0c0c0',3:'#cd7f32'};
-
-  if(currentSubtab==='exact'){
-    legend.innerHTML=`
-      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Espécie com Excesso — pode ser ofertada como substituta</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Espécie com Falta — demanda não atendida</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC pode suprir FSC e Não FSC · Não FSC só supre Não FSC</div>
-      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores estoques em excesso</div>`;
-    if(!data.exactCards.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Nenhuma medida com excesso e falta simultâneos</p></div>';return;}
-    let html='';
-    for(const item of data.exactCards){
-      const rows=item.rows;
-      const excess=rows.filter(r=>r.statusFinal.includes('Excesso'));
-      const lack  =rows.filter(r=>r.statusFinal.includes('Falta'));
-      const other =rows.filter(r=>!r.statusFinal.includes('Excesso')&&!r.statusFinal.includes('Falta'));
-      const sample=rows[0];
-      const dims=[sample.compr,sample.larg,sample.esp].filter(Boolean).join(' × ');
-      const cards=[
-        ...excess.map(g=>makeEspecieCard(g,'excess','↑ Pode ser ofertado como substituto',   'ok',   data.rankMap)),
-        ...lack.map(g=>  makeEspecieCard(g,'lack',  '↓ Demanda não atendida',               'bad',  data.rankMap)),
-        ...other.map(g=> makeEspecieCard(g,'',      '',                                      '',     data.rankMap))
-      ].join('');
-      html+=`<div class="cross-card">
-        <div class="cross-head">
-          <span class="cross-medida">${item.medida}</span>
-          ${dims?`<span style="color:var(--muted);font-size:12px">${dims} mm</span>`:''}
-          <span class="cross-type-badge ctb-exact">Mesma medida</span>
-          <span style="margin-left:auto;display:flex;gap:8px">
-            <span class="badge b-excess">${excess.length} excesso</span>
-            <span class="badge b-lack">${lack.length} falta</span>
-          </span>
+  <div class="dashboard-preview fade-in">
+    <div class="dash-topbar">
+      <div class="dash-logo">EMPRESA</div>
+      <div class="dash-filters">
+        <div class="dash-filter">Cód Item ▾</div>
+        <div class="dash-filter">Fornecedor ▾</div>
+        <div class="dash-filter">Período ▾</div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <div style="text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:.1em">PREÇO MÉDIO</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);filter:blur(5px)">R$ ●●●</div>
         </div>
-        <div class="cross-body">${cards}</div>
-      </div>`;
-    }
-    grid.innerHTML=html;
-
-  } else if(currentSubtab==='cut'){
-    legend.innerHTML=`
-      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Origem — painel maior com excesso (candidato a corte)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Destino — painel menor em falta (seria atendido)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC pode cortar para Não FSC · inverso não permitido</div>
-      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores estoques em excesso</div>`;
-    if(!data.cutPairs.length){grid.innerHTML='<div class="placeholder"><div class="ico">✂</div><p>Nenhuma oportunidade de corte identificada</p></div>';return;}
-    let html='';
-    for(const pair of data.cutPairs){
-      const src=pair.source, tgt=pair.target;
-      const srcDims=[src.compr,src.larg,src.esp].filter(Boolean).join(' × ');
-      const tgtDims=[tgt.compr,tgt.larg,tgt.esp].filter(Boolean).join(' × ');
-      const rank=data.rankMap.get(src)||0;
-      const topCls=rank?`top${rank}`:'';
-      const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
-      html+=`<div class="cross-card">
-        <div class="cross-head">
-          <span class="cross-medida">${src.medida}</span>
-          <span style="color:var(--muted);font-size:18px;margin:0 4px">→</span>
-          <span class="cross-medida" style="color:var(--blue)">${tgt.medida}</span>
-          <span class="cross-type-badge ${pair.crossSpecies?'ctb-excess':'ctb-cut'}">${pair.crossSpecies?'Entre espécies':'Corte'}</span>
-          ${pair.crossCert?`<span class="cross-type-badge ctb-excess" style="margin-left:4px">FSC → Não FSC</span>`:''}
-          <span style="margin-left:auto;font-size:11px;color:var(--muted)">esp. ${src.espN}mm</span>
+        <div style="text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:.1em">TOTAL COMPRADO</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);filter:blur(5px)">●.●●●.●●●</div>
         </div>
-        <div class="cross-body" style="align-items:center">
-          <div class="ce source ${topCls}" style="flex:2;position:relative">
-            ${crown}
-            <div class="ce-name">${src.especie} · ${src.grupoMestre}</div>
-            <div class="ce-row"><span>Medida</span><span>${src.medida}</span></div>
-            <div class="ce-row"><span>Dimensões</span><span>${srcDims} mm</span></div>
-            <div class="ce-row"><span>Certificação</span><span>${certBadge(src.cert)}</span></div>
-            <div class="ce-row"><span>Status</span><span>${badge(src.statusFinal)}</span></div>
-            <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(src.estPCP)}</span></div>
-            ${makeSkuHtml(src)}
-            <div class="ce-tip info">↑ Excesso disponível — candidato a corte</div>
-          </div>
-          <div class="cut-arrow"><span style="font-size:22px">✂</span><span>cortar para</span></div>
-          <div class="ce target" style="flex:2">
-            <div class="ce-name">${tgt.especie} · ${tgt.grupoMestre}</div>
-            <div class="ce-row"><span>Medida</span><span>${tgt.medida}</span></div>
-            <div class="ce-row"><span>Dimensões</span><span>${tgtDims} mm</span></div>
-            <div class="ce-row"><span>Certificação</span><span>${certBadge(tgt.cert)}</span></div>
-            <div class="ce-row"><span>Status</span><span>${badge(tgt.statusFinal)}</span></div>
-            <div class="ce-row"><span>Falta Atual</span><span style="color:var(--danger)">${fmt(tgt.faltaAtual)}</span></div>
-            <div class="ce-row"><span>Falta Seg</span><span style="color:var(--warn)">${fmt(tgt.faltaSeg)}</span></div>
-            ${makeSkuHtml(tgt)}
-            <div class="ce-tip bad">↓ Em falta — pode ser atendido pelo corte acima</div>
-            ${pair.crossSpecies?`<div class="ce-tip warn">⚠ Espécies diferentes — confirmar com PCP</div>`:''}
-            ${pair.crossCert?`<div class="ce-tip fsc">🌲 FSC suprimindo Não FSC — permitido</div>`:''}
+      </div>
+    </div>
+
+    <div class="dash-body">
+      <!-- Gráfico de linha valor -->
+      <div class="dash-cell">
+        <div class="dash-cell-title">Valor Comprado — Evolução Mensal</div>
+        <svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" style="flex:1">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3ecf6e" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#3ecf6e" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,90 C30,85 50,50 80,60 C110,70 130,45 160,55 C190,65 210,30 240,20 C270,10 290,50 320,45 C350,40 370,70 400,65" fill="url(#g1)" stroke="none"/>
+          <path d="M0,90 C30,85 50,50 80,60 C110,70 130,45 160,55 C190,65 210,30 240,20 C270,10 290,50 320,45 C350,40 370,70 400,65" fill="none" stroke="#3ecf6e" stroke-width="2"/>
+          <text x="0" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">jan</text>
+          <text x="60" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">mar</text>
+          <text x="130" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">mai</text>
+          <text x="200" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">jul</text>
+          <text x="270" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">set</text>
+          <text x="340" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">nov</text>
+        </svg>
+      </div>
+
+      <!-- Donut por categoria -->
+      <div class="dash-cell">
+        <div class="dash-cell-title">Distribuição por Categoria</div>
+        <div class="donut-container" style="flex:1">
+          <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="60" r="40" fill="none" stroke="#162019" stroke-width="22"/>
+            <circle cx="60" cy="60" r="40" fill="none" stroke="#3ecf6e" stroke-width="22"
+              stroke-dasharray="77 174" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="40" fill="none" stroke="#27a855" stroke-width="22"
+              stroke-dasharray="54 197" stroke-dashoffset="-77" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="40" fill="none" stroke="#0d6e35" stroke-width="22"
+              stroke-dasharray="31 220" stroke-dashoffset="-131" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="40" fill="none" stroke="#20b353" stroke-width="22"
+              stroke-dasharray="12 239" stroke-dashoffset="-162" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="legend-items">
+            <div class="legend-item"><div class="legend-dot" style="background:#3ecf6e"></div>Embalagem</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#27a855"></div>Matéria Prima</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0d6e35"></div>Compensados</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#20b353"></div>Aço Carbono</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Outros</div>
           </div>
         </div>
-      </div>`;
-    }
-    grid.innerHTML=html;
+      </div>
 
-  } else if(currentSubtab==='excess'){
-    legend.innerHTML=`
-      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Excesso sem demanda correspondente — avaliar oferta comercial ativa</div>
-      <div class="legend-item"><span style="font-size:14px">🥇🥈🥉</span>Top 3 maiores — prioridade máxima para ação comercial</div>`;
-    if(!data.excessSolo.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Todos os excessos têm uma falta correspondente</p></div>';return;}
-    const sorted=[...data.excessSolo].sort((a,b)=>b.estPCP-a.estPCP);
-    let html='<div style="display:flex;flex-wrap:wrap;gap:10px">';
-    for(const g of sorted){
-      const rank=data.rankMap.get(g)||0;
-      const topCls=rank?`top${rank}`:'alert-excess';
-      const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
-      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
-      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-      html+=`<div class="ce ${topCls}" style="min-width:220px;max-width:320px;flex:1;position:relative">
-        ${crown}
-        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
-        <div class="ce-row"><span>Medida</span><span style="color:var(--accent)">${g.medida}</span></div>
-        <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
-        <div class="ce-row"><span>Dimensões</span><span>${[g.compr,g.larg,g.esp].filter(Boolean).join(' × ')} mm</span></div>
-        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
-        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
-        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
-        ${skuHtml}
-        <div class="ce-tip accent">↑ Excesso sem demanda — oferecer ao comercial ou avaliar corte</div>
-      </div>`;
-    }
-    html+='</div>';
-    grid.innerHTML=html;
+      <!-- Tabela de fornecedores -->
+      <div class="dash-cell">
+        <div class="dash-cell-title">Ranking Fornecedores — Total R$</div>
+        <table class="dash-mini-table">
+          <thead>
+            <tr><th>#</th><th>Fornecedor</th><th>CNPJ</th><th>Total R$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1.</td><td class="blur-cell">Fornecedor Alpha S/A</td><td class="blur-cell">XX.XXX.XXX/0001-XX</td><td class="blur-cell">1.465.876,38</td></tr>
+            <tr><td>2.</td><td class="blur-cell">Forn. Beta Ind.</td><td class="blur-cell">XX.XXX.XXX/0001-XX</td><td class="blur-cell">1.075.501,32</td></tr>
+            <tr><td>3.</td><td class="blur-cell">Caixas & Cia Ltda</td><td class="blur-cell">XX.XXX.XXX/0001-XX</td><td class="blur-cell">752.081,28</td></tr>
+            <tr><td>4.</td><td class="blur-cell">Compensados Gama</td><td class="blur-cell">XX.XXX.XXX/0001-XX</td><td class="blur-cell">569.021,18</td></tr>
+            <tr><td>5.</td><td class="blur-cell">Madeireira Delta</td><td class="blur-cell">XX.XXX.XXX/0001-XX</td><td class="blur-cell">560.824,37</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-  } else if(currentSubtab==='risk'){
-    legend.innerHTML=`
-      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Falta iminente — sem fonte de excesso compatível (nem mesma medida, nem corte)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--fsc-color)"></div>FSC em falta é mais crítico — Não FSC não pode cobrir</div>`;
-    if(!data.riskSolo.length){grid.innerHTML='<div class="placeholder"><div class="ico">✅</div><p>Todas as faltas têm uma fonte de excesso identificada</p></div>';return;}
-    const sorted=[...data.riskSolo].sort((a,b)=>{
-      const aF=a.statusFinal.includes('Mês1')?0:1;
-      const bF=b.statusFinal.includes('Mês1')?0:1;
-      return aF-bF||b.faltaAtual-a.faltaAtual;
+      <!-- Gráfico de preço médio -->
+      <div class="dash-cell">
+        <div class="dash-cell-title">Preço Médio — Evolução</div>
+        <svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" style="flex:1">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#27a855" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#27a855" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,50 C30,48 50,70 80,65 C110,60 130,80 160,75 C190,70 210,40 240,90 C270,110 290,60 320,55 C350,50 370,85 400,110" fill="url(#g2)" stroke="none"/>
+          <path d="M0,50 C30,48 50,70 80,65 C110,60 130,80 160,75 C190,70 210,40 240,90 C270,110 290,60 320,55 C350,50 370,85 400,110" fill="none" stroke="#27a855" stroke-width="2"/>
+          <text x="0" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">jan</text>
+          <text x="60" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">mar</text>
+          <text x="130" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">mai</text>
+          <text x="200" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">jul</text>
+          <text x="270" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">set</text>
+          <text x="340" y="125" font-family="DM Mono" font-size="7" fill="#3a4e3f">nov</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACTO -->
+<section style="padding-top: 0;">
+  <p class="section-label fade-in">04 — Impacto</p>
+  <h2 class="fade-in">De horas de trabalho manual<br>a <em>1 clique</em></h2>
+
+  <div class="impact-row fade-in">
+    <div class="impact-item">
+      <div class="impact-num">100%</div>
+      <div class="impact-desc">dos fornecedores consolidados automaticamente — sem cópia manual de dados entre abas.</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num">0 erro</div>
+      <div class="impact-desc">de digitação ou referência cruzada — toda lógica de PROCX e SOMASES aplicada programaticamente.</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num">1 clique</div>
+      <div class="impact-desc">para gerar o relatório completo, tabela dinâmica e painel visual — decisão com dados em tempo real.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-label">Projeto de Automação — Supply Chain & Suprimentos</span>
+  <div class="footer-tags">
+    <span class="footer-tag">Google Apps Script</span>
+    <span class="footer-tag">Data Engineering</span>
+    <span class="footer-tag">Supply Chain</span>
+    <span class="footer-tag">PCP</span>
+    <span class="footer-tag">Looker Studio</span>
+    <span class="footer-tag">PROCX · SOMASES</span>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
     });
-    let html='<div style="display:flex;flex-wrap:wrap;gap:10px">';
-    for(const g of sorted){
-      const isMes1=g.statusFinal.includes('Mês1')||g.statusFinal.includes('Mes1');
-      const isFSCItem=g.cert==='FSC';
-      const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
-      const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-      html+=`<div class="ce alert-risk" style="min-width:220px;max-width:320px;flex:1">
-        <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
-        <div class="ce-row"><span>Medida</span><span style="color:var(--accent)">${g.medida}</span></div>
-        <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
-        <div class="ce-row"><span>Dimensões</span><span>${[g.compr,g.larg,g.esp].filter(Boolean).join(' × ')} mm</span></div>
-        <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
-        <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
-        <div class="ce-row"><span>Falta Atual</span><span style="color:var(--danger)">${fmt(g.faltaAtual)}</span></div>
-        <div class="ce-row"><span>Falta Seg</span><span style="color:var(--warn)">${fmt(g.faltaSeg)}</span></div>
-        <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
-        ${skuHtml}
-        <div class="ce-tip ${isMes1?'bad':'warn'}">
-          ${isMes1?'🚨 Falta iminente — sem fonte de excesso compatível. Ação urgente.':'⚠ Risco no próximo mês — planejar reposição.'}
-        </div>
-        ${isFSCItem?`<div class="ce-tip fsc">🌲 FSC em falta — Não FSC não pode cobrir. Requer estoque FSC.</div>`:''}
-      </div>`;
-    }
-    html+='</div>';
-    grid.innerHTML=html;
-  }
-}
+  }, { threshold: 0.1 });
 
-// ── HELPERS DE CARD ─────────────────────────────────────────
-function makeEspecieCard(g, cls, tipText, tipCls, rankMap){
-  const rank=rankMap.get(g)||0;
-  const medals=['','🥇','🥈','🥉'];
-  const topCls=rank?(cls?`${cls} top${rank}`:`top${rank}`):'';
-  const finalCls=topCls||cls;
-  const crown=rank?`<div class="top-crown">${medals[rank]}</div>`:'';
-  const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,8);
-  const skuHtml=allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-  const tip=tipText?`<div class="ce-tip ${tipCls}">${tipText}</div>`:'';
-  return `<div class="ce ${finalCls}" style="position:relative">
-    ${crown}
-    <div class="ce-name">${g.especie} · ${g.grupoMestre}</div>
-    <div class="ce-row"><span>Padrão</span><span>${g.padrao||'—'}</span></div>
-    <div class="ce-row"><span>Certificação</span><span>${certBadge(g.cert)}</span></div>
-    <div class="ce-row"><span>Status</span><span>${badge(g.statusFinal)}</span></div>
-    <div class="ce-row"><span>Est. PCP</span><span style="color:var(--teal)">${fmt(g.estPCP)}</span></div>
-    <div class="ce-row"><span>Falta Atual</span><span style="color:${g.faltaAtual>0?'var(--danger)':'var(--muted)'}">${fmt(g.faltaAtual)}</span></div>
-    ${skuHtml}${tip}
-  </div>`;
-}
-
-function makeSkuHtml(g){
-  const allRefs=[...new Set([...g.refs,...g.refsAgrup])].slice(0,6);
-  return allRefs.length?`<div class="sku-list" style="margin-top:6px">${allRefs.map(s=>`<span class="sku">${s}</span>`).join('')}</div>`:'';
-}
-
-// ── SUBTABS / TABS ───────────────────────────────────────────
-function switchSubtab(id){
-  currentSubtab=id;
-  const map={exact:'active-exact',cut:'active-cut',excess:'active-excess',risk:'active-risk'};
-  ['exact','cut','excess','risk'].forEach(k=>{
-    const el=document.getElementById('st-'+k);
-    el.className='subtab'+(k===id?' '+map[k]:'');
-  });
-  const data=buildCrossData();
-  renderSubtab(data);
-}
-
-function switchTab(id){
-  const ids=['grafico','tabela','cross'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ids[i]===id));
-  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='tab-'+id));
-}
-
-window.addEventListener('load',()=>{ if(document.getElementById('sheet-url').value.trim()) loadSheet(); });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
